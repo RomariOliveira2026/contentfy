@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `affiliateCommission` int DEFAULT 30 NOT NULL;

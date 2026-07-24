@@ -1,0 +1,1 @@
+ALTER TABLE `affiliates` ADD `status` enum('pending','approved','rejected') DEFAULT 'pending' NOT NULL;

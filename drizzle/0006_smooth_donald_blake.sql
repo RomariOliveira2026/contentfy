@@ -1,0 +1,1 @@
+ALTER TABLE `products` MODIFY COLUMN `affiliateCommission` int NOT NULL DEFAULT 60;

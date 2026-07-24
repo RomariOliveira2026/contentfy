@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `guaranteeDays` int DEFAULT 30 NOT NULL;
