@@ -42,6 +42,13 @@ import CreatorSales from "./pages/creator/Sales";
 import CreatorStudents from "./pages/creator/Students";
 import CreatorAffiliates from "./pages/creator/Affiliates";
 import CreatorSettings from "./pages/creator/Settings";
+import AIStudioDashboard from "./pages/creator/ai/AIStudioDashboard";
+import AIWriter from "./pages/creator/ai/AIWriter";
+import AICourseBuilderPage from "./pages/creator/ai/AICourseBuilderPage";
+import AIQuizBuilderPage from "./pages/creator/ai/AIQuizBuilderPage";
+import AICertificatePage from "./pages/creator/ai/AICertificatePage";
+import AIEmailsPage from "./pages/creator/ai/AIEmailsPage";
+import AISalesPage from "./pages/creator/ai/AISalesPage";
 import About from "./pages/About";
 import Features from "./pages/Features";
 import Examples from "./pages/Examples";
@@ -107,6 +114,13 @@ function Router() {
 
       {/* Creator Area */}
       <Route path="/creator/dashboard" component={CreatorDashboard} />
+      <Route path="/creator/ai/writer" component={AIWriter} />
+      <Route path="/creator/ai/course" component={AICourseBuilderPage} />
+      <Route path="/creator/ai/quiz" component={AIQuizBuilderPage} />
+      <Route path="/creator/ai/certificate" component={AICertificatePage} />
+      <Route path="/creator/ai/emails" component={AIEmailsPage} />
+      <Route path="/creator/ai/sales-page" component={AISalesPage} />
+      <Route path="/creator/ai" component={AIStudioDashboard} />
       <Route path="/creator/products/new" component={CreatorProductWizard} />
       <Route path="/creator/products/:id/edit" component={CreatorProductWizard} />
       <Route path="/creator/products" component={CreatorProducts} />

@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   X,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import BrandLogo from "@/components/BrandLogo";
@@ -23,6 +24,7 @@ interface CreatorLayoutProps {
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Visão Geral", path: "/creator/dashboard" },
+  { icon: Sparkles, label: "AI Studio", path: "/creator/ai" },
   { icon: Package, label: "Produtos", path: "/creator/products" },
   { icon: BookOpen, label: "Cursos", path: "/creator/courses" },
   { icon: ShoppingCart, label: "Vendas", path: "/creator/sales" },
