@@ -522,6 +522,26 @@
     width: 100%;
   }
 
+  /* Evita títulos/âncoras ficarem sob o header sticky */
+  html {
+    scroll-padding-top: 6.5rem;
+  }
+
+  .cf-showcase-page {
+    --cf-header-offset: 5.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .cf-showcase-page {
+      --cf-header-offset: 6.25rem;
+    }
+  }
+
+  .cf-showcase-page .scroll-mt-header,
+  .cf-showcase-page [id="filtros"] {
+    scroll-margin-top: var(--cf-header-offset);
+  }
+
   .cf-header-shell::after {
     content: "";
     display: block;

@@ -10,11 +10,14 @@ import type { ShowcaseProduct } from "@/lib/showcase";
 import {
   checkoutHref,
   formatShowcasePrice,
+  isComingSoonCommerce,
   productHref,
+  visibilityLabel,
+  getProductVisibility,
 } from "@/lib/showcase";
 import { badgesForProduct, ShowcaseBadgePill } from "./ShowcaseBadge";
+import ProductCoverMedia from "./ProductCoverMedia";
 import { Link } from "wouter";
-import { BookOpen } from "lucide-react";
 
 interface ProductDetailModalProps {
   product: ShowcaseProduct | null;
@@ -29,35 +32,26 @@ export default function ProductDetailModal({
 }: ProductDetailModalProps) {
   if (!product) return null;
 
-  const image =
-    product.landscapeImage || product.heroImage || product.coverImage;
+  const comingSoon = isComingSoonCommerce(product);
   const price = formatShowcasePrice(
     product.isPublished ? product.priceCents : null
   );
-  const canBuy = product.isPublished && product.priceCents != null;
+  const canBuy =
+    !comingSoon && product.isPublished && product.priceCents != null;
+  const status = getProductVisibility(product);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl p-0 overflow-hidden border-white/10 bg-[#0f1522] text-foreground gap-0">
         <div className="relative aspect-[21/9] bg-[#111827]">
-          {image ? (
-            <img
-              src={image}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="h-full w-full flex items-center justify-center">
-              <BookOpen className="h-12 w-12 text-white/20" />
-            </div>
-          )}
+          <ProductCoverMedia product={product} priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0f1522] via-transparent to-transparent" />
         </div>
 
         <div className="p-5 sm:p-6 space-y-4 max-h-[55vh] overflow-y-auto">
           <DialogHeader className="text-left space-y-2">
             <div className="flex flex-wrap gap-1.5">
-              {badgesForProduct(product).map((id) => (
+              {badgesForProduct(product, 2).map((id) => (
                 <ShowcaseBadgePill key={id} id={id} />
               ))}
             </div>
@@ -76,9 +70,14 @@ export default function ProductDetailModal({
           <div className="grid sm:grid-cols-2 gap-4 text-sm">
             <Meta label="Tipo" value={product.typeLabel} />
             <Meta label="Categoria" value={product.category} />
+            <Meta label="Status" value={visibilityLabel(status)} />
             {product.author && <Meta label="Autor" value={product.author} />}
             {product.level && <Meta label="Nível" value={product.level} />}
-            {price && <Meta label="Preço" value={price} />}
+            {comingSoon ? (
+              <Meta label="Preço" value="Em breve" />
+            ) : (
+              price && <Meta label="Preço" value={price} />
+            )}
             {product.guaranteeDays != null && product.isPublished && (
               <Meta
                 label="Garantia"
@@ -127,7 +126,7 @@ export default function ProductDetailModal({
               </Button>
             ) : (
               <Button variant="outline" className="flex-1" disabled>
-                Compra disponível na publicação
+                {comingSoon ? "Em breve" : "Compra disponível na publicação"}
               </Button>
             )}
           </div>

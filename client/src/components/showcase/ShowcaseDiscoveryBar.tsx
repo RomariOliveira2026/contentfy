@@ -36,7 +36,7 @@ export default function ShowcaseDiscoveryBar({
   return (
     <section
       id="filtros"
-      className="container scroll-mt-28"
+      className="container scroll-mt-header"
       aria-label="Busca e filtros da vitrine"
     >
       <div className="rounded-2xl border border-white/[0.08] bg-[#0f1522]/90 p-4 sm:p-5 space-y-4">

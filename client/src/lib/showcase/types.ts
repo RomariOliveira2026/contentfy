@@ -1,5 +1,12 @@
 export type ShowcaseProductType = "ebook" | "audiobook" | "course" | "app";
 
+/** Estado público do produto na vitrine. */
+export type ShowcaseVisibility =
+  | "available"
+  | "prelaunch"
+  | "coming_soon"
+  | "draft";
+
 export type ShowcaseBadge =
   | "launch"
   | "featured"
@@ -48,12 +55,20 @@ export interface ShowcaseProduct {
   included?: string[];
   /** Só preencher com dado real; caso contrário omitir. */
   author?: string;
+  /** Prioridade de imagem na UI: landscapeImage → heroImage → coverImage → fallback. */
   heroImage?: string;
   coverImage?: string;
   landscapeImage?: string;
   /** Centavos — apenas quando houver preço real (banco / publicação). */
   priceCents?: number | null;
   isPublished: boolean;
+  /**
+   * Estado explícito. Se omitido, deriva de isPublished / isLaunch / isPrelaunch.
+   * Rascunho nunca aparece publicamente.
+   */
+  visibility?: ShowcaseVisibility;
+  /** Pré-lançamento configurado — pode aparecer na vitrine sem preço. */
+  isPrelaunch?: boolean;
   isLaunch?: boolean;
   isFeatured?: boolean;
   isNew?: boolean;

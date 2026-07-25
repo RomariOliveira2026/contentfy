@@ -1,6 +1,11 @@
 import { Link } from "wouter";
 import type { ShowcaseProduct } from "@/lib/showcase";
-import { formatShowcasePrice, productHref } from "@/lib/showcase";
+import {
+  formatShowcasePrice,
+  isComingSoonCommerce,
+  productHref,
+  resolveProductImage,
+} from "@/lib/showcase";
 import { badgesForProduct, ShowcaseBadgePill } from "./ShowcaseBadge";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
@@ -11,17 +16,17 @@ interface ShowcaseHeroProps {
 }
 
 export default function ShowcaseHero({ product, onDetails }: ShowcaseHeroProps) {
-  const image =
-    product.heroImage || product.landscapeImage || product.coverImage;
+  const image = resolveProductImage(product);
+  const comingSoon = isComingSoonCommerce(product);
   const price = formatShowcasePrice(
     product.isPublished ? product.priceCents : null
   );
-  const badges = badgesForProduct(product);
+  const badges = badgesForProduct(product, 2);
   const href = product.salesPageUrl || productHref(product);
 
   return (
     <section
-      className="relative min-h-[72vh] lg:min-h-[78vh] overflow-hidden rounded-none lg:rounded-[1.5rem] lg:mx-6 lg:mt-4 border-y lg:border border-white/[0.06]"
+      className="relative min-h-[68vh] lg:min-h-[76vh] overflow-hidden rounded-none lg:rounded-[1.5rem] lg:mx-6 lg:mt-3 border-y lg:border border-white/[0.06]"
       aria-labelledby="showcase-hero-title"
     >
       {image ? (
@@ -30,23 +35,24 @@ export default function ShowcaseHero({ product, onDetails }: ShowcaseHeroProps) 
           alt=""
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          data-fallback="false"
+          className="absolute inset-0 h-full w-full object-cover object-[center_30%] sm:object-center"
         />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a2332] via-[#0c1220] to-[#070b12]" />
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-[#1a2332] via-[#0c1220] to-[#070b12]"
+          data-fallback="true"
+        />
       )}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#070b12] via-[#070b12]/85 to-[#070b12]/25" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#070b12] via-transparent to-[#070b12]/40" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#070b12] via-[#070b12]/88 to-[#070b12]/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#070b12] via-transparent to-[#070b12]/45" />
 
-      <div className="relative z-10 container flex min-h-[72vh] lg:min-h-[78vh] items-end lg:items-center py-12 lg:py-16">
+      <div className="relative z-10 container flex min-h-[68vh] lg:min-h-[76vh] items-end lg:items-center pt-24 pb-12 sm:pt-28 lg:py-16">
         <div className="max-w-xl lg:max-w-2xl">
           <div className="flex flex-wrap gap-2 mb-4">
             {badges.map((id) => (
               <ShowcaseBadgePill key={id} id={id} />
             ))}
-            <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-white/80">
-              Destaque
-            </span>
           </div>
 
           <p className="text-xs sm:text-sm text-orange-300/90 mb-2 font-medium">
@@ -54,27 +60,27 @@ export default function ShowcaseHero({ product, onDetails }: ShowcaseHeroProps) 
           </p>
           <h1
             id="showcase-hero-title"
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-3"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-3 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]"
           >
             {product.name}
           </h1>
           {product.slogan && (
-            <p className="text-lg sm:text-xl text-white/90 font-medium mb-3">
+            <p className="text-lg sm:text-xl text-white/92 font-medium mb-3">
               {product.slogan}
             </p>
           )}
-          <p className="text-sm sm:text-base text-white/70 leading-relaxed mb-5 max-w-lg">
+          <p className="text-sm sm:text-base text-white/75 leading-relaxed mb-5 max-w-lg line-clamp-4 sm:line-clamp-none">
             {product.shortDescription || product.description}
           </p>
 
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/55 mb-6">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/60 mb-6">
             {product.level && <span>Nível: {product.level}</span>}
             {product.durationOrPages && <span>{product.durationOrPages}</span>}
-            {price && (
+            {price && !comingSoon && (
               <span className="text-orange-300 font-semibold">{price}</span>
             )}
-            {!price && !product.isPublished && (
-              <span className="text-amber-200/90">Publicação em preparação</span>
+            {comingSoon && (
+              <span className="text-amber-200/95 font-medium">Em breve</span>
             )}
           </div>
 

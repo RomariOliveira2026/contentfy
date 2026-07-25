@@ -4,6 +4,7 @@ import type {
   ShowcaseProduct,
   ShowcaseProductType,
   ShowcaseRailId,
+  ShowcaseVisibility,
 } from "./types";
 
 /** Shape mínimo vindo do tRPC/DB — evita acoplar a tipos gerados. */
@@ -85,6 +86,13 @@ export function mergeShowcaseCatalog(
       // Preço só quando publicado e valor numérico válido do banco
       priceCents: published ? db.price : null,
       isPublished: published,
+      visibility: (published
+        ? "available"
+        : base?.visibility ||
+          (base?.isLaunch || base?.isPrelaunch || base?.isFeatured
+            ? "prelaunch"
+            : "draft")) as ShowcaseVisibility,
+      isPrelaunch: base?.isPrelaunch ?? (!published && Boolean(base?.isLaunch)),
       isLaunch: base?.isLaunch,
       isFeatured: base?.isFeatured,
       isNew: base?.isNew,
@@ -107,9 +115,25 @@ export function mergeShowcaseCatalog(
   return Array.from(bySlug.values());
 }
 
-/** Produtos visíveis na vitrine: publicados + provisórios de lançamento (sem preço inventado). */
+/**
+ * Produtos visíveis na vitrine.
+ * Rascunho nunca aparece. Publicados, pré-lançamento e “em breve” configurados sim.
+ */
 export function getVisibleShowcaseProducts(all: ShowcaseProduct[]) {
-  return all.filter((p) => p.isPublished || p.isLaunch || p.isFeatured);
+  return all.filter((p) => {
+    if (p.visibility === "draft") return false;
+    if (p.isPublished || p.visibility === "available") return true;
+    if (
+      p.visibility === "prelaunch" ||
+      p.visibility === "coming_soon" ||
+      p.isPrelaunch ||
+      p.isLaunch ||
+      p.isFeatured
+    ) {
+      return true;
+    }
+    return false;
+  });
 }
 
 export function getShowcaseProductBySlug(

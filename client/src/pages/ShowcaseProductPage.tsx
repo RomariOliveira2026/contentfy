@@ -7,11 +7,13 @@ import ProductShowcaseCard from "@/components/showcase/ProductShowcaseCard";
 import {
   checkoutHref,
   formatShowcasePrice,
+  isComingSoonCommerce,
+  resolveProductImage,
   useShowcaseCatalog,
 } from "@/lib/showcase";
+import ProductCoverMedia from "@/components/showcase/ProductCoverMedia";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen } from "lucide-react";
 
 export default function ShowcaseProductPage() {
   const params = useParams<{ slug: string }>();
@@ -50,12 +52,13 @@ export default function ShowcaseProductPage() {
     );
   }
 
+  const comingSoon = isComingSoonCommerce(product);
   const price = formatShowcasePrice(
     product.isPublished ? product.priceCents : null
   );
-  const canBuy = product.isPublished && product.priceCents != null;
-  const image =
-    product.heroImage || product.landscapeImage || product.coverImage;
+  const canBuy =
+    !comingSoon && product.isPublished && product.priceCents != null;
+  const image = resolveProductImage(product);
   const related = visible
     .filter((p) => p.slug !== product.slug)
     .filter(
@@ -94,7 +97,7 @@ export default function ShowcaseProductPage() {
           `Conheça ${product.name} na ContentFy.`
         }
         path={`/produto/${product.slug}`}
-        image={image}
+        image={image ?? undefined}
         noIndex={!product.isPublished}
         productJsonLd={jsonLd}
       />
@@ -113,21 +116,11 @@ export default function ShowcaseProductPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/60" />
           <div className="container relative z-10 py-12 lg:py-16 grid lg:grid-cols-[280px_1fr] gap-8 items-start">
             <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#111827] aspect-[3/4] max-w-[280px]">
-              {product.coverImage || image ? (
-                <img
-                  src={product.coverImage || image}
-                  alt={`Capa de ${product.name}`}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center">
-                  <BookOpen className="h-12 w-12 text-white/20" />
-                </div>
-              )}
+              <ProductCoverMedia product={product} priority />
             </div>
             <div>
               <div className="flex flex-wrap gap-2 mb-3">
-                {badgesForProduct(product).map((id) => (
+                {badgesForProduct(product, 2).map((id) => (
                   <ShowcaseBadgePill key={id} id={id} />
                 ))}
               </div>
@@ -144,7 +137,11 @@ export default function ShowcaseProductPage() {
                 {product.description || product.shortDescription}
               </p>
               <div className="flex flex-wrap items-center gap-4 mb-6">
-                {price ? (
+                {comingSoon ? (
+                  <p className="text-lg font-semibold text-amber-200/95">
+                    Em breve
+                  </p>
+                ) : price ? (
                   <p className="text-2xl font-bold text-primary">{price}</p>
                 ) : (
                   <p className="text-sm text-amber-200/90">
@@ -164,7 +161,7 @@ export default function ShowcaseProductPage() {
                   </Button>
                 ) : (
                   <Button size="lg" disabled>
-                    Compra disponível após publicação
+                    {comingSoon ? "Em breve" : "Compra disponível após publicação"}
                   </Button>
                 )}
                 {product.salesPageUrl && (

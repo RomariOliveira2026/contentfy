@@ -20,6 +20,20 @@ const STYLES: Partial<Record<BadgeId, string>> = {
   bestseller: "bg-emerald-500/20 text-emerald-200 border-emerald-500/30",
 };
 
+const MAX_BADGES = 2;
+
+/** Prioridade: Lançamento → Em destaque → Novo → Tipo. */
+const PRIORITY: BadgeId[] = [
+  "launch",
+  "featured",
+  "new",
+  "manual",
+  "ebook",
+  "course",
+  "audiobook",
+  "bestseller",
+];
+
 export function ShowcaseBadgePill({
   id,
   className,
@@ -41,15 +55,28 @@ export function ShowcaseBadgePill({
   );
 }
 
-/** Badges seguros — nunca emite "Mais vendido" sem dados reais. */
-export function badgesForProduct(product: ShowcaseProduct): BadgeId[] {
-  const list: BadgeId[] = [];
-  if (product.isLaunch) list.push("launch");
-  if (product.isFeatured) list.push("featured");
-  if (product.isNew) list.push("new");
-  if (product.typeLabel.toLowerCase() === "manual") list.push("manual");
-  else if (product.type === "ebook") list.push("ebook");
-  else if (product.type === "course") list.push("course");
-  else if (product.type === "audiobook") list.push("audiobook");
-  return list;
+/**
+ * Badges seguros — máx. 2, por prioridade.
+ * Nunca emite "Mais vendido" sem dados reais.
+ * Evita poluição (Lançamento + Destaque + Novo + tipo todos juntos).
+ */
+export function badgesForProduct(
+  product: ShowcaseProduct,
+  max = MAX_BADGES
+): BadgeId[] {
+  const candidates: BadgeId[] = [];
+
+  if (product.isLaunch) candidates.push("launch");
+  if (product.isFeatured) candidates.push("featured");
+  if (product.isNew) candidates.push("new");
+
+  if (product.typeLabel.toLowerCase() === "manual") candidates.push("manual");
+  else if (product.type === "ebook") candidates.push("ebook");
+  else if (product.type === "course") candidates.push("course");
+  else if (product.type === "audiobook") candidates.push("audiobook");
+
+  // "Mais vendido" só com flag futura real — não emitir por enquanto.
+
+  const ranked = PRIORITY.filter((id) => candidates.includes(id));
+  return ranked.slice(0, max);
 }

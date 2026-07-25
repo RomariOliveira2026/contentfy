@@ -1,124 +1,212 @@
 import { Link } from "wouter";
 import type { ShowcaseProduct } from "@/lib/showcase";
-import { formatShowcasePrice, productHref } from "@/lib/showcase";
+import {
+  formatShowcasePrice,
+  isComingSoonCommerce,
+  productHref,
+  visibilityLabel,
+  getProductVisibility,
+  type ProductCardVariant,
+} from "@/lib/showcase";
 import { badgesForProduct, ShowcaseBadgePill } from "./ShowcaseBadge";
+import ProductCoverMedia from "./ProductCoverMedia";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { BookOpen, Sparkles } from "lucide-react";
 
 interface ProductShowcaseCardProps {
   product: ShowcaseProduct;
   onDetails?: (product: ShowcaseProduct) => void;
   priority?: boolean;
+  variant?: ProductCardVariant;
   className?: string;
 }
+
+const VARIANT_SHELL: Record<ProductCardVariant, string> = {
+  featured:
+    "w-full max-w-none shrink-0 sm:shrink",
+  large: "w-full max-w-none shrink-0 sm:shrink",
+  standard: "w-[260px] sm:w-[280px] shrink-0",
+  compact: "w-[200px] sm:w-[220px] shrink-0",
+};
+
+const VARIANT_ASPECT: Record<ProductCardVariant, string> = {
+  featured: "aspect-[16/10] sm:aspect-[21/11]",
+  large: "aspect-[16/10] sm:aspect-[16/9]",
+  standard: "aspect-video",
+  compact: "aspect-video",
+};
 
 export default function ProductShowcaseCard({
   product,
   onDetails,
   priority,
+  variant = "standard",
   className,
 }: ProductShowcaseCardProps) {
+  const comingSoon = isComingSoonCommerce(product);
   const price = formatShowcasePrice(
     product.isPublished ? product.priceCents : null
   );
-  const image =
-    product.landscapeImage || product.coverImage || product.heroImage;
-  const badges = badgesForProduct(product).slice(0, 2);
+  const badges = badgesForProduct(product, 2);
   const href = productHref(product);
+  const status = getProductVisibility(product);
+  const showHoverPanel = variant === "standard" || variant === "compact";
+  const isExpanded = variant === "featured" || variant === "large";
+
+  const commerceLabel = comingSoon
+    ? "Em breve"
+    : price ?? (status === "available" ? null : visibilityLabel(status));
 
   return (
     <article
       className={cn(
-        "cf-showcase-card group relative w-[260px] sm:w-[280px] shrink-0",
+        "cf-showcase-card group relative",
+        VARIANT_SHELL[variant],
         className
       )}
     >
       <Link href={href}>
         <a
-          className="block rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0f1522] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+          className={cn(
+            "block overflow-hidden border border-white/[0.08] bg-[#0f1522] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+            isExpanded ? "rounded-2xl sm:rounded-3xl" : "rounded-2xl"
+          )}
           aria-label={`${product.name} — ${product.typeLabel}`}
         >
-          <div className="relative aspect-video overflow-hidden bg-[#111827]">
-            {image ? (
-              <img
-                src={image}
-                alt=""
-                loading={priority ? "eager" : "lazy"}
-                decoding="async"
-                className="h-full w-full object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
-              />
-            ) : (
-              <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-[#1a2332] to-[#0c1220]">
-                <BookOpen className="h-10 w-10 text-white/25" aria-hidden />
-              </div>
+          <div
+            className={cn(
+              "relative overflow-hidden bg-[#111827]",
+              VARIANT_ASPECT[variant]
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-            <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
+          >
+            <div
+              className={cn(
+                "h-full w-full",
+                "transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
+              )}
+            >
+              <ProductCoverMedia product={product} priority={priority} />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+            <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 max-w-[85%]">
               {badges.map((id) => (
                 <ShowcaseBadgePill key={id} id={id} />
               ))}
             </div>
-            <div className="absolute bottom-0 left-0 right-0 p-3.5">
-              <p className="text-[11px] text-white/70 mb-0.5">
+            <div
+              className={cn(
+                "absolute bottom-0 left-0 right-0",
+                isExpanded ? "p-4 sm:p-5 lg:p-6" : "p-3.5"
+              )}
+            >
+              <p
+                className={cn(
+                  "text-white/70 mb-0.5",
+                  isExpanded ? "text-xs sm:text-sm" : "text-[11px]"
+                )}
+              >
                 {product.typeLabel} · {product.category}
               </p>
-              <h3 className="text-sm sm:text-base font-semibold text-white leading-snug line-clamp-2">
+              <h3
+                className={cn(
+                  "font-semibold text-white leading-snug line-clamp-2",
+                  isExpanded
+                    ? "text-lg sm:text-xl lg:text-2xl tracking-tight"
+                    : "text-sm sm:text-base"
+                )}
+              >
                 {product.name}
               </h3>
-              <p className="text-xs text-orange-300/90 mt-1 font-medium">
-                {price ?? (product.isPublished ? null : "Em breve")}
+              {isExpanded && (product.slogan || product.shortDescription) && (
+                <p className="mt-2 text-sm text-white/75 line-clamp-2 max-w-xl">
+                  {product.slogan || product.shortDescription}
+                </p>
+              )}
+              <p
+                className={cn(
+                  "mt-1.5 font-medium",
+                  comingSoon ? "text-amber-200/95" : "text-orange-300/90",
+                  isExpanded ? "text-sm" : "text-xs"
+                )}
+              >
+                {commerceLabel}
               </p>
             </div>
           </div>
         </a>
       </Link>
 
-      {/* Hover panel (desktop) — absolute, no layout shift */}
-      <div
-        className={cn(
-          "cf-showcase-card-panel pointer-events-none absolute left-0 right-0 top-[72%] z-20",
-          "opacity-0 translate-y-1 scale-[0.98]",
-          "transition-all duration-300 ease-out",
-          "motion-safe:group-hover:opacity-100 motion-safe:group-hover:translate-y-0 motion-safe:group-hover:scale-100",
-          "motion-safe:group-focus-within:opacity-100 motion-safe:group-focus-within:translate-y-0",
-          "hidden md:block"
-        )}
-      >
-        <div className="pointer-events-auto rounded-2xl border border-white/10 bg-[#111827]/95 backdrop-blur-xl p-3.5 shadow-[0_20px_48px_rgba(0,0,0,0.55)]">
-          <p className="text-xs text-muted-foreground line-clamp-3 mb-3">
-            {product.shortDescription || product.slogan || product.description}
-          </p>
-          <div className="flex flex-wrap gap-1.5 mb-3 text-[11px] text-white/60">
-            {product.level && <span>{product.level}</span>}
-            {product.durationOrPages && <span>· {product.durationOrPages}</span>}
-            {product.isNew && (
-              <span className="inline-flex items-center gap-1 text-sky-300">
-                <Sparkles className="h-3 w-3" /> Novo
-              </span>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Link href={href}>
-              <Button size="sm" className="flex-1 w-full">
-                Conhecer
+      {/* CTAs sempre visíveis no mobile / variantes grandes — sem depender de hover */}
+      {isExpanded && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button asChild size="sm" className="min-w-[7.5rem]">
+            <Link href={href}>Conhecer</Link>
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => onDetails?.(product)}
+          >
+            Detalhes
+          </Button>
+        </div>
+      )}
+
+      {/* Hover panel (desktop) — só em variantes de trilho */}
+      {showHoverPanel && (
+        <div
+          className={cn(
+            "cf-showcase-card-panel pointer-events-none absolute left-0 right-0 top-[72%] z-20",
+            "opacity-0 translate-y-1 scale-[0.98]",
+            "transition-all duration-300 ease-out",
+            "motion-safe:group-hover:opacity-100 motion-safe:group-hover:translate-y-0 motion-safe:group-hover:scale-100",
+            "motion-safe:group-focus-within:opacity-100 motion-safe:group-focus-within:translate-y-0",
+            "hidden md:block"
+          )}
+        >
+          <div className="pointer-events-auto rounded-2xl border border-white/10 bg-[#111827]/95 backdrop-blur-xl p-3.5 shadow-[0_20px_48px_rgba(0,0,0,0.55)]">
+            <p className="text-xs text-muted-foreground line-clamp-3 mb-3">
+              {product.shortDescription || product.slogan || product.description}
+            </p>
+            <div className="flex gap-2">
+              <Button asChild size="sm" className="flex-1">
+                <Link href={href}>Conhecer</Link>
               </Button>
-            </Link>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="flex-1"
-              onClick={(e) => {
-                e.preventDefault();
-                onDetails?.(product);
-              }}
-            >
-              Detalhes
-            </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="flex-1"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onDetails?.(product);
+                }}
+              >
+                Detalhes
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Mobile: ações sob o card nas variantes de trilho */}
+      {showHoverPanel && (
+        <div className="mt-2 flex gap-2 md:hidden">
+          <Button asChild size="sm" className="flex-1">
+            <Link href={href}>Conhecer</Link>
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="flex-1"
+            onClick={() => onDetails?.(product)}
+          >
+            Detalhes
+          </Button>
+        </div>
+      )}
     </article>
   );
 }
