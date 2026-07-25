@@ -29,8 +29,8 @@ export default function AdminDashboard() {
       change: "+12.5%",
       trend: "up",
       icon: DollarSign,
-      color: "text-green-600",
-      bgColor: "bg-green-100",
+      color: "text-primary",
+      bgColor: "bg-primary/15",
     },
     {
       title: "Vendas",
@@ -38,8 +38,8 @@ export default function AdminDashboard() {
       change: "+8.2%",
       trend: "up",
       icon: ShoppingCart,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100",
+      color: "text-amber-400",
+      bgColor: "bg-amber-400/15",
     },
     {
       title: "Produtos",
@@ -47,8 +47,8 @@ export default function AdminDashboard() {
       change: "+3",
       trend: "up",
       icon: Package,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100",
+      color: "text-orange-300",
+      bgColor: "bg-orange-300/15",
     },
     {
       title: "Clientes",
@@ -56,8 +56,8 @@ export default function AdminDashboard() {
       change: "+15.3%",
       trend: "up",
       icon: Users,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100",
+      color: "text-red-400",
+      bgColor: "bg-red-400/15",
     },
   ];
 
@@ -65,19 +65,20 @@ export default function AdminDashboard() {
     <AdminLayout>
       <div className="p-6 lg:p-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+        <div className="mb-8 lg:mb-10">
+          <p className="cf-caption mb-2">Admin</p>
+          <h1 className="cf-page-title mb-2">Dashboard</h1>
           <p className="text-muted-foreground">
-            Bem-vindo de volta, {user?.name || "Admin"}! 👋
+            Bem-vindo de volta, {user?.name || "Admin"}
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mb-8">
           {loadingProducts ? (
             <>
               {[1, 2, 3, 4].map((i) => (
-                <Card key={i}>
+                <Card key={i} className="cf-card-premium">
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <Skeleton className="h-4 w-24" />
                     <Skeleton className="h-10 w-10 rounded-full" />
@@ -95,26 +96,26 @@ export default function AdminDashboard() {
               const TrendIcon = stat.trend === "up" ? ArrowUpRight : ArrowDownRight;
 
               return (
-                <Card key={stat.title} className="hover:shadow-lg transition-shadow">
-                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <Card key={stat.title} className="cf-card-premium py-0 gap-4">
+                  <CardHeader className="flex flex-row items-center justify-between pb-0 pt-5">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
                       {stat.title}
                     </CardTitle>
-                    <div className={`p-2 rounded-full ${stat.bgColor}`}>
+                    <div className={`p-2.5 rounded-2xl ${stat.bgColor}`}>
                       <Icon className={`w-5 h-5 ${stat.color}`} />
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold mb-1">{stat.value}</div>
+                  <CardContent className="pb-5">
+                    <div className="text-2xl font-bold tracking-tight mb-1">{stat.value}</div>
                     <div className="flex items-center text-sm">
                       <TrendIcon
                         className={`w-4 h-4 mr-1 ${
-                          stat.trend === "up" ? "text-green-600" : "text-red-600"
+                          stat.trend === "up" ? "text-emerald-400" : "text-red-400"
                         }`}
                       />
                       <span
                         className={
-                          stat.trend === "up" ? "text-green-600" : "text-red-600"
+                          stat.trend === "up" ? "text-emerald-400" : "text-red-400"
                         }
                       >
                         {stat.change}
@@ -131,9 +132,9 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Produtos Recentes */}
-          <Card>
+          <Card className="cf-card-premium">
             <CardHeader>
               <CardTitle>Produtos Recentes</CardTitle>
             </CardHeader>

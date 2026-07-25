@@ -77,6 +77,7 @@ export const productsRouter = router({
       salesPageUrl: z.string().optional(),
       guaranteeDays: z.number().min(0).default(30),
       affiliateCommission: z.number().min(50).max(70).default(60),
+      isActive: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       // Verificar se é admin
@@ -96,12 +97,17 @@ export const productsRouter = router({
         });
       }
 
-      await db.createProduct({
-        ...input,
-        isActive: true,
+      const { isActive, ...rest } = input;
+      const { insertId } = await db.createProduct({
+        ...rest,
+        isActive: isActive ?? true,
       });
 
-      return { success: true };
+      if (input.type === "course" && insertId) {
+        await db.ensureCourseForProduct(insertId);
+      }
+
+      return { success: true, id: insertId };
     }),
 
   // Atualizar produto (apenas admin)
@@ -179,7 +185,7 @@ export const productsRouter = router({
       const newSlug = `${originalProduct.slug}-copia-${timestamp}`;
 
       // Criar produto duplicado
-      const duplicatedProduct = await db.createProduct({
+      const { insertId } = await db.createProduct({
         name: `${originalProduct.name} (Cópia)`,
         slug: newSlug,
         description: originalProduct.description,
@@ -193,7 +199,11 @@ export const productsRouter = router({
         guaranteeDays: originalProduct.guaranteeDays,
       });
 
-      return duplicatedProduct;
+      if (originalProduct.type === "course" && insertId) {
+        await db.ensureCourseForProduct(insertId);
+      }
+
+      return { success: true, id: insertId };
     }),
 
   // Deletar produto (soft delete - apenas admin)

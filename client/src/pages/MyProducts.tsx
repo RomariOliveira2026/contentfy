@@ -5,6 +5,8 @@ import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ProgressBar } from "@/components/design-system/ProgressBar";
+import AnimatedSection from "@/components/AnimatedSection";
 import {
   BookOpen,
   GraduationCap,
@@ -21,6 +23,7 @@ type LibraryProduct = {
   description: string;
   actionLabel: string;
   href: string;
+  progress: number;
 };
 
 const libraryProducts: LibraryProduct[] = [
@@ -30,16 +33,18 @@ const libraryProducts: LibraryProduct[] = [
     type: "course",
     description:
       "Aprenda técnicas práticas para foco, organização e produtividade.",
-    actionLabel: "Assistir Curso",
+    actionLabel: "Continuar",
     href: "/my-account/course/1",
+    progress: 42,
   },
   {
     id: 2,
     name: "Desacelere",
     type: "ebook",
     description: "Controle a ansiedade e recupere a paz mental.",
-    actionLabel: "Baixar E-book",
+    actionLabel: "Abrir",
     href: "/my-account/product/2",
+    progress: 18,
   },
 ];
 
@@ -73,65 +78,78 @@ export default function MyProducts() {
         <div className="container">
           <PageHeader
             title="Minha Biblioteca"
-            subtitle="Acesse seus produtos adquiridos"
+            subtitle="Seu conteúdo adquirido, pronto para continuar"
             icon={<Library className="w-6 h-6 text-primary" />}
           />
 
           {hasProducts ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {libraryProducts.map((product) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6">
+              {libraryProducts.map((product, index) => {
                 const Icon = getProductIcon(product.type);
                 const ActionIcon = getActionIcon(product.type);
 
                 return (
-                  <Card key={product.id} className="cf-card-product group">
-                    <div className="cf-product-cover">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Icon className="w-16 h-16 text-white/50 group-hover:scale-110 transition-transform duration-300" />
+                  <AnimatedSection key={product.id} delay={index * 0.06}>
+                    <Card className="cf-card-library group py-0 gap-0 h-full">
+                      <div className="cf-product-cover aspect-[16/10]">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-[#070B12] via-transparent to-transparent">
+                          <Icon className="w-20 h-20 text-white/35 group-hover:scale-110 transition-transform duration-200" />
+                        </div>
+                        <div className="absolute top-4 left-4 flex gap-2">
+                          <Badge className="bg-black/55 text-white border-0 backdrop-blur-md">
+                            {getProductTypeLabel(product.type)}
+                          </Badge>
+                          <Badge className="cf-badge-type border">
+                            Em progresso
+                          </Badge>
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <div className="h-14 w-14 rounded-full bg-gradient-owl flex items-center justify-center shadow-xl shadow-orange-500/30">
+                            <Play className="w-6 h-6 text-white fill-white ml-0.5" />
+                          </div>
+                        </div>
                       </div>
-                      <div className="absolute top-4 left-4">
-                        <Badge
-                          variant="secondary"
-                          className="bg-black/40 text-white border-0 backdrop-blur-sm"
-                        >
-                          {getProductTypeLabel(product.type)}
-                        </Badge>
-                      </div>
-                    </div>
 
-                    <CardContent className="cf-card-product-body">
-                      <h2 className="text-lg font-bold mb-2 line-clamp-2 min-h-[3.5rem]">
-                        {product.name}
-                      </h2>
-                      <p className="text-sm text-muted-foreground mb-6 line-clamp-2 min-h-[2.5rem] leading-relaxed flex-1">
-                        {product.description}
-                      </p>
+                      <CardContent className="p-5 lg:p-6 flex flex-col flex-1">
+                        <h2 className="text-lg font-bold mb-2 line-clamp-2 min-h-[3.25rem]">
+                          {product.name}
+                        </h2>
+                        <p className="text-sm text-muted-foreground mb-5 line-clamp-2 flex-1">
+                          {product.description}
+                        </p>
 
-                      <Link href={product.href}>
-                        <Button className="w-full rounded-lg cf-btn-gradient">
-                          <ActionIcon className="mr-2 w-4 h-4" />
-                          {product.actionLabel}
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
+                        <ProgressBar
+                          value={product.progress}
+                          label="Progresso"
+                          className="mb-5"
+                        />
+
+                        <Link href={product.href}>
+                          <Button className="w-full">
+                            <ActionIcon className="mr-2 w-4 h-4" />
+                            {product.actionLabel}
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  </AnimatedSection>
                 );
               })}
             </div>
           ) : (
-            <Card className="cf-card-premium">
+            <Card className="cf-card-premium py-0">
               <CardContent className="py-16 px-6 text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-muted/60 border border-border/50 mb-6">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-secondary border border-white/[0.08] mb-6">
                   <Library className="w-10 h-10 text-muted-foreground" />
                 </div>
                 <h2 className="text-xl font-semibold mb-2">
                   Você ainda não possui produtos.
                 </h2>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
+                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
                   Explore nosso catálogo e comece sua jornada de aprendizado.
                 </p>
                 <Link href="/products">
-                  <Button size="lg" className="cf-btn-gradient rounded-lg">
+                  <Button size="lg">
                     Explorar Produtos
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>

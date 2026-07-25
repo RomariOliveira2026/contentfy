@@ -26,18 +26,22 @@ const socialLinks = [
 
 export default function PublicFooter() {
   return (
-    <footer className="relative cf-surface-header cf-footer-lines">
+    <footer className="relative bg-[#070B12] border-t border-white/[0.08]">
+      <div className="cf-gradient-bar opacity-70" />
       <div className="container py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
           <div className="lg:col-span-5">
             <Link href="/">
-              <a className="cf-brand-logo-link inline-flex items-center mb-5">
-                <BrandLogo />
+              <a className="cf-brand-logo-link inline-flex items-center mb-5 py-0">
+                <BrandLogo
+                  wrapClassName="!h-14 lg:!h-16"
+                  className="!h-14 !max-h-14 lg:!h-16 lg:!max-h-16 !w-auto"
+                />
               </a>
             </Link>
-            <p className="text-sm text-white/60 leading-relaxed mb-6 max-w-sm">
-              Sua plataforma completa de infoprodutos. Cursos online, e-books,
-              audiobooks e apps em um só lugar — com a identidade{" "}
+            <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-sm">
+              Plataforma premium de infoprodutos. Cursos, e-books, audiobooks e
+              apps — com a identidade{" "}
               <span className="text-gradient-owl font-semibold">ContentFy</span>.
             </p>
             <div className="flex gap-2">
@@ -45,7 +49,7 @@ export default function PublicFooter() {
                 <a
                   key={label}
                   href="#"
-                  className="h-9 w-9 rounded-lg bg-muted/60 border border-border/50 flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
+                  className="h-10 w-10 rounded-xl bg-[#111827] border border-white/[0.08] flex items-center justify-center text-muted-foreground hover:text-white hover:border-primary/40 transition-all duration-200"
                   aria-label={label}
                 >
                   <Icon className="w-4 h-4" />

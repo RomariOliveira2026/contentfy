@@ -225,7 +225,12 @@ export async function createProduct(product: InsertProduct) {
   if (!db) throw new Error("Database not available");
 
   const result = await db.insert(products).values(product);
-  return result;
+  const insertId = Number(
+    (result as unknown as [{ insertId?: number }])[0]?.insertId ??
+      (result as unknown as { insertId?: number }).insertId ??
+      0
+  );
+  return { insertId, result };
 }
 
 export async function updateProduct(id: number, product: Partial<InsertProduct>) {
@@ -467,6 +472,30 @@ export async function getCourseByProductId(productId: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function ensureCourseForProduct(productId: number) {
+  const existing = await getCourseByProductId(productId);
+  if (existing) return existing;
+
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(courses).values({
+    productId,
+    level: "beginner",
+    certificateEnabled: true,
+  });
+  const insertId = Number(
+    (result as unknown as [{ insertId?: number }])[0]?.insertId ??
+      (result as unknown as { insertId?: number }).insertId ??
+      0
+  );
+  const created = await getCourseByProductId(productId);
+  if (!created) {
+    throw new Error(`Failed to create course row (insertId=${insertId})`);
+  }
+  return created;
+}
+
 export async function getCourseModules(courseId: number) {
   const db = await getDb();
   if (!db) return [];
@@ -483,6 +512,115 @@ export async function getModuleLessons(moduleId: number) {
   return await db.select().from(courseLessons)
     .where(eq(courseLessons.moduleId, moduleId))
     .orderBy(courseLessons.order);
+}
+
+export async function getCourseStructureForBuilder(productId: number) {
+  const course = await ensureCourseForProduct(productId);
+  const modules = await getCourseModules(course.id);
+  const withLessons = await Promise.all(
+    modules.map(async (mod) => ({
+      ...mod,
+      lessons: await getModuleLessons(mod.id),
+    }))
+  );
+  return { course, modules: withLessons };
+}
+
+export async function createCourseModule(data: InsertCourseModule) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(courseModules).values(data);
+  const insertId = Number(
+    (result as unknown as [{ insertId?: number }])[0]?.insertId ??
+      (result as unknown as { insertId?: number }).insertId ??
+      0
+  );
+  return insertId;
+}
+
+export async function updateCourseModule(
+  id: number,
+  data: Partial<InsertCourseModule>
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(courseModules).set(data).where(eq(courseModules.id, id));
+}
+
+export async function deleteCourseModule(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const lessons = await getModuleLessons(id);
+  for (const lesson of lessons) {
+    await db.delete(courseLessons).where(eq(courseLessons.id, lesson.id));
+  }
+  await db.delete(courseModules).where(eq(courseModules.id, id));
+}
+
+export async function createCourseLesson(data: InsertCourseLesson) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(courseLessons).values(data);
+  return Number(
+    (result as unknown as [{ insertId?: number }])[0]?.insertId ??
+      (result as unknown as { insertId?: number }).insertId ??
+      0
+  );
+}
+
+export async function updateCourseLesson(
+  id: number,
+  data: Partial<InsertCourseLesson>
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(courseLessons).set(data).where(eq(courseLessons.id, id));
+}
+
+export async function deleteCourseLesson(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(courseLessons).where(eq(courseLessons.id, id));
+}
+
+export async function swapModuleOrder(moduleIdA: number, moduleIdB: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [a] = await db.select().from(courseModules).where(eq(courseModules.id, moduleIdA)).limit(1);
+  const [b] = await db.select().from(courseModules).where(eq(courseModules.id, moduleIdB)).limit(1);
+  if (!a || !b) throw new Error("Módulo não encontrado");
+  await db.update(courseModules).set({ order: b.order }).where(eq(courseModules.id, a.id));
+  await db.update(courseModules).set({ order: a.order }).where(eq(courseModules.id, b.id));
+}
+
+export async function swapLessonOrder(lessonIdA: number, lessonIdB: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [a] = await db.select().from(courseLessons).where(eq(courseLessons.id, lessonIdA)).limit(1);
+  const [b] = await db.select().from(courseLessons).where(eq(courseLessons.id, lessonIdB)).limit(1);
+  if (!a || !b) throw new Error("Aula não encontrada");
+  await db.update(courseLessons).set({ order: b.order }).where(eq(courseLessons.id, a.id));
+  await db.update(courseLessons).set({ order: a.order }).where(eq(courseLessons.id, b.id));
+}
+
+export async function countStudentsByProduct(productId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(userProducts)
+    .where(and(eq(userProducts.productId, productId), eq(userProducts.isActive, true)));
+  return Number(result[0]?.count ?? 0);
+}
+
+export async function countDistinctStudents() {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db
+    .select({ count: sql<number>`count(distinct ${userProducts.userId})` })
+    .from(userProducts)
+    .where(eq(userProducts.isActive, true));
+  return Number(result[0]?.count ?? 0);
 }
 
 export async function getUserLessonProgress(userId: number, lessonId: number) {

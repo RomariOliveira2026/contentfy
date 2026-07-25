@@ -142,13 +142,13 @@ export default function ProductDetail() {
     <div className="min-h-screen flex flex-col">
       <PublicHeader />
 
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-10 lg:py-14">
         <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
             {/* Conteúdo Principal */}
             <div className="lg:col-span-2">
               {/* Imagem de Capa */}
-              <div className="aspect-video cf-gradient-accent rounded-xl overflow-hidden mb-6 shadow-lg">
+              <div className="aspect-[16/9] lg:aspect-[16/8] cf-gradient-accent rounded-[1.25rem] overflow-hidden mb-8 shadow-[0_24px_64px_rgba(0,0,0,0.45)] border border-white/[0.08]">
                 {product.coverImage ? (
                   <img
                     src={product.coverImage}
@@ -163,13 +163,13 @@ export default function ProductDetail() {
               </div>
 
               {/* Título e Badge */}
-              <div className="mb-6">
-                <Badge className="mb-3 cf-badge-type" variant="secondary">
+              <div className="mb-8">
+                <Badge className="mb-4 cf-badge-type" variant="secondary">
                   {getProductTypeLabel(product.type)}
                 </Badge>
-                <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
+                <h1 className="mb-4">{product.name}</h1>
                 {product.description && (
-                  <p className="text-lg text-muted-foreground">
+                  <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
                     {product.description}
                   </p>
                 )}
@@ -193,7 +193,7 @@ export default function ProductDetail() {
                 <h2 className="cf-section-title mb-4">
                   O que você vai {product.type === "course" ? "aprender" : "receber"}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {[
                     "Conteúdo de alta qualidade",
                     "Acesso imediato após a compra",
@@ -202,9 +202,12 @@ export default function ProductDetail() {
                     "Certificado de conclusão",
                     `Garantia de ${(product as { guaranteeDays?: number }).guaranteeDays || 30} dias`,
                   ].map((item, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>{item}</span>
+                    <div
+                      key={index}
+                      className="flex items-start gap-3 rounded-2xl border border-white/[0.08] bg-card/60 px-4 py-3.5"
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-foreground/90">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -358,12 +361,14 @@ export default function ProductDetail() {
 
             {/* Sidebar - Card de Compra */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24">
-                <Card className="cf-card-premium border-primary/10 shadow-lg">
-                  <CardContent className="p-6">
+              <div className="sticky top-28">
+                <Card className="cf-card-premium border-primary/20 shadow-[0_24px_64px_rgba(0,0,0,0.4)] py-0 overflow-hidden">
+                  <div className="cf-gradient-bar" />
+                  <CardContent className="p-6 lg:p-7">
                     {/* Preço */}
                     <div className="mb-6">
-                      <p className="text-4xl font-bold mb-1">
+                      <p className="cf-caption mb-2">Investimento</p>
+                      <p className="text-4xl font-bold tracking-tight mb-1">
                         R$ {(product.price / 100).toFixed(2)}
                       </p>
                       {product.isRecurring && (
@@ -387,7 +392,7 @@ export default function ProductDetail() {
                     <Button
                       size="lg"
                       type="button"
-                      className="w-full mb-4 cf-btn-gradient rounded-lg"
+                      className="w-full mb-4 h-12 text-base"
                       onClick={handleBuyClick}
                     >
                       {product.type === "app" ? "Ver Planos" : "Comprar Agora"}

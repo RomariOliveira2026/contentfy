@@ -2,10 +2,10 @@ export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
 export const APP_TITLE = import.meta.env.VITE_APP_TITLE || "Contentfy";
 
-export const APP_LOGO = "/logo-contentfy.png";
+export const APP_LOGO = "/logo-contentfy.svg";
 export const APP_LOGO_2X = "/logo-contentfy@2x.png";
-export const APP_LOGO_WIDTH = 214;
-export const APP_LOGO_HEIGHT = 56;
+export const APP_LOGO_WIDTH = 228;
+export const APP_LOGO_HEIGHT = 60;
 export const APP_FAVICON = "/favicon-48.png";
 export const APP_FAVICON_APPLE = "/apple-touch-icon.png";
 

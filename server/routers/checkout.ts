@@ -19,7 +19,10 @@ export const checkoutRouter = router({
       price: z.number(),
     })
   )
-  .mutation(async ({ input }) => {
+  .mutation(async ({ ctx, input }) => {
+    // Keep URLs aligned with the running app origin (ContentFy on :3001),
+    // not the OAuth portal (:3010).
+    const origin = (ctx.req.headers.origin as string) || "http://localhost:3001";
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -35,8 +38,8 @@ export const checkoutRouter = router({
           quantity: 1,
         },
       ],
-      success_url: "http://localhost:3010/checkout/success",
-      cancel_url: "http://localhost:3010/products",
+      success_url: `${origin}/checkout/success`,
+      cancel_url: `${origin}/products`,
     });
 
     return { url: session.url };

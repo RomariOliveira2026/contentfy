@@ -96,17 +96,19 @@ export default function Products() {
       <main className="cf-page-main">
         <div className="container">
           <PageHeader
-            title="Catálogo de Produtos"
-            subtitle="Explore nossa coleção completa de infoprodutos"
+            title="Catálogo"
+            subtitle="Explore a coleção completa de infoprodutos ContentFy"
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Sidebar - Filtros */}
             <aside className="lg:col-span-1">
-              <Card className="cf-card-premium sticky top-24">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Filter className="w-5 h-5" />
+              <Card className="cf-card-premium sticky top-28 py-0">
+                <CardContent className="p-5 lg:p-6">
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="cf-kpi-icon !h-9 !w-9 !rounded-xl">
+                      <Filter className="w-4 h-4" />
+                    </div>
                     <h2 className="font-semibold text-lg">Filtros</h2>
                   </div>
 
@@ -270,7 +272,7 @@ export default function Products() {
                     const Icon = getProductIcon(product.type);
                     return (
                       <Link key={product.id} href={`/products/${product.slug}`}>
-                        <Card className="cf-card-product group">
+                        <Card className="cf-card-product group py-0 gap-0">
                           <div className="cf-product-cover">
                             {product.coverImage ? (
                               <img src={product.coverImage} alt={product.name} />

@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function PublicHeader() {
   const [location, navigate] = useLocation();
@@ -48,23 +49,22 @@ export default function PublicHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full cf-surface-header cf-header-lines">
-      <div className="container flex h-20 items-center gap-4 lg:gap-6">
+    <header className="cf-header-shell cf-surface-header">
+      <div className="container flex h-[5rem] lg:h-[5.5rem] items-center gap-3 lg:gap-6">
         <Link href="/">
-          <a className="cf-brand-logo-link flex items-center shrink-0">
-            <BrandLogo />
+          <a className="cf-brand-logo-link flex items-center shrink-0 py-0">
+            <BrandLogo
+              wrapClassName="!h-14 lg:!h-[3.75rem]"
+              className="!h-14 !max-h-14 lg:!h-[3.75rem] lg:!max-h-[3.75rem] !w-auto"
+            />
           </a>
         </Link>
 
-        <div className="hidden xl:flex flex-1 justify-center px-2 cf-header-search">
-          <SearchBar />
-        </div>
-
-        <nav className="hidden lg:flex items-center gap-0.5 ml-auto xl:ml-0">
+        <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
           {navItems.map((item) => (
             <Link key={item.path} href={item.path}>
               <a
-                className={`cf-nav-link px-3 py-2 ${
+                className={`cf-nav-link ${
                   isActive(item.path) ? "cf-nav-link-active" : ""
                 }`}
               >
@@ -74,12 +74,15 @@ export default function PublicHeader() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-2 shrink-0">
+        <div className="hidden xl:flex w-full max-w-xs cf-header-search shrink-0">
+          <SearchBar />
+        </div>
+
+        <div className="hidden md:flex items-center gap-2 shrink-0 ml-auto lg:ml-0">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="rounded-lg"
             aria-label="Alternar tema"
           >
             {theme === "dark" ? (
@@ -93,7 +96,7 @@ export default function PublicHeader() {
             <>
               {user.role === "admin" && (
                 <Link href="/admin">
-                  <Button variant="outline" size="sm" className="rounded-lg">
+                  <Button variant="outline" size="sm">
                     <LayoutDashboard className="w-4 h-4 mr-2" />
                     Admin
                   </Button>
@@ -101,12 +104,12 @@ export default function PublicHeader() {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-lg max-w-[160px]">
+                  <Button variant="outline" size="sm" className="max-w-[160px]">
                     <User className="w-4 h-4 mr-2 shrink-0" />
                     <span className="truncate">{user.name || "Minha Conta"}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-48 rounded-xl border-white/10 bg-card">
                   <DropdownMenuItem onClick={() => navigate("/my-account/products")}>
                     <LayoutDashboard className="w-4 h-4 mr-2" />
                     Minha Biblioteca
@@ -120,7 +123,7 @@ export default function PublicHeader() {
               </DropdownMenu>
             </>
           ) : (
-            <Button asChild size="sm" className="cf-btn-gradient rounded-lg px-5">
+            <Button asChild size="sm" className="px-6">
               <a href={getLoginUrl()}>Entrar</a>
             </Button>
           )}
@@ -129,7 +132,7 @@ export default function PublicHeader() {
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden rounded-lg ml-auto"
+          className="md:hidden ml-auto"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Menu"
         >
@@ -137,85 +140,93 @@ export default function PublicHeader() {
         </Button>
       </div>
 
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/10 cf-surface-header">
-          <div className="container py-4 cf-header-search">
-            <SearchBar />
-            <nav className="flex flex-col gap-1 mt-4">
-              {navItems.map((item) => (
-                <Link key={item.path} href={item.path}>
-                  <a
-                    className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                      isActive(item.path)
-                        ? "text-primary bg-primary/10"
-                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                    }`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </a>
-                </Link>
-              ))}
-            </nav>
-            <div className="pt-4 mt-4 border-t border-border/50 flex flex-col gap-2">
-              <Button variant="outline" className="w-full rounded-lg" onClick={toggleTheme}>
-                {theme === "dark" ? (
-                  <>
-                    <Sun className="h-4 w-4 mr-2" />
-                    Modo Claro
-                  </>
-                ) : (
-                  <>
-                    <Moon className="h-4 w-4 mr-2" />
-                    Modo Escuro
-                  </>
-                )}
-              </Button>
-              {user ? (
-                <>
-                  {user.role === "admin" && (
-                    <Link href="/admin">
-                      <Button
-                        variant="outline"
-                        className="w-full rounded-lg"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <LayoutDashboard className="w-4 h-4 mr-2" />
-                        Admin
-                      </Button>
-                    </Link>
-                  )}
-                  <Link href="/my-account/products">
-                    <Button
-                      variant="outline"
-                      className="w-full rounded-lg"
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden overflow-hidden border-t border-white/[0.06] cf-surface-header"
+          >
+            <div className="container py-5 cf-header-search">
+              <SearchBar />
+              <nav className="flex flex-col gap-1 mt-4">
+                {navItems.map((item) => (
+                  <Link key={item.path} href={item.path}>
+                    <a
+                      className={`block px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                        isActive(item.path)
+                          ? "text-foreground bg-primary/10"
+                          : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
+                      }`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <User className="w-4 h-4 mr-2" />
-                      Minha Biblioteca
-                    </Button>
+                      {item.label}
+                    </a>
                   </Link>
-                  <Button
-                    variant="ghost"
-                    className="w-full rounded-lg"
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sair
-                  </Button>
-                </>
-              ) : (
-                <Button asChild className="w-full cf-btn-gradient rounded-lg">
-                  <a href={getLoginUrl()}>Entrar</a>
+                ))}
+              </nav>
+              <div className="pt-4 mt-4 border-t border-white/[0.06] flex flex-col gap-2">
+                <Button variant="outline" className="w-full" onClick={toggleTheme}>
+                  {theme === "dark" ? (
+                    <>
+                      <Sun className="h-4 w-4 mr-2" />
+                      Modo Claro
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="h-4 w-4 mr-2" />
+                      Modo Escuro
+                    </>
+                  )}
                 </Button>
-              )}
+                {user ? (
+                  <>
+                    {user.role === "admin" && (
+                      <Link href="/admin">
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <LayoutDashboard className="w-4 h-4 mr-2" />
+                          Admin
+                        </Button>
+                      </Link>
+                    )}
+                    <Link href="/my-account/products">
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <User className="w-4 h-4 mr-2" />
+                        Minha Biblioteca
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      className="w-full"
+                      onClick={() => {
+                        handleLogout();
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sair
+                    </Button>
+                  </>
+                ) : (
+                  <Button asChild className="w-full">
+                    <a href={getLoginUrl()}>Entrar</a>
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

@@ -67,15 +67,15 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background border-b">
+      <header className="sticky top-0 z-50 cf-surface-header border-b border-white/[0.08]">
         <div className="container flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer">
-              <img src={APP_LOGO} alt={APP_TITLE} className="h-8" />
-              <span className="font-bold text-lg hidden sm:inline">{APP_TITLE}</span>
+              <img src={APP_LOGO} alt={APP_TITLE} className="h-9 w-auto" />
+              <span className="font-bold text-lg tracking-tight hidden sm:inline">{APP_TITLE}</span>
             </div>
           </Link>
 
@@ -147,14 +147,14 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
               </div>
 
               {/* Navigation */}
-              <nav className="space-y-2">
+              <nav className="space-y-1.5 rounded-[1.25rem] border border-white/[0.08] bg-card p-2">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   const isActive = location === item.href;
                   return (
                     <Link key={item.href} href={item.href}>
                       <Button
-                        variant={isActive ? "secondary" : "ghost"}
+                        variant={isActive ? "default" : "ghost"}
                         className="w-full justify-start"
                         onClick={() => setSidebarOpen(false)}
                       >

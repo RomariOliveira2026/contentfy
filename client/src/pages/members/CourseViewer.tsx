@@ -1,36 +1,67 @@
-import { useState } from "react";
-import { useParams } from "wouter";
-import MembersLayout from "@/components/MembersLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import {
-  Play,
+  ArrowLeft,
   CheckCircle2,
-  Circle,
-  ChevronDown,
-  ChevronUp,
-  Lock,
   Clock,
+  Heart,
+  Share2,
+  Trophy,
+  PlayCircle,
+  Menu,
+  X,
+  Bot,
 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import PremiumPlayer from "@/components/lms/PremiumPlayer";
+import CourseCurriculumSidebar from "@/components/lms/CourseCurriculumSidebar";
+import LessonExtras from "@/components/lms/LessonExtras";
+import AILearningAssistant from "@/components/lms/ai/AILearningAssistant";
+import {
+  DEMO_COURSE_TITLE,
+  DEMO_MODULES,
+  computeDemoStats,
+} from "@/components/lms/demoCurriculum";
+import type { LmsLesson, LmsModule } from "@/components/lms/types";
+
+function favoritesKey(productId: number) {
+  return `contentfy-lms-fav-${productId}`;
+}
+
+function loadFavorites(productId: number): number[] {
+  try {
+    const raw = localStorage.getItem(favoritesKey(productId));
+    return raw ? (JSON.parse(raw) as number[]) : [];
+  } catch {
+    return [];
+  }
+}
 
 export default function CourseViewer() {
   const { id } = useParams();
-  const productId = parseInt(id || "0");
+  const productId = parseInt(id || "0", 10);
 
   const [expandedModules, setExpandedModules] = useState<number[]>([]);
   const [currentLessonId, setCurrentLessonId] = useState<number | null>(null);
+  const [demoModules, setDemoModules] = useState<LmsModule[]>(DEMO_MODULES);
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileAiOpen, setMobileAiOpen] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
-  const { data: courseData, isLoading, refetch } = trpc.members.getCourseStructure.useQuery(
+  const {
+    data: courseData,
+    isLoading,
+    isError,
+    refetch,
+  } = trpc.members.getCourseStructure.useQuery(
     { productId },
-    { enabled: productId > 0 }
+    { enabled: productId > 0, retry: false }
   );
 
   const markCompleteMutation = trpc.members.markLessonComplete.useMutation({
@@ -43,6 +74,64 @@ export default function CourseViewer() {
     },
   });
 
+  const useDemo =
+    isError ||
+    !courseData ||
+    !courseData.modules ||
+    courseData.modules.length === 0;
+
+  const modules: LmsModule[] = useDemo
+    ? demoModules
+    : (courseData!.modules as LmsModule[]);
+
+  const stats = useDemo
+    ? computeDemoStats(demoModules)
+    : courseData!.stats;
+
+  const courseTitle = useDemo ? DEMO_COURSE_TITLE : "Curso Online";
+
+  const currentLesson: LmsLesson | undefined = useMemo(
+    () => modules.flatMap((m) => m.lessons).find((l) => l.id === currentLessonId),
+    [modules, currentLessonId]
+  );
+
+  const nextLesson = useMemo(() => {
+    const all = modules.flatMap((m) => m.lessons);
+    const idx = all.findIndex((l) => l.id === currentLessonId);
+    return idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
+  }, [modules, currentLessonId]);
+
+  useEffect(() => {
+    setFavorites(loadFavorites(productId));
+  }, [productId]);
+
+  useEffect(() => {
+    if (initialized || modules.length === 0) return;
+
+    const firstIncomplete = modules
+      .flatMap((m) => m.lessons)
+      .find((l) => !l.isCompleted);
+    const first = firstIncomplete || modules[0]?.lessons[0];
+    if (!first) return;
+
+    setCurrentLessonId(first.id);
+    const moduleWithLesson = modules.find((m) =>
+      m.lessons.some((l) => l.id === first.id)
+    );
+    if (moduleWithLesson) {
+      setExpandedModules([moduleWithLesson.id]);
+    }
+    setInitialized(true);
+  }, [modules, initialized]);
+
+  // Reset init when product changes
+  useEffect(() => {
+    setInitialized(false);
+    setCurrentLessonId(null);
+    setExpandedModules([]);
+    setDemoModules(DEMO_MODULES);
+  }, [productId]);
+
   const toggleModule = (moduleId: number) => {
     setExpandedModules((prev) =>
       prev.includes(moduleId)
@@ -53,273 +142,332 @@ export default function CourseViewer() {
 
   const handleLessonClick = (lessonId: number) => {
     setCurrentLessonId(lessonId);
+    setMobileNavOpen(false);
+    try {
+      localStorage.setItem(
+        `contentfy-lms-continue-${productId}`,
+        JSON.stringify({ lessonId, at: Date.now() })
+      );
+    } catch {
+      /* ignore */
+    }
   };
 
-  const handleMarkComplete = (lessonId: number, isCompleted: boolean) => {
+  const handleMarkComplete = () => {
+    if (!currentLesson) return;
+
+    if (useDemo) {
+      setDemoModules((prev) =>
+        prev.map((mod) => ({
+          ...mod,
+          lessons: mod.lessons.map((l) =>
+            l.id === currentLesson.id
+              ? { ...l, isCompleted: !l.isCompleted }
+              : l
+          ),
+        }))
+      );
+      toast.success(
+        currentLesson.isCompleted
+          ? "Marcada como não concluída (demo)"
+          : "Aula concluída (demo)"
+      );
+      return;
+    }
+
     markCompleteMutation.mutate({
-      lessonId,
-      isCompleted: !isCompleted,
+      lessonId: currentLesson.id,
+      isCompleted: !currentLesson.isCompleted,
     });
   };
 
-  // Encontrar a aula atual
-  const currentLesson = courseData?.modules
-    .flatMap((m) => m.lessons)
-    .find((l) => l.id === currentLessonId);
+  const isFavorite = currentLesson
+    ? favorites.includes(currentLesson.id)
+    : false;
 
-  // Se não houver aula selecionada, selecionar a primeira não concluída
-  if (!currentLessonId && courseData && courseData.modules.length > 0) {
-    const firstIncompleteLesson = courseData.modules
-      .flatMap((m) => m.lessons)
-      .find((l) => !l.isCompleted);
-    
-    if (firstIncompleteLesson) {
-      setCurrentLessonId(firstIncompleteLesson.id);
-      // Expandir o módulo da primeira aula
-      const moduleWithLesson = courseData.modules.find((m) =>
-        m.lessons.some((l) => l.id === firstIncompleteLesson.id)
-      );
-      if (moduleWithLesson && !expandedModules.includes(moduleWithLesson.id)) {
-        setExpandedModules([moduleWithLesson.id]);
+  const toggleFavorite = () => {
+    if (!currentLesson) return;
+    const next = isFavorite
+      ? favorites.filter((id) => id !== currentLesson.id)
+      : [...favorites, currentLesson.id];
+    setFavorites(next);
+    localStorage.setItem(favoritesKey(productId), JSON.stringify(next));
+    toast.success(isFavorite ? "Removida dos favoritos" : "Aula favoritada");
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: currentLesson?.title || courseTitle,
+          url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copiado");
       }
+    } catch {
+      toast.message("Compartilhamento cancelado");
     }
-  }
+  };
 
   if (isLoading) {
     return (
-      <MembersLayout>
-        <div className="space-y-6">
-          <Skeleton className="h-96 w-full" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Skeleton className="h-96 lg:col-span-2" />
-            <Skeleton className="h-96" />
-          </div>
+      <div className="min-h-screen bg-background p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <Skeleton className="h-[80vh] lg:col-span-3 rounded-[1.25rem]" />
+          <Skeleton className="h-[80vh] lg:col-span-6 rounded-[1.25rem]" />
+          <Skeleton className="h-[80vh] lg:col-span-3 rounded-[1.25rem]" />
         </div>
-      </MembersLayout>
-    );
-  }
-
-  if (!courseData) {
-    return (
-      <MembersLayout>
-        <Card>
-          <CardContent className="p-12 text-center">
-            <h2 className="text-2xl font-bold mb-4">Curso não encontrado</h2>
-            <p className="text-muted-foreground">
-              Você não possui acesso a este curso ou ele não existe.
-            </p>
-          </CardContent>
-        </Card>
-      </MembersLayout>
+      </div>
     );
   }
 
   return (
-    <MembersLayout>
-      <div className="space-y-6">
-        {/* Header do Curso */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <Badge className="mb-2">Curso Online</Badge>
-                <CardTitle className="text-2xl mb-2">
-                  Curso Online
-                </CardTitle>
-                <p className="text-muted-foreground">
-                  Aprenda no seu ritmo com aulas em vídeo
-                </p>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Progresso do Curso</span>
-                <span className="font-medium">
-                  {courseData.stats.progressPercentage}%
-                </span>
-              </div>
-              <Progress value={courseData.stats.progressPercentage} />
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span>
-                  {courseData.stats.completedLessons} de{" "}
-                  {courseData.stats.totalLessons} aulas concluídas
-                </span>
-                <span>•</span>
-                <span>{courseData.stats.totalModules} módulos</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Player de Vídeo */}
-          <div className="lg:col-span-2 space-y-4">
-            <Card>
-              <CardContent className="p-0">
-                {/* Video Player Placeholder */}
-                <div className="aspect-video bg-black rounded-t-lg flex items-center justify-center relative overflow-hidden">
-                  {currentLesson?.contentUrl && currentLesson.type === 'video' ? (
-                    <video
-                      key={currentLesson.id}
-                      controls
-                      className="w-full h-full"
-                      src={currentLesson.contentUrl}
-                    >
-                      Seu navegador não suporta o elemento de vídeo.
-                    </video>
-                  ) : (
-                    <div className="text-center text-white">
-                      <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                      <p className="text-lg">
-                        {currentLesson
-                          ? "Vídeo não disponível"
-                          : "Selecione uma aula para começar"}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {currentLesson && (
-                  <div className="p-6">
-                    <h2 className="text-2xl font-bold mb-2">
-                      {currentLesson.title}
-                    </h2>
-                    {currentLesson.description && (
-                      <p className="text-muted-foreground mb-4">
-                        {currentLesson.description}
-                      </p>
-                    )}
-
-                    <div className="flex items-center gap-4">
-                      <Button
-                        onClick={() =>
-                          handleMarkComplete(
-                            currentLesson.id,
-                            currentLesson.isCompleted
-                          )
-                        }
-                        variant={currentLesson.isCompleted ? "outline" : "default"}
-                        disabled={markCompleteMutation.isPending}
-                      >
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                        {currentLesson.isCompleted
-                          ? "Marcar como Não Concluída"
-                          : "Marcar como Concluída"}
-                      </Button>
-
-                      {currentLesson.duration && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Clock className="w-4 h-4" />
-                          <span>{currentLesson.duration} min</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Descrição e Recursos */}
-            {currentLesson && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sobre esta Aula</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    {currentLesson.description ||
-                      "Nesta aula você aprenderá conceitos importantes que vão te ajudar a dominar o conteúdo do curso."}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Top bar */}
+      <div className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#070B12]/85 backdrop-blur-xl">
+        <div className="flex h-14 items-center justify-between gap-3 px-4 lg:px-6">
+          <div className="flex items-center gap-2 min-w-0">
+            <Button
+              size="icon-sm"
+              variant="ghost"
+              className="lg:hidden"
+              onClick={() => setMobileNavOpen(true)}
+              aria-label="Abrir currículo"
+            >
+              <Menu className="h-4 w-4" />
+            </Button>
+            <Link href="/my-account/products">
+              <Button size="sm" variant="ghost" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Biblioteca</span>
+              </Button>
+            </Link>
+            <span className="text-muted-foreground hidden sm:inline">/</span>
+            <span className="truncate text-sm font-medium">{courseTitle}</span>
           </div>
-
-          {/* Sidebar - Lista de Aulas */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle>Conteúdo do Curso</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ScrollArea className="h-[600px]">
-                  <div className="p-6 pt-0 space-y-2">
-                    {courseData.modules.map((module) => (
-                      <div key={module.id} className="space-y-2">
-                        {/* Module Header */}
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-between h-auto py-3"
-                          onClick={() => toggleModule(module.id)}
-                        >
-                          <div className="flex items-start gap-3 text-left flex-1">
-                            <div className="mt-0.5">
-                              {expandedModules.includes(module.id) ? (
-                                <ChevronUp className="w-4 h-4" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4" />
-                              )}
-                            </div>
-                            <div className="flex-1">
-                              <p className="font-semibold">{module.title}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {module.lessons.filter((l) => l.isCompleted).length}{" "}
-                                / {module.lessons.length} aulas
-                              </p>
-                            </div>
-                          </div>
-                        </Button>
-
-                        {/* Lessons List */}
-                        {expandedModules.includes(module.id) && (
-                          <div className="ml-4 space-y-1">
-                            {module.lessons.map((lesson) => (
-                              <Button
-                                key={lesson.id}
-                                variant="ghost"
-                                className={cn(
-                                  "w-full justify-start h-auto py-2 text-left",
-                                  currentLessonId === lesson.id &&
-                                    "bg-accent"
-                                )}
-                                onClick={() => handleLessonClick(lesson.id)}
-                              >
-                                <div className="flex items-start gap-3 flex-1">
-                                  {lesson.isCompleted ? (
-                                    <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                  ) : lesson.contentUrl ? (
-                                    <Circle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                                  ) : (
-                                    <Lock className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                                  )}
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium line-clamp-2">
-                                      {lesson.title}
-                                    </p>
-                                    {lesson.duration && (
-                                      <p className="text-xs text-muted-foreground">
-                                        {lesson.duration} min
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                              </Button>
-                            ))}
-                          </div>
-                        )}
-
-                        <Separator className="my-2" />
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
+          <div className="flex items-center gap-2">
+            {useDemo && (
+              <Badge className="bg-amber-500/15 text-amber-300 border-amber-500/30 hidden sm:inline-flex">
+                Preview LMS
+              </Badge>
+            )}
+            <Button
+              size="sm"
+              variant="outline"
+              className="lg:hidden gap-1.5"
+              onClick={() => setMobileAiOpen(true)}
+            >
+              <Bot className="h-4 w-4 text-primary" />
+              Professor IA
+            </Button>
+            <Badge variant="outline" className="border-white/10">
+              {stats.progressPercentage}%
+            </Badge>
           </div>
         </div>
       </div>
-    </MembersLayout>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-3.5rem)]">
+        {/* Left curriculum */}
+        <div className="hidden lg:block lg:col-span-3 xl:col-span-3 h-[calc(100vh-3.5rem)] sticky top-14">
+          <CourseCurriculumSidebar
+            courseTitle={courseTitle}
+            modules={modules}
+            stats={stats}
+            currentLessonId={currentLessonId}
+            expandedModules={expandedModules}
+            onToggleModule={toggleModule}
+            onSelectLesson={handleLessonClick}
+          />
+        </div>
+
+        {/* Mobile drawer */}
+        {mobileNavOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div
+              className="absolute inset-0 bg-black/60"
+              onClick={() => setMobileNavOpen(false)}
+            />
+            <div className="absolute inset-y-0 left-0 w-[min(100%,20rem)] shadow-2xl">
+              <div className="absolute top-3 right-3 z-10">
+                <Button
+                  size="icon-sm"
+                  variant="ghost"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <CourseCurriculumSidebar
+                courseTitle={courseTitle}
+                modules={modules}
+                stats={stats}
+                currentLessonId={currentLessonId}
+                expandedModules={expandedModules}
+                onToggleModule={toggleModule}
+                onSelectLesson={handleLessonClick}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Main */}
+        <main className="lg:col-span-6 xl:col-span-6 px-4 py-5 lg:px-6 lg:py-6 space-y-5">
+          {currentLesson ? (
+            <>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <p className="cf-caption mb-2">Aula atual</p>
+                  <h1 className="text-2xl lg:text-3xl font-bold tracking-tight mb-2">
+                    {currentLesson.title}
+                  </h1>
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
+                    {currentLesson.description ||
+                      "Acompanhe o conteúdo e marque como concluída ao finalizar."}
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                    {currentLesson.duration ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <Clock className="h-4 w-4 text-primary" />
+                        {currentLesson.duration} min estimados
+                      </span>
+                    ) : null}
+                    {currentLesson.isCompleted && (
+                      <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">
+                        Concluída
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button size="sm" variant="outline" onClick={handleShare}>
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Compartilhar
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={isFavorite ? "default" : "outline"}
+                    onClick={toggleFavorite}
+                    className={cn(isFavorite && "bg-gradient-owl")}
+                  >
+                    <Heart
+                      className={cn(
+                        "h-4 w-4 mr-2",
+                        isFavorite && "fill-current"
+                      )}
+                    />
+                    {isFavorite ? "Favorita" : "Favoritar"}
+                  </Button>
+                </div>
+              </div>
+
+              <PremiumPlayer
+                title={currentLesson.title}
+                contentUrl={currentLesson.contentUrl}
+                lessonType={currentLesson.type}
+              />
+
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={handleMarkComplete}
+                  variant={currentLesson.isCompleted ? "outline" : "default"}
+                  disabled={markCompleteMutation.isPending}
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  {currentLesson.isCompleted
+                    ? "Desmarcar conclusão"
+                    : "Marcar como concluída"}
+                </Button>
+                {nextLesson && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleLessonClick(nextLesson.id)}
+                  >
+                    <PlayCircle className="h-4 w-4 mr-2" />
+                    Próxima aula
+                  </Button>
+                )}
+              </div>
+
+              <LessonExtras lesson={currentLesson} />
+            </>
+          ) : (
+            <div className="rounded-[1.25rem] border border-white/[0.08] bg-card p-12 text-center">
+              <p className="text-muted-foreground">
+                Selecione uma aula na barra lateral para começar.
+              </p>
+            </div>
+          )}
+        </main>
+
+        {/* Right — AI Learning Assistant */}
+        <div className="hidden lg:block lg:col-span-3 xl:col-span-3 h-[calc(100vh-3.5rem)] sticky top-14">
+          {currentLesson ? (
+            <AILearningAssistant
+              lessonTitle={currentLesson.title}
+              lessonId={currentLesson.id}
+              courseTitle={courseTitle}
+              completedLessons={stats.completedLessons}
+              totalLessons={stats.totalLessons}
+              progressPercentage={stats.progressPercentage}
+              nextLessonTitle={nextLesson?.title}
+              onGoNextLesson={
+                nextLesson ? () => handleLessonClick(nextLesson.id) : undefined
+              }
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center border-l border-white/[0.08] bg-[#0c1220]/60 p-6 text-center text-sm text-muted-foreground">
+              Selecione uma aula para ativar o Professor IA.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile AI drawer */}
+      {mobileAiOpen && currentLesson && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setMobileAiOpen(false)}
+          />
+          <div className="absolute inset-y-0 right-0 w-[min(100%,24rem)] shadow-2xl">
+            <AILearningAssistant
+              lessonTitle={currentLesson.title}
+              lessonId={currentLesson.id}
+              courseTitle={courseTitle}
+              completedLessons={stats.completedLessons}
+              totalLessons={stats.totalLessons}
+              progressPercentage={stats.progressPercentage}
+              nextLessonTitle={nextLesson?.title}
+              onGoNextLesson={
+                nextLesson
+                  ? () => {
+                      handleLessonClick(nextLesson.id);
+                      setMobileAiOpen(false);
+                    }
+                  : undefined
+              }
+              onCloseMobile={() => setMobileAiOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Mobile FAB */}
+      {currentLesson && !mobileAiOpen && (
+        <button
+          type="button"
+          onClick={() => setMobileAiOpen(true)}
+          className="lg:hidden fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-owl text-white shadow-[0_12px_32px_rgba(249,115,22,0.45)]"
+          aria-label="Abrir Professor IA"
+        >
+          <Bot className="h-6 w-6" />
+        </button>
+      )}
+    </div>
   );
 }

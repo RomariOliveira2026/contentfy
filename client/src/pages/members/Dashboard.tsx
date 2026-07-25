@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
+import ContinueWatching from "@/components/lms/ContinueWatching";
 import {
   BookOpen,
   Headphones,
@@ -56,11 +57,19 @@ export default function MembersDashboard() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold mb-2">Bem-vindo de volta!</h1>
+          <p className="cf-caption mb-2">Área do aluno</p>
+          <h1 className="cf-page-title mb-2">Bem-vindo de volta</h1>
           <p className="text-muted-foreground">
             Continue de onde parou e explore seus produtos
           </p>
         </div>
+
+        <ContinueWatching
+          courseTitle="Curso Dominando o TDAH"
+          lessonTitle="Como o cérebro com TDAH funciona"
+          href="/my-account/course/1"
+          progressPercentage={42}
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -76,41 +85,41 @@ export default function MembersDashboard() {
             </>
           ) : (
             <>
-              <Card>
+              <Card className="cf-card-premium py-0">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-muted-foreground">Total de Produtos</p>
-                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                    <TrendingUp className="w-4 h-4 text-primary" />
                   </div>
                   <p className="text-3xl font-bold">{stats?.totalProducts || 0}</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="cf-card-premium py-0">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-muted-foreground">Cursos</p>
-                    <GraduationCap className="w-4 h-4 text-muted-foreground" />
+                    <GraduationCap className="w-4 h-4 text-primary" />
                   </div>
                   <p className="text-3xl font-bold">{stats?.courses || 0}</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="cf-card-premium py-0">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-muted-foreground">E-books</p>
-                    <BookOpen className="w-4 h-4 text-muted-foreground" />
+                    <BookOpen className="w-4 h-4 text-primary" />
                   </div>
                   <p className="text-3xl font-bold">{stats?.ebooks || 0}</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="cf-card-premium py-0">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-muted-foreground">Audiobooks</p>
-                    <Headphones className="w-4 h-4 text-muted-foreground" />
+                    <Headphones className="w-4 h-4 text-primary" />
                   </div>
                   <p className="text-3xl font-bold">{stats?.audiobooks || 0}</p>
                 </CardContent>

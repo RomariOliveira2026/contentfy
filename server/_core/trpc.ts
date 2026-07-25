@@ -43,3 +43,32 @@ export const adminProcedure = t.procedure.use(
     });
   }),
 );
+
+/**
+ * creatorProcedure — Área do Criador.
+ * Hoje: apenas admin (sem role "creator" no schema).
+ * Futuro: ampliar para role creator / ownership de produtos sem mudar o contrato das rotas.
+ */
+export const creatorProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
+    }
+
+    if (ctx.user.role !== "admin") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Acesso restrito à Área do Criador",
+      });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+      },
+    });
+  }),
+);

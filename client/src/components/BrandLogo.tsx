@@ -3,18 +3,21 @@ import { cn } from "@/lib/utils";
 
 interface BrandLogoProps {
   className?: string;
+  wrapClassName?: string;
 }
 
-export default function BrandLogo({ className }: BrandLogoProps) {
+export default function BrandLogo({ className, wrapClassName }: BrandLogoProps) {
+  const isSvg = APP_LOGO.endsWith(".svg");
+
   return (
-    <span className="cf-brand-logo-wrap">
+    <span className={cn("cf-brand-logo-wrap", wrapClassName)}>
       <img
         src={APP_LOGO}
-        srcSet={`${APP_LOGO} 1x, ${APP_LOGO_2X} 2x`}
+        srcSet={isSvg ? undefined : `${APP_LOGO} 1x, ${APP_LOGO_2X} 2x`}
         alt={APP_TITLE}
         width={APP_LOGO_WIDTH}
         height={APP_LOGO_HEIGHT}
-        decoding="sync"
+        decoding="async"
         fetchPriority="high"
         draggable={false}
         className={cn("cf-brand-logo", className)}

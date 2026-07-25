@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,7 @@ export default function Courses() {
   };
 
   return (
+    <AdminLayout>
     <div className="container py-8 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -158,5 +160,6 @@ export default function Courses() {
         </CardContent>
       </Card>
     </div>
+    </AdminLayout>
   );
 }

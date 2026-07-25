@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import ScrollToTop from "./components/ScrollToTop";
+import GlobalBackButton from "./components/GlobalBackButton";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -32,6 +33,15 @@ import AdminCustomers from "./pages/admin/Customers";
 import AdminCourses from "./pages/admin/Courses";
 import AdminSettings from "./pages/admin/Settings";
 import AdminOrderDetail from "./pages/admin/OrderDetail";
+import CreatorDashboard from "./pages/creator/Dashboard";
+import CreatorProducts from "./pages/creator/Products";
+import CreatorProductWizard from "./pages/creator/ProductWizard";
+import CreatorCourses from "./pages/creator/Courses";
+import CreatorCourseBuilder from "./pages/creator/CourseBuilder";
+import CreatorSales from "./pages/creator/Sales";
+import CreatorStudents from "./pages/creator/Students";
+import CreatorAffiliates from "./pages/creator/Affiliates";
+import CreatorSettings from "./pages/creator/Settings";
 import About from "./pages/About";
 import Features from "./pages/Features";
 import Examples from "./pages/Examples";
@@ -94,6 +104,18 @@ function Router() {
       <Route path="/admin/courses" component={AdminCourses} />
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin/sales/:id" component={AdminOrderDetail} />
+
+      {/* Creator Area */}
+      <Route path="/creator/dashboard" component={CreatorDashboard} />
+      <Route path="/creator/products/new" component={CreatorProductWizard} />
+      <Route path="/creator/products/:id/edit" component={CreatorProductWizard} />
+      <Route path="/creator/products" component={CreatorProducts} />
+      <Route path="/creator/courses/:id/builder" component={CreatorCourseBuilder} />
+      <Route path="/creator/courses" component={CreatorCourses} />
+      <Route path="/creator/sales" component={CreatorSales} />
+      <Route path="/creator/students" component={CreatorStudents} />
+      <Route path="/creator/affiliates" component={CreatorAffiliates} />
+      <Route path="/creator/settings" component={CreatorSettings} />
       
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
@@ -119,6 +141,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
+          <GlobalBackButton />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

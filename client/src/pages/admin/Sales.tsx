@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import AdminLayout from "@/components/AdminLayout";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,11 +33,11 @@ export default function Sales() {
 
   const { data: orders, isLoading } = trpc.orders.list.useQuery();
 
-  // Calcular estatísticas
+  // Calcular estatísticas (DB enum: pending | completed | failed | refunded)
   const stats = {
     totalRevenue: orders?.reduce((sum: number, order: any) => sum + order.totalAmount, 0) || 0,
     totalOrders: orders?.length || 0,
-    paidOrders: orders?.filter((o: any) => o.status === "paid").length || 0,
+    paidOrders: orders?.filter((o: any) => o.status === "completed").length || 0,
     pendingOrders: orders?.filter((o: any) => o.status === "pending").length || 0,
   };
 
@@ -56,8 +57,8 @@ export default function Sales() {
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
       pending: { variant: "secondary", label: "Pendente" },
-      paid: { variant: "default", label: "Pago" },
-      cancelled: { variant: "destructive", label: "Cancelado" },
+      completed: { variant: "default", label: "Pago" },
+      failed: { variant: "destructive", label: "Falhou" },
       refunded: { variant: "outline", label: "Reembolsado" },
     };
 
@@ -67,20 +68,23 @@ export default function Sales() {
 
   if (isLoading) {
     return (
-      <div className="container py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-muted rounded w-1/4"></div>
-          <div className="grid gap-4 md:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-muted rounded"></div>
-            ))}
+      <AdminLayout>
+        <div className="container py-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-muted rounded w-1/4"></div>
+            <div className="grid gap-4 md:grid-cols-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-32 bg-muted rounded"></div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
+    <AdminLayout>
     <div className="container py-8 space-y-6">
       {/* Header */}
       <div>
@@ -177,8 +181,8 @@ export default function Sales() {
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
                   <SelectItem value="pending">Pendente</SelectItem>
-                  <SelectItem value="paid">Pago</SelectItem>
-                  <SelectItem value="cancelled">Cancelado</SelectItem>
+                  <SelectItem value="completed">Pago</SelectItem>
+                  <SelectItem value="failed">Falhou</SelectItem>
                   <SelectItem value="refunded">Reembolsado</SelectItem>
                 </SelectContent>
               </Select>
@@ -262,5 +266,6 @@ export default function Sales() {
         </CardContent>
       </Card>
     </div>
+    </AdminLayout>
   );
 }
