@@ -433,16 +433,48 @@
     cursor: not-allowed;
   }
 
-  /* ——— Header ——— */
-  .cf-surface-header {
-    background: rgba(255, 255, 255, 0.82);
-    color: var(--cf-text);
+  /* ——— Header / Footer chrome (always dark) ——— */
+  .cf-surface-header,
+  .cf-surface-footer {
+    /* Force dark tokens even when the page theme is light */
+    --cf-bg: #070b12;
+    --cf-card: #111827;
+    --cf-card-2: #1a2332;
+    --cf-border: rgba(255, 255, 255, 0.08);
+    --cf-text: #f8fafc;
+    --cf-text-muted: #94a3b8;
+    --background: #070b12;
+    --foreground: #f8fafc;
+    --card: #111827;
+    --card-foreground: #f8fafc;
+    --popover: #111827;
+    --popover-foreground: #f8fafc;
+    --secondary: #1a2332;
+    --secondary-foreground: #f8fafc;
+    --muted: #1a2332;
+    --muted-foreground: #94a3b8;
+    --accent: #1a2332;
+    --accent-foreground: #f8fafc;
+    --border: rgba(255, 255, 255, 0.08);
+    --input: rgba(255, 255, 255, 0.1);
+    --sidebar: #0c1220;
+    --sidebar-foreground: #f8fafc;
+    --sidebar-accent: #1a2332;
+    --sidebar-accent-foreground: #f8fafc;
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+    color-scheme: dark;
     backdrop-filter: blur(20px) saturate(1.4);
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
   }
 
-  .dark .cf-surface-header {
-    background: rgba(7, 11, 18, 0.72);
+  .cf-surface-header {
+    background: rgba(7, 11, 18, 0.88);
+  }
+
+  .cf-surface-footer {
+    background: #070b12;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .cf-header-shell {
@@ -479,16 +511,12 @@
   }
 
   .cf-nav-link:hover {
-    color: var(--cf-text);
-    background: rgba(15, 23, 42, 0.05);
-  }
-
-  .dark .cf-nav-link:hover {
+    color: #f8fafc;
     background: rgba(255, 255, 255, 0.04);
   }
 
   .cf-nav-link-active {
-    color: var(--cf-text) !important;
+    color: #f8fafc !important;
   }
 
   .cf-nav-link-active::after {

@@ -69,7 +69,7 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 cf-surface-header border-b border-border">
+      <header className="dark sticky top-0 z-50 cf-surface-header border-b border-white/10">
         <div className="container flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/">

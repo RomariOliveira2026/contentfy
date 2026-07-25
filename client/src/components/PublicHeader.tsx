@@ -49,7 +49,7 @@ export default function PublicHeader() {
   };
 
   return (
-    <header className="cf-header-shell cf-surface-header">
+    <header className="dark cf-header-shell cf-surface-header">
       <div className="container flex h-[5rem] lg:h-[5.5rem] items-center gap-3 lg:gap-6">
         <Link href="/">
           <a className="cf-brand-logo-link flex items-center shrink-0 py-0">
@@ -109,7 +109,7 @@ export default function PublicHeader() {
                     <span className="truncate">{user.name || "Minha Conta"}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 rounded-xl border-border bg-card">
+                <DropdownMenuContent align="end" className="dark w-48 rounded-xl border-white/10 bg-[#111827] text-slate-100">
                   <DropdownMenuItem onClick={() => navigate("/my-account/products")}>
                     <LayoutDashboard className="w-4 h-4 mr-2" />
                     Minha Biblioteca
@@ -147,7 +147,7 @@ export default function PublicHeader() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden overflow-hidden border-t border-border cf-surface-header"
+            className="dark md:hidden overflow-hidden border-t border-white/10 cf-surface-header"
           >
             <div className="container py-5 cf-header-search">
               <SearchBar />
