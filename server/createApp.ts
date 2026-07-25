@@ -6,6 +6,7 @@ import { createContext } from "./_core/context";
 import { serveStatic } from "./_core/static";
 import { setupStripeWebhook } from "./routers/stripe-webhook";
 import { setupUploadRoute } from "./routes/upload";
+import { registerDevOAuthPortal } from "./routes/devOAuthPortal";
 
 export type CreateAppOptions = {
   /** Local production: serve dist/public via Express. On Vercel, CDN serves /public. */
@@ -25,6 +26,7 @@ export function createApp(options: CreateAppOptions = {}): Express {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
+  registerDevOAuthPortal(app);
   registerOAuthRoutes(app);
   setupUploadRoute(app);
 
