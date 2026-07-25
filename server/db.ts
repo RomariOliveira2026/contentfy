@@ -55,9 +55,23 @@ let _db: ReturnType<typeof drizzle> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
+  const url = process.env.DATABASE_URL;
+  if (!url) return _db;
+
+  // Vercel cannot reach a MySQL on the developer's machine.
+  if (
+    process.env.VERCEL &&
+    /localhost|127\.0\.0\.1|::1/i.test(url)
+  ) {
+    console.error(
+      "[Database] DATABASE_URL aponta para localhost na Vercel. Use um MySQL hospedado (PlanetScale, Railway, Neon MySQL, etc)."
+    );
+    return null;
+  }
+
+  if (!_db) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      _db = drizzle(url);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -153,7 +167,12 @@ export async function getAllUsers() {
   const db = await getDb();
   if (!db) return [];
 
-  return await db.select().from(users).orderBy(desc(users.createdAt));
+  try {
+    return await db.select().from(users).orderBy(desc(users.createdAt));
+  } catch (error) {
+    console.error("[Database] getAllUsers failed:", error);
+    return [];
+  }
 }
 
 export async function updateUserStripeCustomerId(userId: number, stripeCustomerId: string) {
@@ -178,30 +197,35 @@ export async function getAllProducts() {
   const db = await getDb();
   if (!db) return [];
 
-  return await db
-    .select({
-      id: products.id,
-      name: products.name,
-      slug: products.slug,
-      description: products.description,
-      type: products.type,
-      categoryId: products.categoryId,
-      price: products.price,
-      isRecurring: products.isRecurring,
-      recurringInterval: products.recurringInterval,
-      allowInstallments: products.allowInstallments,
-      maxInstallments: products.maxInstallments,
-      coverImage: products.coverImage,
-      thumbnailImage: products.thumbnailImage,
-      salesPageUrl: products.salesPageUrl,
-      isActive: products.isActive,
-      createdAt: products.createdAt,
-      updatedAt: products.updatedAt,
-      category: productCategories,
-    })
-    .from(products)
-    .leftJoin(productCategories, eq(products.categoryId, productCategories.id))
-    .orderBy(desc(products.createdAt));
+  try {
+    return await db
+      .select({
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        description: products.description,
+        type: products.type,
+        categoryId: products.categoryId,
+        price: products.price,
+        isRecurring: products.isRecurring,
+        recurringInterval: products.recurringInterval,
+        allowInstallments: products.allowInstallments,
+        maxInstallments: products.maxInstallments,
+        coverImage: products.coverImage,
+        thumbnailImage: products.thumbnailImage,
+        salesPageUrl: products.salesPageUrl,
+        isActive: products.isActive,
+        createdAt: products.createdAt,
+        updatedAt: products.updatedAt,
+        category: productCategories,
+      })
+      .from(products)
+      .leftJoin(productCategories, eq(products.categoryId, productCategories.id))
+      .orderBy(desc(products.createdAt));
+  } catch (error) {
+    console.error("[Database] getAllProducts failed:", error);
+    return [];
+  }
 }
 
 export async function getProductById(id: number) {
@@ -393,22 +417,27 @@ export async function getAllOrders() {
   const db = await getDb();
   if (!db) return [];
 
-  return await db.select({
-    id: orders.id,
-    userId: orders.userId,
-    totalAmount: orders.amount,
-    status: orders.status,
-    stripeCheckoutSessionId: orders.stripeCheckoutSessionId,
-    createdAt: orders.createdAt,
-    user: {
-      id: users.id,
-      name: users.name,
-      email: users.email,
-    },
-  })
-    .from(orders)
-    .leftJoin(users, eq(orders.userId, users.id))
-    .orderBy(desc(orders.createdAt));
+  try {
+    return await db.select({
+      id: orders.id,
+      userId: orders.userId,
+      totalAmount: orders.amount,
+      status: orders.status,
+      stripeCheckoutSessionId: orders.stripeCheckoutSessionId,
+      createdAt: orders.createdAt,
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+      },
+    })
+      .from(orders)
+      .leftJoin(users, eq(orders.userId, users.id))
+      .orderBy(desc(orders.createdAt));
+  } catch (error) {
+    console.error("[Database] getAllOrders failed:", error);
+    return [];
+  }
 }
 
 
@@ -720,24 +749,27 @@ export async function getAllAffiliates() {
   const db = await getDb();
   if (!db) return [];
 
-  const result = await db.select({
-    id: affiliates.id,
-    userId: affiliates.userId,
-    affiliateCode: affiliates.affiliateCode,
-    commissionRate: affiliates.commissionRate,
-    totalEarnings: affiliates.totalEarnings,
-    pendingEarnings: affiliates.pendingEarnings,
-    isActive: affiliates.isActive,
-    createdAt: affiliates.createdAt,
-    updatedAt: affiliates.updatedAt,
-    userName: users.name,
-    userEmail: users.email,
-  })
-    .from(affiliates)
-    .leftJoin(users, eq(affiliates.userId, users.id))
-    .orderBy(affiliates.createdAt);
-
-  return result;
+  try {
+    return await db.select({
+      id: affiliates.id,
+      userId: affiliates.userId,
+      affiliateCode: affiliates.affiliateCode,
+      commissionRate: affiliates.commissionRate,
+      totalEarnings: affiliates.totalEarnings,
+      pendingEarnings: affiliates.pendingEarnings,
+      isActive: affiliates.isActive,
+      createdAt: affiliates.createdAt,
+      updatedAt: affiliates.updatedAt,
+      userName: users.name,
+      userEmail: users.email,
+    })
+      .from(affiliates)
+      .leftJoin(users, eq(affiliates.userId, users.id))
+      .orderBy(affiliates.createdAt);
+  } catch (error) {
+    console.error("[Database] getAllAffiliates failed:", error);
+    return [];
+  }
 }
 
 export async function updateAffiliateStatus(
