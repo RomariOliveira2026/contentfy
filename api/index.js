@@ -3121,7 +3121,7 @@ function createApp(options = {}) {
 }
 
 // server/vercel-app.ts
-var vercel_app_default = createApp({ serveClient: true });
+var vercel_app_default = createApp({ serveClient: false });
 export {
   vercel_app_default as default
 };

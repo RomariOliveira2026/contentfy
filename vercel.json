@@ -2,10 +2,15 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm run build",
+  "outputDirectory": "public",
   "rewrites": [
     {
-      "source": "/((?!assets/).*)",
+      "source": "/api/(.*)",
       "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
