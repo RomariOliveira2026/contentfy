@@ -3,7 +3,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./_core/oauth";
 import { appRouter } from "./routers";
 import { createContext } from "./_core/context";
-import { serveStatic } from "./_core/vite";
+import { serveStatic } from "./_core/static";
 import { setupStripeWebhook } from "./routers/stripe-webhook";
 import { setupUploadRoute } from "./routes/upload";
 
