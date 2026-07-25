@@ -11,7 +11,8 @@
 import http from "node:http";
 import { URL } from "node:url";
 
-const PORT = Number(process.env.MOCK_OAUTH_PORT || 3010);
+const PORT = Number(process.env.PORT || process.env.MOCK_OAUTH_PORT || 3010);
+const HOST = process.env.HOST || "0.0.0.0";
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -123,7 +124,7 @@ const server = http.createServer(async (req, res) => {
   sendJson(res, 404, { error: "not found", path });
 });
 
-server.listen(PORT, () => {
-  console.log(`[mock-oauth] listening on http://localhost:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`[mock-oauth] listening on http://${HOST}:${PORT}`);
   console.log(`[mock-oauth] /app-auth ready for ContentFy login`);
 });
