@@ -61,12 +61,16 @@ import Pricing from "./pages/Pricing";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Desacelere from "./pages/Desacelere";
+import Explore from "./pages/Explore";
+import ShowcaseProductPage from "./pages/ShowcaseProductPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path="/explorar" component={Explore} />
+      <Route path="/produto/:slug" component={ShowcaseProductPage} />
       <Route path="/products" component={Products} />
       <Route path="/products/:slug/plans" component={ProductPlans} />
       <Route path="/products/:slug" component={ProductDetail} />

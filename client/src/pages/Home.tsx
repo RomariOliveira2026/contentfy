@@ -105,7 +105,7 @@ export default function Home() {
                 internacional — feita para quem leva conteúdo a sério.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href="/products">
+                <Link href="/explorar">
                   <Button size="lg" className="w-full sm:w-auto">
                     Explorar Produtos
                     <ArrowRight className="ml-2 w-4 h-4" />

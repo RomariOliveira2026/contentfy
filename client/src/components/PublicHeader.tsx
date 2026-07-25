@@ -7,7 +7,8 @@ import { trpc } from "@/lib/trpc";
 import { Menu, X, User, LogOut, LayoutDashboard, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import SearchBar from "@/components/SearchBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +22,17 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function PublicHeader() {
   const [location, navigate] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { data: user } = trpc.auth.me.useQuery();
   const logoutMutation = trpc.auth.logout.useMutation();
   const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -37,10 +46,9 @@ export default function PublicHeader() {
 
   const navItems = [
     { label: "Início", path: "/" },
-    { label: "Produtos", path: "/products" },
-    { label: "Preços", path: "/pricing" },
-    { label: "Sobre", path: "/about" },
-    { label: "Contato", path: "/contact" },
+    { label: "Explorar", path: "/explorar" },
+    { label: "Categorias", path: "/explorar#filtros" },
+    { label: "Para Criadores", path: "/creator/dashboard" },
   ];
 
   const isActive = (path: string) => {
@@ -49,8 +57,18 @@ export default function PublicHeader() {
   };
 
   return (
-    <header className="dark cf-header-shell cf-surface-header">
-      <div className="container flex h-[5rem] lg:h-[5.5rem] items-center gap-3 lg:gap-6">
+    <header
+      className={cn(
+        "dark cf-header-shell cf-surface-header transition-[height,background-color] duration-300",
+        scrolled && "cf-header-scrolled"
+      )}
+    >
+      <div
+        className={cn(
+          "container flex items-center gap-3 lg:gap-6 transition-[height] duration-300",
+          scrolled ? "h-[4.25rem] lg:h-[4.5rem]" : "h-[5rem] lg:h-[5.5rem]"
+        )}
+      >
         <Link href="/">
           <a className="cf-brand-logo-link flex items-center shrink-0 py-0">
             <BrandLogo
@@ -123,9 +141,14 @@ export default function PublicHeader() {
               </DropdownMenu>
             </>
           ) : (
-            <Button asChild size="sm" className="px-6">
-              <a href={getLoginUrl()}>Entrar</a>
-            </Button>
+            <>
+              <Button asChild size="sm" variant="outline" className="px-4">
+                <a href={getLoginUrl()}>Entrar</a>
+              </Button>
+              <Button asChild size="sm" className="px-5">
+                <a href={getLoginUrl()}>Criar conta</a>
+              </Button>
+            </>
           )}
         </div>
 

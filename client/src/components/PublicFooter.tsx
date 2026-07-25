@@ -1,27 +1,30 @@
 import { Link } from "wouter";
 import BrandLogo from "@/components/BrandLogo";
 import { APP_TITLE } from "@/const";
-import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
 const productLinks = [
-  { label: "Cursos Online", href: "/products?type=course" },
-  { label: "E-books", href: "/products?type=ebook" },
-  { label: "Audiobooks", href: "/products?type=audiobook" },
-  { label: "Apps", href: "/products?type=app" },
+  { label: "Explorar", href: "/explorar" },
+  { label: "Catálogo", href: "/products" },
+  { label: "Desacelere", href: "/produto/desacelere" },
+  {
+    label: "Manual do Representante Comercial",
+    href: "/produto/manual-do-representante-comercial",
+  },
 ];
 
-const companyLinks = [
-  { label: "Sobre", href: "/about" },
+const creatorLinks = [
+  { label: "Área do Criador", href: "/creator/dashboard" },
+  { label: "AI Studio", href: "/creator/ai" },
+];
+
+const helpLinks = [
+  { label: "FAQ", href: "/faq" },
   { label: "Contato", href: "/contact" },
-  { label: "Termos de Uso", href: "/terms" },
-  { label: "Privacidade", href: "/privacy" },
 ];
 
-const socialLinks = [
-  { icon: Facebook, label: "Facebook" },
-  { icon: Instagram, label: "Instagram" },
-  { icon: Twitter, label: "Twitter" },
-  { icon: Youtube, label: "YouTube" },
+const legalLinks = [
+  { label: "Termos", href: "/terms" },
+  { label: "Privacidade", href: "/privacy" },
 ];
 
 export default function PublicFooter() {
@@ -30,7 +33,7 @@ export default function PublicFooter() {
       <div className="cf-gradient-bar opacity-70" />
       <div className="container py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-4">
             <Link href="/">
               <a className="cf-brand-logo-link inline-flex items-center mb-5 py-0">
                 <BrandLogo
@@ -39,75 +42,21 @@ export default function PublicFooter() {
                 />
               </a>
             </Link>
-            <p className="text-sm text-slate-400 leading-relaxed mb-6 max-w-sm">
-              Plataforma premium de infoprodutos. Cursos, e-books, audiobooks e
-              apps — com a identidade{" "}
+            <p className="text-sm text-slate-400 leading-relaxed mb-4 max-w-sm">
+              Plataforma premium de infoprodutos. Cursos, e-books, manuais,
+              audiobooks e apps — com a identidade{" "}
               <span className="text-gradient-owl font-semibold">ContentFy</span>.
             </p>
-            <div className="flex gap-2">
-              {socialLinks.map(({ icon: Icon, label }) => (
-                <a
-                  key={label}
-                  href="#"
-                  className="h-10 w-10 rounded-xl bg-[#111827] border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-primary/40 transition-all duration-200"
-                  aria-label={label}
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
+            <p className="text-xs text-slate-500">
+              Tecnologia{" "}
+              <span className="text-slate-300">BuilderTudo Technologies</span>
+            </p>
           </div>
 
-          <div className="lg:col-span-3">
-            <h4 className="font-semibold text-white mb-4">Produtos</h4>
-            <ul className="space-y-2.5">
-              {productLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href}>
-                    <a className="text-sm text-slate-400 hover:text-primary transition-colors">
-                      {link.label}
-                    </a>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h4 className="font-semibold text-white mb-4">Empresa</h4>
-            <ul className="space-y-2.5">
-              {companyLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href}>
-                    <a className="text-sm text-slate-400 hover:text-primary transition-colors">
-                      {link.label}
-                    </a>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h4 className="font-semibold text-white mb-4">Suporte</h4>
-            <ul className="space-y-2.5 text-sm text-slate-400">
-              <li>
-                <Link href="/faq">
-                  <a className="hover:text-primary transition-colors">FAQ</a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact">
-                  <a className="hover:text-primary transition-colors">Fale conosco</a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/my-account/products">
-                  <a className="hover:text-primary transition-colors">Minha Biblioteca</a>
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <FooterCol title="Produtos" links={productLinks} />
+          <FooterCol title="Para Criadores" links={creatorLinks} />
+          <FooterCol title="Ajuda" links={helpLinks} span="lg:col-span-2" />
+          <FooterCol title="Legal" links={legalLinks} span="lg:col-span-2" />
         </div>
 
         <div className="mt-10 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
@@ -115,9 +64,38 @@ export default function PublicFooter() {
             © {new Date().getFullYear()} {APP_TITLE}. Grupo O Especialista — CNPJ
             46.709.692/0001-42.
           </p>
-          <p className="text-center sm:text-right">Todos os direitos reservados.</p>
+          <p className="text-center sm:text-right">
+            contentfy.com.br · Todos os direitos reservados.
+          </p>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  links,
+  span = "lg:col-span-2",
+}: {
+  title: string;
+  links: { label: string; href: string }[];
+  span?: string;
+}) {
+  return (
+    <div className={span}>
+      <h4 className="font-semibold text-white mb-4">{title}</h4>
+      <ul className="space-y-2.5">
+        {links.map((link) => (
+          <li key={link.href + link.label}>
+            <Link href={link.href}>
+              <a className="text-sm text-slate-400 hover:text-primary transition-colors">
+                {link.label}
+              </a>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

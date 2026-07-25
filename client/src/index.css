@@ -472,6 +472,44 @@
     background: rgba(7, 11, 18, 0.88);
   }
 
+  .cf-header-scrolled.cf-surface-header {
+    background: rgba(7, 11, 18, 0.78);
+    backdrop-filter: blur(22px) saturate(1.5);
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  }
+
+  /* ——— Public showcase (vitrine) ——— */
+  .cf-showcase-rail {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(249, 115, 22, 0.35) transparent;
+  }
+
+  .cf-showcase-rail::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .cf-showcase-rail::-webkit-scrollbar-thumb {
+    background: rgba(249, 115, 22, 0.35);
+    border-radius: 999px;
+  }
+
+  .cf-showcase-card {
+    z-index: 1;
+  }
+
+  .cf-showcase-card:hover,
+  .cf-showcase-card:focus-within {
+    z-index: 30;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cf-showcase-card img,
+    .cf-showcase-card-panel {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+
   .cf-surface-footer {
     background: #070b12;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
