@@ -147,7 +147,7 @@ export default function PublicHeader() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden overflow-hidden border-t border-white/[0.06] cf-surface-header"
+            className="md:hidden overflow-hidden border-t border-border cf-surface-header"
           >
             <div className="container py-5 cf-header-search">
               <SearchBar />
@@ -167,7 +167,7 @@ export default function PublicHeader() {
                   </Link>
                 ))}
               </nav>
-              <div className="pt-4 mt-4 border-t border-white/[0.06] flex flex-col gap-2">
+              <div className="pt-4 mt-4 border-t border-border flex flex-col gap-2">
                 <Button variant="outline" className="w-full" onClick={toggleTheme}>
                   {theme === "dark" ? (
                     <>

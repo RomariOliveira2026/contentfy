@@ -92,10 +92,10 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
-              <Badge className="mb-6 bg-white/[0.06] text-foreground border-white/10 backdrop-blur-md px-3.5 py-1.5">
+              <Badge className="mb-6 bg-card/80 text-foreground border-border backdrop-blur-md px-3.5 py-1.5">
                 Plataforma premium de infoprodutos
               </Badge>
-              <h1 className="mb-6 text-white">
+              <h1 className="mb-6 text-foreground">
                 Transforme{" "}
                 <span className="text-gradient-owl">conhecimento</span> em{" "}
                 <span className="text-gradient-owl">resultado</span>
@@ -276,7 +276,7 @@ export default function Home() {
                 { value: "98%", label: "Satisfação", description: "Clientes que recomendam" },
               ].map((stat, index) => (
                 <AnimatedSection key={stat.label} delay={index * 0.05}>
-                  <Card className="text-center cf-card-premium bg-[#111827]/80 border-white/[0.08] py-0">
+                  <Card className="text-center cf-card-premium bg-card/80 border-border py-0">
                     <CardContent className="pt-8 pb-7 px-4">
                       <div className="text-3xl lg:text-4xl font-bold text-gradient-owl mb-2">
                         {stat.value}

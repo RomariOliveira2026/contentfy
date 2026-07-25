@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useLayoutEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
@@ -9,6 +9,28 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+const STORAGE_KEY = "theme";
+
+function isTheme(value: string | null): value is Theme {
+  return value === "light" || value === "dark";
+}
+
+function readStoredTheme(fallback: Theme): Theme {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return isTheme(stored) ? stored : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function applyThemeClass(theme: Theme) {
+  const root = document.documentElement;
+  root.classList.toggle("dark", theme === "dark");
+  root.style.colorScheme = theme;
+}
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -21,24 +43,17 @@ export function ThemeProvider({
   defaultTheme = "light",
   switchable = false,
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (switchable) {
-      const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
-    }
-    return defaultTheme;
-  });
+  const [theme, setTheme] = useState<Theme>(() =>
+    switchable ? readStoredTheme(defaultTheme) : defaultTheme
+  );
 
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-
-    if (switchable) {
-      localStorage.setItem("theme", theme);
+  useLayoutEffect(() => {
+    applyThemeClass(theme);
+    if (!switchable) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      // ignore quota / private mode
     }
   }, [theme, switchable]);
 
