@@ -221,7 +221,7 @@ export default function Features() {
                 <Card key={index} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
-                      <feature.icon className="w-6 h-6 text-accent" />
+                      <feature.icon className="w-6 h-6 text-primary" />
                     </div>
                     <CardTitle className="text-lg">{feature.title}</CardTitle>
                     <CardDescription>
@@ -235,7 +235,7 @@ export default function Features() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-primary to-accent text-primary-foreground">
+        <section className="py-20 bg-gradient-owl text-primary-foreground">
           <div className="container text-center">
             <div className="max-w-3xl mx-auto space-y-8">
               <Rocket className="w-16 h-16 mx-auto opacity-90" />

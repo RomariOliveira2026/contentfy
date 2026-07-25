@@ -259,7 +259,7 @@ export default function Blog() {
         </section>
 
         {/* Newsletter CTA */}
-        <section className="py-20 bg-gradient-to-br from-primary to-accent text-primary-foreground">
+        <section className="py-20 bg-gradient-owl text-primary-foreground">
           <div className="container text-center">
             <div className="max-w-2xl mx-auto space-y-6">
               <BookOpen className="w-16 h-16 mx-auto opacity-90" />

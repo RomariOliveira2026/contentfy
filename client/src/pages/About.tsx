@@ -120,7 +120,7 @@ export default function About() {
               <Card className="border-2 hover:border-accent transition-colors">
                 <CardContent className="pt-8 space-y-4">
                   <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center">
-                    <Eye className="w-7 h-7 text-accent" />
+                    <Eye className="w-7 h-7 text-primary" />
                   </div>
                   <h2 className="text-2xl font-bold">Nossa Visão</h2>
                   <p className="text-muted-foreground leading-relaxed">
@@ -168,7 +168,7 @@ export default function About() {
           <div className="container">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-16">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-primary text-sm font-medium mb-6">
                   <Award size={16} />
                   <span>Diferenciais</span>
                 </div>
@@ -197,7 +197,7 @@ export default function About() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-primary to-accent text-primary-foreground">
+        <section className="py-20 bg-gradient-owl text-primary-foreground">
           <div className="container text-center">
             <div className="max-w-3xl mx-auto space-y-8">
               <Globe className="w-16 h-16 mx-auto opacity-90" />

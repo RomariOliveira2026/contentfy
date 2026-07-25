@@ -205,7 +205,7 @@ export default function Home() {
                             <Badge variant="secondary" className="cf-badge-type">
                               {product.category?.name || "Sem categoria"}
                             </Badge>
-                            <Badge variant="outline" className="border-white/10">
+                            <Badge variant="outline" className="border-border">
                               {product.type === "course" && "Curso"}
                               {product.type === "ebook" && "E-book"}
                               {product.type === "audiobook" && "Audiobook"}
@@ -281,7 +281,7 @@ export default function Home() {
                       <div className="text-3xl lg:text-4xl font-bold text-gradient-owl mb-2">
                         {stat.value}
                       </div>
-                      <h3 className="text-base lg:text-lg mb-2 text-white">
+                      <h3 className="text-base lg:text-lg mb-2 text-foreground">
                         {stat.label}
                       </h3>
                       <p className="text-xs lg:text-sm text-muted-foreground">

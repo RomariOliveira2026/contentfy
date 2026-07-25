@@ -139,7 +139,7 @@ export default function MyProducts() {
           ) : (
             <Card className="cf-card-premium py-0">
               <CardContent className="py-16 px-6 text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-secondary border border-white/[0.08] mb-6">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-secondary border border-border mb-6">
                   <Library className="w-10 h-10 text-muted-foreground" />
                 </div>
                 <h2 className="text-xl font-semibold mb-2">

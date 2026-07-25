@@ -121,11 +121,10 @@ export default function TestimonialsCarousel() {
               className="flex-shrink-0 px-4"
               style={{ width: `${100 / itemsPerView}%` }}
             >
-              <Card className="card-owl-border hover-glow-owl transition-all duration-300 shadow-lg bg-[var(--owl-graphite)] border-[var(--owl-gray)]">
+              <Card className="transition-all duration-300 shadow-[var(--cf-shadow)] bg-card/90 border-border hover:border-primary/30">
                 <CardContent className="p-8">
-                  {/* Avatar */}
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 rounded-full bg-gradient-owl flex items-center justify-center text-white font-bold text-xl glow-orange">
+                    <div className="w-16 h-16 rounded-full bg-gradient-owl flex items-center justify-center text-primary-foreground font-bold text-xl">
                       {testimonial.initials}
                     </div>
                     <div>
@@ -138,15 +137,13 @@ export default function TestimonialsCarousel() {
                     </div>
                   </div>
 
-                  {/* Conteúdo */}
-                  <p className="text-gray-300 italic leading-relaxed text-lg">
+                  <p className="text-muted-foreground italic leading-relaxed text-lg">
                     "{testimonial.content}"
                   </p>
 
-                  {/* Estrelas */}
                   <div className="flex gap-1 mt-6">
                     {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-[var(--owl-yellow)] text-[var(--owl-yellow)]" />
+                      <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
                 </CardContent>

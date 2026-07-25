@@ -158,7 +158,7 @@ export default function Examples() {
         <section className="py-20 bg-gradient-to-br from-primary/5 via-background to-accent/5">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-primary text-sm font-medium">
                 <BookOpen size={16} />
                 <span>Exemplos Práticos</span>
               </div>
@@ -261,7 +261,7 @@ export default function Examples() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
+                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                     45%
                   </div>
                   <div className="text-muted-foreground">
@@ -282,7 +282,7 @@ export default function Examples() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-primary to-accent text-primary-foreground">
+        <section className="py-20 bg-gradient-owl text-primary-foreground">
           <div className="container text-center">
             <div className="max-w-3xl mx-auto space-y-8">
               <GraduationCap className="w-16 h-16 mx-auto opacity-90" />

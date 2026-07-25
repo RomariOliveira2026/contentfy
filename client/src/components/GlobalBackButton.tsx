@@ -44,10 +44,10 @@ export default function GlobalBackButton() {
         variant="outline"
         aria-label="Voltar para a tela anterior"
         className={cn(
-          "pointer-events-auto shadow-[0_8px_28px_rgba(0,0,0,0.45)]",
+          "pointer-events-auto shadow-[var(--cf-shadow)]",
           "rounded-full h-11 px-4 gap-2",
-          "border-white/15 bg-[#111827]/90 text-foreground backdrop-blur-xl",
-          "hover:border-primary/40 hover:bg-[#1a2332]"
+          "border-border bg-card/95 text-foreground backdrop-blur-xl",
+          "hover:border-primary/40 hover:bg-accent"
         )}
       >
         <ArrowLeft className="h-4 w-4" />

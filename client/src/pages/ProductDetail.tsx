@@ -148,7 +148,7 @@ export default function ProductDetail() {
             {/* Conteúdo Principal */}
             <div className="lg:col-span-2">
               {/* Imagem de Capa */}
-              <div className="aspect-[16/9] lg:aspect-[16/8] cf-gradient-accent rounded-[1.25rem] overflow-hidden mb-8 shadow-[0_24px_64px_rgba(0,0,0,0.45)] border border-white/[0.08]">
+              <div className="aspect-[16/9] lg:aspect-[16/8] cf-gradient-accent rounded-[1.25rem] overflow-hidden mb-8 shadow-[var(--cf-shadow-hover)] border border-border">
                 {product.coverImage ? (
                   <img
                     src={product.coverImage}
@@ -204,7 +204,7 @@ export default function ProductDetail() {
                   ].map((item, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-3 rounded-2xl border border-white/[0.08] bg-card/60 px-4 py-3.5"
+                      className="flex items-start gap-3 rounded-2xl border border-border bg-card/60 px-4 py-3.5"
                     >
                       <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                       <span className="text-sm text-foreground/90">{item}</span>

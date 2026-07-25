@@ -280,7 +280,7 @@ export default function Contact() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-primary to-accent text-primary-foreground">
+        <section className="py-20 bg-gradient-owl text-primary-foreground">
           <div className="container text-center">
             <div className="max-w-3xl mx-auto space-y-8">
               <MessageCircle className="w-16 h-16 mx-auto opacity-90" />

@@ -109,7 +109,7 @@ export default function PublicHeader() {
                     <span className="truncate">{user.name || "Minha Conta"}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 rounded-xl border-white/10 bg-card">
+                <DropdownMenuContent align="end" className="w-48 rounded-xl border-border bg-card">
                   <DropdownMenuItem onClick={() => navigate("/my-account/products")}>
                     <LayoutDashboard className="w-4 h-4 mr-2" />
                     Minha Biblioteca

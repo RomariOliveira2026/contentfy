@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="font-bold text-xl mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h3 className="font-bold text-xl mb-4 text-gradient-owl">
               {APP_TITLE}
             </h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md">

@@ -69,7 +69,7 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 cf-surface-header border-b border-white/[0.08]">
+      <header className="sticky top-0 z-50 cf-surface-header border-b border-border">
         <div className="container flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/">
@@ -147,7 +147,7 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
               </div>
 
               {/* Navigation */}
-              <nav className="space-y-1.5 rounded-[1.25rem] border border-white/[0.08] bg-card p-2">
+              <nav className="space-y-1.5 rounded-[1.25rem] border border-border bg-card p-2">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   const isActive = location === item.href;

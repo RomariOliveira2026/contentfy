@@ -214,7 +214,7 @@ export default function FAQ() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="pt-8 text-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
-                      <Mail className="w-7 h-7 text-accent" />
+                      <Mail className="w-7 h-7 text-primary" />
                     </div>
                     <h3 className="font-bold text-lg">Email</h3>
                     <p className="text-sm text-muted-foreground">
@@ -248,7 +248,7 @@ export default function FAQ() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-primary to-accent text-primary-foreground">
+        <section className="py-20 bg-gradient-owl text-primary-foreground">
           <div className="container text-center">
             <div className="max-w-3xl mx-auto space-y-8">
               <HelpCircle className="w-16 h-16 mx-auto opacity-90" />

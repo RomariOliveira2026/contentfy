@@ -221,7 +221,7 @@ export default function Process() {
                   </div>
 
                   <div className="relative flex items-start gap-6">
-                    <div className="flex-shrink-0 w-16 h-16 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-bold z-10">
+                    <div className="flex-shrink-0 w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold z-10">
                       15min
                     </div>
                     <div className="flex-1 pt-3">
@@ -236,7 +236,7 @@ export default function Process() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-primary to-accent text-primary-foreground">
+        <section className="py-20 bg-gradient-owl text-primary-foreground">
           <div className="container text-center">
             <div className="max-w-3xl mx-auto space-y-8">
               <CheckCircle2 className="w-16 h-16 mx-auto opacity-90" />
