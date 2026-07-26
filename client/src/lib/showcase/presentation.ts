@@ -99,8 +99,8 @@ export function getFirstLaunchesProducts(
 ): ShowcaseProduct[] {
   const visible = getVisibleShowcaseProducts(products);
   const preferred = [
-    "desacelere",
     "manual-do-representante-comercial",
+    "desacelere",
   ];
   const ordered: ShowcaseProduct[] = [];
   const used = new Set<string>();

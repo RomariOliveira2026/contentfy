@@ -59,6 +59,13 @@ export interface ShowcaseProduct {
   heroImage?: string;
   coverImage?: string;
   landscapeImage?: string;
+  /** Galeria da página do produto (mockups, capa, CRM, etc.). */
+  galleryImages?: ShowcaseGalleryImage[];
+  /** object-fit preferido para mockups sem corte. */
+  imageFit?: "cover" | "contain";
+  /** srcSet WebP responsivo da imagem principal (landscape/hero). */
+  imageSrcSet?: string;
+  imageSizes?: string;
   /** Centavos — apenas quando houver preço real (banco / publicação). */
   priceCents?: number | null;
   isPublished: boolean;
@@ -81,6 +88,15 @@ export interface ShowcaseProduct {
   seoDescription?: string;
   source: "database" | "provisional";
   createdAt?: string;
+}
+
+export interface ShowcaseGalleryImage {
+  src: string;
+  alt: string;
+  srcSet?: string;
+  sizes?: string;
+  /** cover | contain — padrão contain para mockups oficiais. */
+  fit?: "cover" | "contain";
 }
 
 export interface ShowcaseFilters {

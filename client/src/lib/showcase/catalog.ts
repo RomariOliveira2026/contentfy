@@ -83,6 +83,10 @@ export function mergeShowcaseCatalog(
       coverImage: db.coverImage || base?.coverImage || undefined,
       landscapeImage:
         base?.landscapeImage || db.coverImage || base?.heroImage || undefined,
+      galleryImages: base?.galleryImages,
+      imageFit: base?.imageFit,
+      imageSrcSet: base?.imageSrcSet,
+      imageSizes: base?.imageSizes,
       // Preço só quando publicado e valor numérico válido do banco
       priceCents: published ? db.price : null,
       isPublished: published,

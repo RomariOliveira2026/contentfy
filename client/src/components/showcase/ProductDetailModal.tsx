@@ -43,9 +43,9 @@ export default function ProductDetailModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl p-0 overflow-hidden border-white/10 bg-[#0f1522] text-foreground gap-0">
-        <div className="relative aspect-[21/9] bg-[#111827]">
+        <div className="relative aspect-[21/9] bg-[#070b12]">
           <ProductCoverMedia product={product} priority />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0f1522] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f1522] via-transparent to-transparent pointer-events-none" />
         </div>
 
         <div className="p-5 sm:p-6 space-y-4 max-h-[55vh] overflow-y-auto">

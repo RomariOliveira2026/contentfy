@@ -32,11 +32,17 @@ export default function ShowcaseHero({ product, onDetails }: ShowcaseHeroProps) 
       {image ? (
         <img
           src={image}
+          srcSet={product.imageSrcSet}
+          sizes={product.imageSizes || "100vw"}
           alt=""
           fetchPriority="high"
           decoding="async"
           data-fallback="false"
-          className="absolute inset-0 h-full w-full object-cover object-[center_30%] sm:object-center"
+          className={
+            product.imageFit === "contain"
+              ? "absolute inset-0 h-full w-full object-contain object-center p-6 sm:p-10 bg-[#070b12]"
+              : "absolute inset-0 h-full w-full object-cover object-[center_30%] sm:object-center"
+          }
         />
       ) : (
         <div

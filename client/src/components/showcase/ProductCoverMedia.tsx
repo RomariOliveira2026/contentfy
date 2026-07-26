@@ -7,31 +7,55 @@ interface ProductCoverMediaProps {
   product: ShowcaseProduct;
   priority?: boolean;
   className?: string;
-  /** object-fit da imagem real */
   objectPosition?: string;
+  /** Override do fit do produto. */
+  fit?: "cover" | "contain";
+  /**
+   * Qual campo priorizar.
+   * - landscape: padrão da vitrine (mockup)
+   * - cover: capa na página do produto
+   */
+  prefer?: "landscape" | "cover" | "hero";
 }
 
 /**
  * Imagem do produto com prioridade landscape → hero → cover → fallback premium.
- * Fallback marcado internamente (data-fallback) — não inventa capa oficial.
+ * Suporta srcSet responsivo e object-contain para mockups sem corte.
  */
 export default function ProductCoverMedia({
   product,
   priority,
   className,
   objectPosition = "center",
+  fit,
+  prefer = "landscape",
 }: ProductCoverMediaProps) {
-  const image = resolveProductImage(product);
+  const image =
+    prefer === "cover"
+      ? product.coverImage || resolveProductImage(product)
+      : prefer === "hero"
+        ? product.heroImage || resolveProductImage(product)
+        : resolveProductImage(product);
+
+  const objectFit = fit || product.imageFit || "cover";
+  const useLandscapeSrcSet = prefer === "landscape" || prefer === "hero";
 
   if (image) {
     return (
       <img
         src={image}
+        srcSet={useLandscapeSrcSet ? product.imageSrcSet : undefined}
+        sizes={useLandscapeSrcSet ? product.imageSizes : undefined}
         alt=""
         loading={priority ? "eager" : "lazy"}
         decoding="async"
+        fetchPriority={priority ? "high" : undefined}
         data-fallback="false"
-        className={cn("h-full w-full object-cover", className)}
+        className={cn(
+          "h-full w-full",
+          objectFit === "contain" ? "object-contain p-2 sm:p-3" : "object-cover",
+          className
+        )}
         style={{ objectPosition }}
       />
     );
@@ -55,20 +79,11 @@ export default function ProductCoverMedia({
         className
       )}
     >
-      {/* Textura discreta */}
       <div
         className="absolute inset-0 opacity-[0.14] mix-blend-soft-light"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-        }}
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 opacity-40"
-        style={{
-          background:
-            "linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%)",
         }}
         aria-hidden
       />

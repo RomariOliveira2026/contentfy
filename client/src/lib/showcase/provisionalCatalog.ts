@@ -8,6 +8,7 @@
  */
 
 import type { ShowcaseProduct } from "./types";
+import { REPRESENTANTE40_ASSETS as R40 } from "./representante40Assets";
 
 const DESACELERE_HERO =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_hero_bg-49SjHkZ9Zq4VXLF5SeHWvU.webp";
@@ -68,7 +69,7 @@ export const PROVISIONAL_SHOWCASE_CATALOG: ShowcaseProduct[] = [
   {
     id: "provisional:manual-do-representante-comercial",
     slug: "manual-do-representante-comercial",
-    name: "Manual do Representante Comercial",
+    name: "Manual Representante 4.0",
     type: "ebook",
     typeLabel: "Manual",
     category: "Vendas e carreira",
@@ -78,22 +79,25 @@ export const PROVISIONAL_SHOWCASE_CATALOG: ShowcaseProduct[] = [
       "prospecção",
       "negociação",
       "carreira",
+      "representante 4.0",
+      "CRM",
     ],
     collections: [
       "launches",
+      "featured",
       "sales-career",
       "ebooks-manuals",
       "keep-exploring",
     ],
-    slogan: "Atue com mais estratégia, organização e profissionalismo.",
+    slogan: "Venda mais. Organize melhor. Represente com inteligência.",
     shortDescription:
-      "Guia prático para representantes comerciais que querem evoluir na carreira com método.",
+      "O manual premium do representante comercial moderno com IA — ecossistema com CRM, bônus e mapa de alta performance.",
     description:
-      "Guia prático para representantes comerciais que desejam atuar com mais estratégia, organização e profissionalismo. Preço, autor, páginas e arquivos serão definidos no cadastro oficial.",
+      "Ecossistema Representante 4.0: manual premium, Rep4.0CRM, prompts de IA, mensagens prontas, checklists e modelos comerciais. Preço e publicação oficial serão confirmados no cadastro.",
     benefits: [
       "Estrutura clara para organizar a operação comercial",
-      "Foco em prospecção e negociação com critério",
-      "Posicionamento profissional mais consistente",
+      "Rep4.0CRM para visão 360° da carteira",
+      "Bônus práticos: metas, prospecção e checklists",
     ],
     audience: [
       "Representantes comerciais",
@@ -101,22 +105,62 @@ export const PROVISIONAL_SHOWCASE_CATALOG: ShowcaseProduct[] = [
       "Quem está estruturando a carreira em representação",
     ],
     included: [
-      "Manual em formato digital",
-      "Diretrizes práticas de aplicação",
+      "Manual Representante 4.0 (digital)",
+      "Acesso ao ecossistema Rep4.0CRM",
+      "Bônus e mapa do representante",
     ],
-    heroImage: undefined,
-    coverImage: undefined,
-    landscapeImage: undefined,
+    author: "Romário Oliveira",
+    heroImage: R40.mockupKit,
+    coverImage: R40.coverPremium,
+    landscapeImage: R40.mockupKit,
+    imageFit: "contain",
+    imageSrcSet: R40.mockupKitSrcSet,
+    imageSizes: R40.mockupKitSizes,
+    galleryImages: [
+      {
+        src: R40.mockupKit,
+        alt: "Mockup completo Representante 4.0 — livro, CRM, bônus e mapa",
+        srcSet: R40.mockupKitSrcSet,
+        sizes: "(max-width: 768px) 100vw, 800px",
+        fit: "contain",
+      },
+      {
+        src: R40.coverPremium,
+        alt: "Capa premium do Manual Representante 4.0",
+        srcSet: R40.coverPremiumSrcSet,
+        sizes: "(max-width: 768px) 80vw, 360px",
+        fit: "contain",
+      },
+      {
+        src: R40.crmLaptop,
+        alt: "Rep4.0CRM — dashboard no notebook",
+        srcSet: R40.crmLaptopSrcSet,
+        sizes: "(max-width: 768px) 100vw, 720px",
+        fit: "contain",
+      },
+      {
+        src: R40.coverAlt,
+        alt: "Capa do Manual Representante 4.0",
+        srcSet: R40.coverAltSrcSet,
+        sizes: "(max-width: 768px) 80vw, 360px",
+        fit: "contain",
+      },
+      {
+        src: R40.kitHero,
+        alt: "Composição kit Representante 4.0",
+        fit: "contain",
+      },
+    ],
     priceCents: null,
     isPublished: false,
     visibility: "prelaunch",
     isPrelaunch: true,
     isLaunch: true,
-    isFeatured: false,
+    isFeatured: true,
     isNew: true,
-    seoTitle: "Manual do Representante Comercial | ContentFy",
+    seoTitle: "Manual Representante 4.0 | ContentFy",
     seoDescription:
-      "Manual prático para representantes comerciais — estratégia, organização e carreira.",
+      "Manual premium do representante comercial moderno com IA — CRM, bônus e mapa de alta performance.",
     source: "provisional",
   },
 ];

@@ -12,14 +12,35 @@ import {
   useShowcaseCatalog,
 } from "@/lib/showcase";
 import ProductCoverMedia from "@/components/showcase/ProductCoverMedia";
+import ProductGallery from "@/components/showcase/ProductGallery";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
 
 export default function ShowcaseProductPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug || "";
   const { getBySlug, visible, isLoading } = useShowcaseCatalog();
   const product = getBySlug(slug);
+  const image = product ? resolveProductImage(product) : null;
+
+  useEffect(() => {
+    if (!product || !image) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = image;
+    if (product.imageSrcSet) {
+      link.setAttribute("imagesrcset", product.imageSrcSet);
+    }
+    if (product.imageSizes) {
+      link.setAttribute("imagesizes", product.imageSizes);
+    }
+    document.head.appendChild(link);
+    return () => {
+      link.remove();
+    };
+  }, [product, image]);
 
   if (isLoading) {
     return (
@@ -58,7 +79,18 @@ export default function ShowcaseProductPage() {
   );
   const canBuy =
     !comingSoon && product.isPublished && product.priceCents != null;
-  const image = resolveProductImage(product);
+  const gallery = product.galleryImages?.length
+    ? product.galleryImages
+    : image
+      ? [
+          {
+            src: image,
+            alt: product.name,
+            fit: product.imageFit || ("cover" as const),
+          },
+        ]
+      : [];
+
   const related = visible
     .filter((p) => p.slug !== product.slug)
     .filter(
@@ -115,8 +147,13 @@ export default function ShowcaseProductPage() {
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/60" />
           <div className="container relative z-10 py-12 lg:py-16 grid lg:grid-cols-[280px_1fr] gap-8 items-start">
-            <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#111827] aspect-[3/4] max-w-[280px]">
-              <ProductCoverMedia product={product} priority />
+            <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#070b12] aspect-[3/4] max-w-[280px] shadow-[0_24px_56px_rgba(0,0,0,0.5)]">
+              <ProductCoverMedia
+                product={product}
+                priority
+                prefer="cover"
+                fit="contain"
+              />
             </div>
             <div>
               <div className="flex flex-wrap gap-2 mb-3">
@@ -174,7 +211,11 @@ export default function ShowcaseProductPage() {
           </div>
         </section>
 
-        <div className="container py-12 space-y-10 max-w-4xl">
+        <div className="container py-12 space-y-10 max-w-5xl">
+          {gallery.length > 0 && (
+            <ProductGallery images={gallery} productName={product.name} />
+          )}
+
           {product.benefits?.length ? (
             <Section title="Proposta de valor / Benefícios">
               <ul className="list-disc pl-5 space-y-2 text-muted-foreground">

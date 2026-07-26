@@ -68,26 +68,36 @@ export default function ProductShowcaseCard({
       <Link href={href}>
         <a
           className={cn(
-            "block overflow-hidden border border-white/[0.08] bg-[#0f1522] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+            "block overflow-hidden border border-white/[0.08] bg-[#0f1522]",
+            "shadow-[0_18px_48px_rgba(0,0,0,0.42)]",
+            "transition-shadow duration-500 ease-out motion-safe:group-hover:shadow-[0_28px_64px_rgba(0,0,0,0.55)]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
             isExpanded ? "rounded-2xl sm:rounded-3xl" : "rounded-2xl"
           )}
           aria-label={`${product.name} — ${product.typeLabel}`}
         >
           <div
             className={cn(
-              "relative overflow-hidden bg-[#111827]",
+              "relative overflow-hidden bg-[#070b12]",
               VARIANT_ASPECT[variant]
             )}
           >
             <div
               className={cn(
                 "h-full w-full",
-                "transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
+                "transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.05]"
               )}
             >
               <ProductCoverMedia product={product} priority={priority} />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+            <div
+              className={cn(
+                "absolute inset-0 pointer-events-none",
+                product.imageFit === "contain"
+                  ? "bg-gradient-to-t from-black/90 via-black/20 to-transparent"
+                  : "bg-gradient-to-t from-black/90 via-black/35 to-transparent"
+              )}
+            />
             <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 max-w-[85%]">
               {badges.map((id) => (
                 <ShowcaseBadgePill key={id} id={id} />
