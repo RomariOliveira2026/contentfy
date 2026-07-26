@@ -310,9 +310,9 @@ function Section({
 
 function Faq({ q, a }: { q: string; a: string }) {
   return (
-    <div className="rounded-xl border border-white/[0.08] bg-[#0f1522] p-4">
-      <p className="font-medium mb-1">{q}</p>
-      <p className="text-muted-foreground">{a}</p>
+    <div className="rounded-xl border border-white/15 bg-[#0f1522] p-4 text-slate-100">
+      <p className="font-medium mb-1 text-white">{q}</p>
+      <p className="text-slate-200 leading-relaxed">{a}</p>
     </div>
   );
 }
