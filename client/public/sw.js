@@ -1,5 +1,5 @@
 // ContentFy Service Worker - PWA Cache Strategy
-const CACHE_NAME = 'contentfy-v2';
+const CACHE_NAME = 'contentfy-v3';
 const urlsToCache = [
   '/',
   '/manifest.json',

@@ -17,8 +17,13 @@ import {
   Shield,
   Zap,
   Users,
+  Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
+
+/** Mockup oficial já usado na marca — sem inventar arte nova. */
+const DESACELERE_MOCKUP =
+  "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_mockup_oficial-FDXUTUiPqGyfYHoemKGAag.webp";
 
 export default function Home() {
   const { data: products, isLoading } = trpc.products.list.useQuery();
@@ -74,54 +79,96 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col cf-home-page">
       <PublicHeader />
 
       <main className="flex-1">
-        <section className="relative overflow-hidden py-24 lg:py-32">
-          <div className="absolute inset-0 cf-gradient-hero" />
-          <div className="absolute inset-0 opacity-40 pointer-events-none">
-            <div className="absolute top-10 right-[10%] w-[28rem] h-[28rem] bg-[#F97316] rounded-full blur-[120px]" />
-            <div className="absolute bottom-0 left-[5%] w-[22rem] h-[22rem] bg-[#F59E0B] rounded-full blur-[100px]" />
-          </div>
+        {/* Hero Enterprise Premium */}
+        <section className="cf-home-hero relative overflow-hidden">
+          <div className="absolute inset-0 cf-gradient-hero" aria-hidden />
+          <div className="cf-home-hero-atmosphere" aria-hidden />
+          <div className="cf-home-hero-particles" aria-hidden />
+          <div className="cf-home-hero-vignette" aria-hidden />
 
           <div className="container relative z-10">
-            <motion.div
-              className="max-w-3xl mx-auto text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Badge className="mb-6 bg-card/80 text-foreground border-border backdrop-blur-md px-3.5 py-1.5">
-                Plataforma premium de infoprodutos
-              </Badge>
-              <h1 className="mb-6 text-foreground">
-                Transforme{" "}
-                <span className="text-gradient-owl">conhecimento</span> em{" "}
-                <span className="text-gradient-owl">resultado</span>
-              </h1>
-              <p className="text-lg lg:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto">
-                Cursos, e-books, audiobooks e apps em uma experiência de nível
-                internacional — feita para quem leva conteúdo a sério.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href="/explorar">
-                  <Button size="lg" className="w-full sm:w-auto">
-                    Explorar Produtos
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </Link>
-                <Link href="/about">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full sm:w-auto"
-                  >
-                    Saiba Mais
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
+            <div className="cf-home-hero-grid">
+              <motion.div
+                className="cf-home-hero-copy"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <p className="cf-home-hero-eyebrow">
+                  Plataforma premium de infoprodutos
+                </p>
+
+                <h1 className="cf-home-hero-title text-balance">
+                  Transforme{" "}
+                  <span className="text-gradient-owl">conhecimento</span> em{" "}
+                  <span className="text-gradient-owl">resultado</span>
+                </h1>
+
+                <p className="cf-home-hero-subtitle">
+                  Cursos, e-books, audiobooks e apps em uma experiência de nível
+                  internacional — feita para quem leva conteúdo a sério.
+                </p>
+
+                <div className="cf-home-hero-ctas">
+                  <Link href="/explorar">
+                    <Button size="lg" className="cf-home-btn-primary w-full sm:w-auto">
+                      Explorar Produtos
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </Link>
+                  <Link href="/about">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="cf-home-btn-secondary w-full sm:w-auto"
+                    >
+                      Saiba Mais
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="cf-home-hero-badges">
+                  <div className="cf-home-trust-badge">
+                    <Shield className="cf-home-trust-icon" aria-hidden />
+                    <span>Garantia de 30 dias</span>
+                  </div>
+                  <div className="cf-home-trust-badge">
+                    <Clock className="cf-home-trust-icon" aria-hidden />
+                    <span>Acesso imediato</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="cf-home-mockup-stage"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.08,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <div className="cf-home-mockup-glow-blue" aria-hidden />
+                <div className="cf-home-mockup-glow-gold" aria-hidden />
+                <div className="cf-home-mockup-frame">
+                  <img
+                    src={DESACELERE_MOCKUP}
+                    alt="Mockup premium do e-book Desacelere"
+                    width={720}
+                    height={900}
+                    fetchPriority="high"
+                    decoding="async"
+                    className="cf-home-mockup-img"
+                  />
+                  <div className="cf-home-mockup-reflection" aria-hidden />
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
 
@@ -143,7 +190,7 @@ export default function Home() {
                 return (
                   <AnimatedSection key={type.type} delay={index * 0.06}>
                     <Link href={`/products?type=${type.type}`}>
-                      <Card className="h-full cf-card-premium group py-0">
+                      <Card className="h-full cf-card-premium cf-home-lift group py-0">
                         <CardContent className="p-6">
                           <div className="h-12 w-12 rounded-2xl bg-gradient-owl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-200 shadow-lg shadow-orange-500/20">
                             <Icon className="w-6 h-6 text-white" />
@@ -179,13 +226,15 @@ export default function Home() {
                 {products.slice(0, 6).map((product, index) => (
                   <AnimatedSection key={product.id} delay={index * 0.05}>
                     <Link href={`/products/${product.slug}`}>
-                      <Card className="cf-card-product group py-0 gap-0">
+                      <Card className="cf-card-product cf-home-lift group py-0 gap-0">
                         <div className="cf-product-cover">
                           {product.coverImage ? (
                             <img
                               src={product.coverImage}
                               alt={product.name}
                               loading="lazy"
+                              width={640}
+                              height={360}
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
@@ -194,8 +243,8 @@ export default function Home() {
                           )}
                           <div className="absolute top-3 right-3">
                             <Badge className="bg-black/50 text-white border-0 backdrop-blur-md font-medium">
-                              {(product as { guaranteeDays?: number }).guaranteeDays ||
-                                30}{" "}
+                              {(product as { guaranteeDays?: number })
+                                .guaranteeDays || 30}{" "}
                               dias
                             </Badge>
                           </div>
@@ -248,7 +297,7 @@ export default function Home() {
 
               <div className="text-center mt-12">
                 <Link href="/products">
-                  <Button size="lg" variant="outline">
+                  <Button size="lg" variant="outline" className="cf-home-btn-secondary">
                     Ver todos os produtos
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
@@ -262,7 +311,9 @@ export default function Home() {
           <div className="container">
             <div className="cf-section-header">
               <p className="cf-caption mb-3">Resultados</p>
-              <h2 className="cf-section-title text-white">Números que impressionam</h2>
+              <h2 className="cf-section-title text-white">
+                Números que impressionam
+              </h2>
               <p className="cf-section-subtitle mx-auto text-muted-foreground">
                 Escala e confiança de uma plataforma pensada para crescer
               </p>
@@ -270,13 +321,29 @@ export default function Home() {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
               {[
-                { value: "10K+", label: "Usuários Ativos", description: "Criadores e alunos ativos" },
-                { value: "R$ 10M+", label: "Em Vendas", description: "Processados na plataforma" },
-                { value: "5K+", label: "Produtos", description: "No catálogo digital" },
-                { value: "98%", label: "Satisfação", description: "Clientes que recomendam" },
+                {
+                  value: "10K+",
+                  label: "Usuários Ativos",
+                  description: "Criadores e alunos ativos",
+                },
+                {
+                  value: "R$ 10M+",
+                  label: "Em Vendas",
+                  description: "Processados na plataforma",
+                },
+                {
+                  value: "5K+",
+                  label: "Produtos",
+                  description: "No catálogo digital",
+                },
+                {
+                  value: "98%",
+                  label: "Satisfação",
+                  description: "Clientes que recomendam",
+                },
               ].map((stat, index) => (
                 <AnimatedSection key={stat.label} delay={index * 0.05}>
-                  <Card className="text-center cf-card-premium bg-card/80 border-border py-0">
+                  <Card className="text-center cf-card-premium cf-home-lift bg-card/80 border-border py-0">
                     <CardContent className="pt-8 pb-7 px-4">
                       <div className="text-3xl lg:text-4xl font-bold text-gradient-owl mb-2">
                         {stat.value}
@@ -310,7 +377,7 @@ export default function Home() {
                 const Icon = feature.icon;
                 return (
                   <AnimatedSection key={feature.title} delay={index * 0.05}>
-                    <Card className="cf-card-premium text-center py-0 h-full">
+                    <Card className="cf-card-premium cf-home-lift text-center py-0 h-full">
                       <CardContent className="p-6">
                         <div className="cf-kpi-icon mx-auto mb-4">
                           <Icon className="w-5 h-5" />
@@ -333,7 +400,8 @@ export default function Home() {
             <div className="cf-section-header">
               <p className="cf-caption mb-3">Social proof</p>
               <h2 className="cf-section-title text-white">
-                O que nossos <span className="text-gradient-owl">clientes</span> dizem
+                O que nossos{" "}
+                <span className="text-gradient-owl">clientes</span> dizem
               </h2>
               <p className="cf-section-subtitle mx-auto text-muted-foreground">
                 Depoimentos de quem já usa a plataforma
@@ -360,7 +428,7 @@ export default function Home() {
             <Link href="/products">
               <Button
                 size="lg"
-                className="bg-white text-[#F97316] hover:bg-white/95 font-bold shadow-xl hover:-translate-y-0.5"
+                className="bg-white text-[#F97316] hover:bg-white/95 font-bold shadow-xl cf-home-lift"
               >
                 Explorar produtos agora
                 <ArrowRight className="ml-2 w-4 h-4" />

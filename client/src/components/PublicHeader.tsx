@@ -72,13 +72,13 @@ export default function PublicHeader() {
         <Link href="/">
           <a className="cf-brand-logo-link flex items-center shrink-0 py-0">
             <BrandLogo
-              wrapClassName="!h-14 lg:!h-[3.75rem]"
-              className="!h-14 !max-h-14 lg:!h-[3.75rem] lg:!max-h-[3.75rem] !w-auto"
+              wrapClassName="!h-[3.65rem] lg:!h-[4.05rem]"
+              className="!h-[3.65rem] !max-h-[3.65rem] lg:!h-[4.05rem] lg:!max-h-[4.05rem] !w-auto"
             />
           </a>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
+        <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
           {navItems.map((item) => (
             <Link key={item.path} href={item.path}>
               <a
@@ -92,14 +92,15 @@ export default function PublicHeader() {
           ))}
         </nav>
 
-        <div className="hidden xl:flex w-full max-w-xs cf-header-search shrink-0">
+        <div className="hidden xl:flex w-full max-w-[17.5rem] cf-header-search shrink-0">
           <SearchBar />
         </div>
 
-        <div className="hidden md:flex items-center gap-2 shrink-0 ml-auto lg:ml-0">
+        <div className="hidden md:flex items-center gap-2.5 shrink-0 ml-auto lg:ml-0">
           <Button
             variant="ghost"
             size="icon"
+            className="rounded-xl hover:bg-white/[0.06]"
             onClick={toggleTheme}
             aria-label="Alternar tema"
           >
@@ -142,10 +143,19 @@ export default function PublicHeader() {
             </>
           ) : (
             <>
-              <Button asChild size="sm" variant="outline" className="px-4">
+              <Button
+                asChild
+                size="sm"
+                variant="outline"
+                className="px-4 rounded-xl border-white/15 hover:border-orange-400/40 hover:bg-white/[0.04]"
+              >
                 <a href={getLoginUrl()}>Entrar</a>
               </Button>
-              <Button asChild size="sm" className="px-5">
+              <Button
+                asChild
+                size="sm"
+                className="px-5 rounded-xl shadow-[0_8px_22px_rgba(249,115,22,0.28)] hover:-translate-y-0.5 transition-transform"
+              >
                 <a href={getLoginUrl()}>Criar conta</a>
               </Button>
             </>
