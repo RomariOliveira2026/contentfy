@@ -724,6 +724,255 @@
     border-right: 2px solid #f97316;
   }
 
+  /* ——— Admin Dashboard Enterprise ——— */
+  .cf-admin-dashboard {
+    max-width: 1440px;
+  }
+
+  .cf-admin-demo-badge {
+    border-color: rgba(249, 115, 22, 0.35) !important;
+    color: #fdba74 !important;
+    background: rgba(249, 115, 22, 0.08);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 650;
+  }
+
+  .cf-admin-commandbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 1rem;
+    border: 1px solid var(--cf-border);
+    background: color-mix(in srgb, var(--cf-card) 88%, transparent);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(12px);
+  }
+
+  .cf-admin-commandbar-search {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    height: 2.5rem;
+    padding: 0 0.85rem;
+    border-radius: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--cf-border) 80%, transparent);
+    background: color-mix(in srgb, var(--cf-card-2) 70%, transparent);
+    color: var(--cf-text-muted);
+    font-size: 0.875rem;
+    text-align: left;
+    transition:
+      border-color 200ms var(--cf-ease),
+      box-shadow 200ms var(--cf-ease),
+      transform 200ms var(--cf-ease);
+  }
+
+  .cf-admin-commandbar-search:hover {
+    border-color: rgba(249, 115, 22, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .cf-admin-kbd {
+    margin-left: auto;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 1.4rem;
+    padding: 0 0.4rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--cf-border);
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--cf-text-muted);
+  }
+
+  @media (min-width: 640px) {
+    .cf-admin-kbd {
+      display: inline-flex;
+    }
+  }
+
+  .cf-admin-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 1.35rem;
+    border-radius: 1.25rem;
+    border: 1px solid var(--cf-border);
+    background:
+      radial-gradient(ellipse 70% 80% at 100% 0%, rgba(249, 115, 22, 0.12), transparent 55%),
+      color-mix(in srgb, var(--cf-card) 92%, transparent);
+    box-shadow: var(--cf-shadow);
+  }
+
+  @media (min-width: 768px) {
+    .cf-admin-hero {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 1.5rem 1.75rem;
+    }
+  }
+
+  .cf-admin-hero-title {
+    font-size: clamp(1.65rem, 2.6vw, 2.15rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--cf-text);
+    margin-bottom: 0.45rem;
+  }
+
+  .cf-admin-hero-sub {
+    max-width: 46rem;
+    font-size: 0.925rem;
+    line-height: 1.6;
+    color: var(--cf-text-muted);
+  }
+
+  .cf-admin-status-panel {
+    shrink: 0;
+    text-align: left;
+  }
+
+  @media (min-width: 768px) {
+    .cf-admin-status-panel {
+      text-align: right;
+    }
+  }
+
+  .cf-admin-kpi {
+    transition:
+      transform 220ms var(--cf-ease),
+      box-shadow 220ms var(--cf-ease),
+      border-color 220ms var(--cf-ease);
+  }
+
+  .cf-admin-kpi:hover {
+    transform: translateY(-2px) scale(1.01);
+    border-color: rgba(249, 115, 22, 0.28);
+    box-shadow:
+      var(--cf-shadow-hover),
+      0 0 28px rgba(249, 115, 22, 0.06);
+  }
+
+  .cf-admin-panel {
+    transition:
+      transform 220ms var(--cf-ease),
+      box-shadow 220ms var(--cf-ease),
+      border-color 220ms var(--cf-ease);
+  }
+
+  .cf-admin-panel:hover {
+    border-color: rgba(249, 115, 22, 0.2);
+    box-shadow: var(--cf-shadow-hover);
+  }
+
+  .cf-admin-product-row {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.65rem;
+    border-radius: 0.9rem;
+    border: 1px solid transparent;
+    transition:
+      background-color 200ms var(--cf-ease),
+      border-color 200ms var(--cf-ease),
+      transform 200ms var(--cf-ease);
+  }
+
+  .cf-admin-product-row:hover {
+    background: rgba(249, 115, 22, 0.05);
+    border-color: rgba(249, 115, 22, 0.14);
+    transform: translateY(-1px);
+  }
+
+  .cf-admin-product-cover {
+    width: 3.25rem;
+    height: 4.1rem;
+    border-radius: 0.55rem;
+    overflow: hidden;
+    background: #0c1220;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+  }
+
+  .cf-admin-product-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cf-admin-table th {
+    text-align: left;
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--cf-text-muted);
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid var(--cf-border);
+  }
+
+  .cf-admin-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--cf-border) 70%, transparent);
+  }
+
+  .cf-admin-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .cf-admin-table tbody tr {
+    transition: background-color 180ms var(--cf-ease);
+  }
+
+  .cf-admin-table tbody tr:hover {
+    background: rgba(249, 115, 22, 0.04);
+  }
+
+  .cf-admin-bar-track {
+    height: 0.4rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--cf-text) 10%, transparent);
+    overflow: hidden;
+  }
+
+  .cf-admin-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--cf-gradient);
+  }
+
+  .cf-admin-quick-action {
+    border-radius: 0.9rem !important;
+    transition:
+      transform 200ms var(--cf-ease),
+      border-color 200ms var(--cf-ease),
+      box-shadow 200ms var(--cf-ease) !important;
+  }
+
+  .cf-admin-quick-action:hover {
+    transform: translateY(-2px) scale(1.01);
+    border-color: rgba(249, 115, 22, 0.35) !important;
+    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cf-admin-kpi:hover,
+    .cf-admin-product-row:hover,
+    .cf-admin-quick-action:hover,
+    .cf-admin-commandbar-search:hover {
+      transform: none;
+    }
+  }
+
   /* ——— KPI ——— */
   .cf-kpi-icon {
     @apply h-11 w-11 rounded-2xl flex items-center justify-center;

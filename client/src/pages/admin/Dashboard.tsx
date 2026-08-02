@@ -1,206 +1,385 @@
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
-import { 
-  DollarSign, 
-  Package, 
-  ShoppingCart, 
-  Users,
-  TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight
+import {
+  DEMO_BADGE_LABEL,
+  demoPrimaryKpis,
+  demoProducts,
+  demoQuickActions,
+  demoRecentSales,
+  demoRevenueMap,
+  demoSecondaryKpis,
+  demoTodaySummary,
+  demoTopProducts,
+  firstName,
+  formatBRLFromNumber,
+  greetingForHour,
+} from "@/lib/admin/demoDashboardData";
+import DashboardCommandBar from "@/components/admin/dashboard/DashboardCommandBar";
+import KpiCard from "@/components/admin/dashboard/KpiCard";
+import RevenueAreaChart from "@/components/admin/dashboard/RevenueAreaChart";
+import DailySalesChart from "@/components/admin/dashboard/DailySalesChart";
+import LiveActivityFeed from "@/components/admin/dashboard/LiveActivityFeed";
+import { Link } from "wouter";
+import {
+  Star,
+  Activity,
+  Target,
+  Zap,
+  BookOpen,
+  PackagePlus,
+  LayoutTemplate,
+  UserPlus,
+  Upload,
+  Ticket,
 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+
+const QUICK_ICONS = [
+  PackagePlus,
+  BookOpen,
+  LayoutTemplate,
+  UserPlus,
+  Upload,
+  Ticket,
+];
 
 export default function AdminDashboard() {
-  const { data: products, isLoading: loadingProducts } = trpc.products.list.useQuery();
   const { data: user } = trpc.auth.me.useQuery();
+  const [syncSeconds, setSyncSeconds] = useState(18);
 
-  // Calcular métricas (mock data por enquanto)
-  const totalProducts = products?.length || 0;
-  const totalSales = 0; // TODO: implementar quando tiver dados reais
-  const totalRevenue = 0; // TODO: implementar quando tiver dados reais
-  const totalCustomers = 0; // TODO: implementar quando tiver dados reais
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setSyncSeconds((s) => (s >= 59 ? 12 : s + 3));
+    }, 3000);
+    return () => window.clearInterval(id);
+  }, []);
 
-  const stats = [
-    {
-      title: "Receita Total",
-      value: `R$ ${(totalRevenue / 100).toFixed(2)}`,
-      change: "+12.5%",
-      trend: "up",
-      icon: DollarSign,
-      color: "text-primary",
-      bgColor: "bg-primary/15",
-    },
-    {
-      title: "Vendas",
-      value: totalSales.toString(),
-      change: "+8.2%",
-      trend: "up",
-      icon: ShoppingCart,
-      color: "text-amber-400",
-      bgColor: "bg-amber-400/15",
-    },
-    {
-      title: "Produtos",
-      value: totalProducts.toString(),
-      change: "+3",
-      trend: "up",
-      icon: Package,
-      color: "text-orange-300",
-      bgColor: "bg-orange-300/15",
-    },
-    {
-      title: "Clientes",
-      value: totalCustomers.toString(),
-      change: "+15.3%",
-      trend: "up",
-      icon: Users,
-      color: "text-red-400",
-      bgColor: "bg-red-400/15",
-    },
-  ];
+  const name = firstName(user?.name);
+  const greeting = greetingForHour();
 
   return (
     <AdminLayout>
-      <div className="p-6 lg:p-8">
-        {/* Header */}
-        <div className="mb-8 lg:mb-10">
-          <p className="cf-caption mb-2">Admin</p>
-          <h1 className="cf-page-title mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Bem-vindo de volta, {user?.name || "Admin"}
+      <div className="cf-admin-dashboard p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-7">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Badge variant="outline" className="cf-admin-demo-badge">
+            {DEMO_BADGE_LABEL}
+          </Badge>
+          <p className="text-[11px] text-muted-foreground">
+            Métricas ilustrativas para demonstração e captura de portfólio
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mb-8">
-          {loadingProducts ? (
-            <>
-              {[1, 2, 3, 4].map((i) => (
-                <Card key={i} className="cf-card-premium">
-                  <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-8 w-20 mb-2" />
-                    <Skeleton className="h-4 w-16" />
-                  </CardContent>
-                </Card>
-              ))}
-            </>
-          ) : (
-            stats.map((stat) => {
-              const Icon = stat.icon;
-              const TrendIcon = stat.trend === "up" ? ArrowUpRight : ArrowDownRight;
+        <DashboardCommandBar userName={user?.name} />
 
-              return (
-                <Card key={stat.title} className="cf-card-premium py-0 gap-4">
-                  <CardHeader className="flex flex-row items-center justify-between pb-0 pt-5">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {stat.title}
-                    </CardTitle>
-                    <div className={`p-2.5 rounded-2xl ${stat.bgColor}`}>
-                      <Icon className={`w-5 h-5 ${stat.color}`} />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pb-5">
-                    <div className="text-2xl font-bold tracking-tight mb-1">{stat.value}</div>
-                    <div className="flex items-center text-sm">
-                      <TrendIcon
-                        className={`w-4 h-4 mr-1 ${
-                          stat.trend === "up" ? "text-emerald-400" : "text-red-400"
-                        }`}
-                      />
-                      <span
-                        className={
-                          stat.trend === "up" ? "text-emerald-400" : "text-red-400"
-                        }
-                      >
-                        {stat.change}
-                      </span>
-                      <span className="text-muted-foreground ml-1">
-                        vs mês anterior
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })
-          )}
-        </div>
+        {/* Executive Hero */}
+        <section className="cf-admin-hero">
+          <div className="min-w-0">
+            <p className="cf-caption mb-1.5">Admin · Dashboard</p>
+            <h1 className="cf-admin-hero-title">
+              {greeting}, {name}.
+            </h1>
+            <p className="cf-admin-hero-sub">
+              Bem-vindo de volta. Hoje ocorreram{" "}
+              <strong className="text-foreground">{demoTodaySummary.sales} vendas</strong>
+              , receita de{" "}
+              <strong className="text-foreground">
+                {formatBRLFromNumber(demoTodaySummary.revenueCents / 100)}
+              </strong>
+              ,{" "}
+              <strong className="text-foreground">
+                {demoTodaySummary.newAffiliates} novos afiliados
+              </strong>{" "}
+              e{" "}
+              <strong className="text-foreground">
+                {demoTodaySummary.newProducts} novos produtos publicados
+              </strong>
+              .
+            </p>
+          </div>
 
-        {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {/* Produtos Recentes */}
-          <Card className="cf-card-premium">
-            <CardHeader>
-              <CardTitle>Produtos Recentes</CardTitle>
+          <div className="cf-admin-status-panel">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              Sistema Online
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Última sincronização: há {syncSeconds} segundos
+            </p>
+          </div>
+        </section>
+
+        {/* Primary KPIs */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+          {demoPrimaryKpis.map((kpi) => (
+            <KpiCard key={kpi.id} {...kpi} />
+          ))}
+        </section>
+
+        {/* Secondary KPIs */}
+        <section className="grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+          {demoSecondaryKpis.map((kpi) => (
+            <KpiCard
+              key={kpi.id}
+              title={kpi.title}
+              valueLabel={
+                "valueLabel" in kpi && kpi.valueLabel
+                  ? kpi.valueLabel
+                  : undefined
+              }
+              value={"value" in kpi ? kpi.value : undefined}
+              change={kpi.change}
+              trend={kpi.trend}
+              compact
+            />
+          ))}
+        </section>
+
+        {/* Charts */}
+        <section className="grid grid-cols-1 xl:grid-cols-5 gap-4 lg:gap-5">
+          <Card className="cf-card-premium cf-admin-panel xl:col-span-3 py-0 gap-0">
+            <CardHeader className="pb-2 pt-5 px-5">
+              <CardTitle className="text-base lg:text-lg">
+                Receita — últimos 12 meses
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Evolução mensal estilo Stripe
+              </p>
             </CardHeader>
-            <CardContent>
-              {loadingProducts ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <Skeleton className="h-12 w-12 rounded" />
-                      <div className="flex-1">
-                        <Skeleton className="h-4 w-32 mb-2" />
-                        <Skeleton className="h-3 w-24" />
-                      </div>
-                      <Skeleton className="h-6 w-16" />
-                    </div>
-                  ))}
-                </div>
-              ) : products && products.length > 0 ? (
-                <div className="space-y-4">
-                  {products.slice(0, 5).map((product) => (
-                    <div
-                      key={product.id}
-                      className="flex items-center gap-4 p-3 rounded-lg hover:bg-accent transition-colors"
-                    >
-                      <div className="h-12 w-12 rounded bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
-                        <Package className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{product.name}</p>
-                        <p className="text-sm text-muted-foreground capitalize">
-                          {product.type}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold">
-                          R$ {(product.price / 100).toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>Nenhum produto cadastrado ainda</p>
-                </div>
-              )}
+            <CardContent className="px-3 pb-5 sm:px-5">
+              <RevenueAreaChart />
             </CardContent>
           </Card>
 
-          {/* Vendas Recentes */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Vendas Recentes</CardTitle>
+          <Card className="cf-card-premium cf-admin-panel xl:col-span-2 py-0 gap-0">
+            <CardHeader className="pb-2 pt-5 px-5">
+              <CardTitle className="text-base lg:text-lg">
+                Vendas por dia
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Últimos 30 dias</p>
             </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <ShoppingCart className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>Nenhuma venda registrada ainda</p>
-                <p className="text-sm mt-2">
-                  As vendas aparecerão aqui quando os clientes começarem a comprar
-                </p>
+            <CardContent className="px-3 pb-5 sm:px-5">
+              <DailySalesChart />
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Products + Sales + Live */}
+        <section className="grid grid-cols-1 xl:grid-cols-12 gap-4 lg:gap-5">
+          <Card className="cf-card-premium cf-admin-panel xl:col-span-4 py-0 gap-0">
+            <CardHeader className="pb-3 pt-5 px-5">
+              <CardTitle className="text-base lg:text-lg">
+                Produtos recentes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-5 space-y-3">
+              {demoProducts.map((product) => (
+                <div key={product.id} className="cf-admin-product-row">
+                  <div className="cf-admin-product-cover">
+                    <img
+                      src={product.cover}
+                      alt=""
+                      loading="lazy"
+                      width={56}
+                      height={72}
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-semibold text-sm truncate">
+                        {product.name}
+                      </p>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "shrink-0 text-[10px]",
+                          product.status === "Publicado"
+                            ? "border-emerald-400/30 text-emerald-300"
+                            : "border-amber-400/30 text-amber-200"
+                        )}
+                      >
+                        {product.status}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {product.category} · {product.priceLabel}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
+                      <span>{product.sales} vendas</span>
+                      <span className="inline-flex items-center gap-0.5 text-amber-300">
+                        <Star className="h-3 w-3 fill-amber-300" />
+                        {product.rating}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="cf-card-premium cf-admin-panel xl:col-span-5 py-0 gap-0">
+            <CardHeader className="pb-3 pt-5 px-5">
+              <CardTitle className="text-base lg:text-lg">
+                Vendas recentes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-0 pb-3 overflow-x-auto">
+              <table className="cf-admin-table w-full min-w-[520px]">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Produto</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th>Hora</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {demoRecentSales.map((sale) => (
+                    <tr key={sale.id}>
+                      <td className="font-medium">{sale.customer}</td>
+                      <td className="text-muted-foreground">{sale.product}</td>
+                      <td className="font-semibold">{sale.amountLabel}</td>
+                      <td>
+                        <span
+                          className={cn(
+                            "inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                            sale.status === "Pago"
+                              ? "bg-emerald-400/15 text-emerald-300"
+                              : "bg-amber-400/15 text-amber-200"
+                          )}
+                        >
+                          {sale.status}
+                        </span>
+                      </td>
+                      <td className="text-muted-foreground tabular-nums">
+                        {sale.time}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+
+          <Card className="cf-card-premium cf-admin-panel xl:col-span-3 py-0 gap-0">
+            <CardHeader className="pb-3 pt-5 px-5">
+              <CardTitle className="text-base lg:text-lg flex items-center gap-2">
+                <Activity className="h-4 w-4 text-primary" />
+                Atividade em tempo real
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-5 pb-5">
+              <LiveActivityFeed />
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Ranking + Revenue map + Quick actions */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
+          <Card className="cf-card-premium cf-admin-panel py-0 gap-0">
+            <CardHeader className="pb-3 pt-5 px-5">
+              <CardTitle className="text-base lg:text-lg">
+                Produtos mais vendidos
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-5 pb-5 space-y-3.5">
+              {demoTopProducts.map((item) => (
+                <div key={item.rank}>
+                  <div className="flex items-center justify-between gap-2 text-sm mb-1.5">
+                    <span className="font-medium truncate">
+                      <span className="text-muted-foreground mr-2 tabular-nums">
+                        {item.rank}
+                      </span>
+                      {item.name}
+                    </span>
+                    <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                      {item.sales}
+                    </span>
+                  </div>
+                  <div className="cf-admin-bar-track">
+                    <div
+                      className="cf-admin-bar-fill"
+                      style={{ width: `${item.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="cf-card-premium cf-admin-panel py-0 gap-0">
+            <CardHeader className="pb-3 pt-5 px-5">
+              <CardTitle className="text-base lg:text-lg flex items-center gap-2">
+                <Target className="h-4 w-4 text-primary" />
+                Mapa de receita
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-5 pb-5 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: "Receita hoje", value: demoRevenueMap.todayLabel },
+                  { label: "Receita semana", value: demoRevenueMap.weekLabel },
+                  { label: "Receita mês", value: demoRevenueMap.monthLabel },
+                  { label: "Meta mensal", value: demoRevenueMap.goalLabel },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-xl border border-border/70 bg-card/40 px-3 py-2.5"
+                  >
+                    <p className="text-[11px] text-muted-foreground">
+                      {item.label}
+                    </p>
+                    <p className="text-sm font-bold mt-0.5">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div className="flex items-center justify-between text-xs mb-2">
+                  <span className="text-muted-foreground">Progresso da meta</span>
+                  <span className="font-semibold text-primary">
+                    {demoRevenueMap.goalProgress}%
+                  </span>
+                </div>
+                <Progress value={demoRevenueMap.goalProgress} className="h-2.5" />
               </div>
             </CardContent>
           </Card>
-        </div>
+
+          <Card className="cf-card-premium cf-admin-panel py-0 gap-0">
+            <CardHeader className="pb-3 pt-5 px-5">
+              <CardTitle className="text-base lg:text-lg flex items-center gap-2">
+                <Zap className="h-4 w-4 text-primary" />
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-5 grid grid-cols-2 gap-2.5">
+              {demoQuickActions.map((action, i) => {
+                const Icon = QUICK_ICONS[i] || PackagePlus;
+                return (
+                  <Link key={action.id} href={action.href}>
+                    <Button
+                      variant="outline"
+                      className="cf-admin-quick-action w-full h-auto py-3 px-2.5 flex-col gap-1.5"
+                    >
+                      <Icon className="h-4 w-4 text-primary" />
+                      <span className="text-[11px] font-medium leading-tight text-center">
+                        {action.label}
+                      </span>
+                    </Button>
+                  </Link>
+                );
+              })}
+            </CardContent>
+          </Card>
+        </section>
       </div>
     </AdminLayout>
   );
