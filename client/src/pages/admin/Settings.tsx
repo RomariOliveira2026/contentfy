@@ -153,7 +153,7 @@ export default function Settings() {
                 <p><strong>Modo Atual:</strong> Teste (Sandbox)</p>
                 <p className="mt-2">
                   Para ativar pagamentos reais, substitua as chaves de teste pelas chaves de produção
-                  em Settings → Secrets no painel Manus.
+                  nas variáveis de ambiente do projeto (Vercel / servidor).
                 </p>
               </div>
             </CardContent>

@@ -22,7 +22,7 @@ const testimonials: Testimonial[] = [
   {
     name: "João Santos",
     role: "Coach de Finanças",
-    content: "Migrei do Hotmart para a Contentfy e economizei mais de 60% em taxas. Além disso, tenho total controle sobre minha plataforma e meus dados. Melhor decisão que tomei para meu negócio!",
+    content: "Migrei para a ContentFy e economizei mais de 60% em taxas. Além disso, tenho total controle sobre minha plataforma e meus dados. Melhor decisão que tomei para meu negócio!",
     initials: "JS",
     rating: 5
   },

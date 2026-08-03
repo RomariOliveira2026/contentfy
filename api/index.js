@@ -2649,6 +2649,372 @@ var creatorRouter = router({
   })
 });
 
+// server/routers/contentfy.ts
+import { z as z9 } from "zod";
+
+// shared/contentfy/identity.ts
+var CONTENTFY_IDENTITY = {
+  name: "ContentFy",
+  company: "BuilderTudo Technologies",
+  category: "Sistema Operacional do Conhecimento Digital",
+  tagline: "Tecnologia propriet\xE1ria para criar, vender e evoluir conhecimento digital.",
+  paymentLabel: "Pagamento ContentFy",
+  guaranteeDays: 30,
+  guaranteeLabel: "Garantia ContentFy"
+};
+
+// shared/contentfy/contracts/success-score.ts
+function computeSuccessScore(input) {
+  const breakdown = {
+    videoProgress: clamp01(input.videoProgress) * 20,
+    activitiesCompleted: normalizeCount(input.activitiesCompleted, 10) * 15,
+    quizzesPassed: normalizeCount(input.quizzesPassed, 8) * 20,
+    applicationTasks: normalizeCount(input.applicationTasks, 6) * 15,
+    consistencyDays: normalizeCount(input.consistencyDays, 30) * 15,
+    completionRate: clamp01(input.completionRate) * 15
+  };
+  const score = Math.round(
+    breakdown.videoProgress + breakdown.activitiesCompleted + breakdown.quizzesPassed + breakdown.applicationTasks + breakdown.consistencyDays + breakdown.completionRate
+  );
+  return {
+    score: Math.min(100, score),
+    grade: scoreToGrade(score),
+    breakdown
+  };
+}
+function clamp01(n) {
+  return Math.max(0, Math.min(1, n));
+}
+function normalizeCount(n, target) {
+  return clamp01(n / target);
+}
+function scoreToGrade(score) {
+  if (score >= 85) return "master";
+  if (score >= 65) return "rise";
+  if (score >= 40) return "grow";
+  return "seed";
+}
+
+// shared/contentfy/contracts/products.ts
+var DEFAULT_PRODUCT_SURFACES = [
+  "landing",
+  "library",
+  "downloads",
+  "certificates",
+  "resources"
+];
+
+// server/core/registry.ts
+var CONTENTFY_CORE_STATUS = [
+  { domain: "auth", maturity: "implemented", notes: "OAuth + session (unchanged)" },
+  { domain: "permissions", maturity: "implemented", notes: "Role checks in routers" },
+  { domain: "products", maturity: "implemented", notes: "Ecosystem model scaffolded" },
+  { domain: "orders", maturity: "implemented", notes: "Existing orders router" },
+  { domain: "payments", maturity: "in_development", notes: "ContentFy Pay abstraction over Stripe" },
+  { domain: "certificates", maturity: "implemented" },
+  { domain: "progress", maturity: "implemented", notes: "LMS progress" },
+  { domain: "media", maturity: "planned", notes: "Media engine scaffolded" },
+  { domain: "analytics", maturity: "planned", notes: "Insight engine scaffolded" },
+  { domain: "recommendations", maturity: "planned", notes: "Discovery engine scaffolded" },
+  { domain: "ai", maturity: "in_development", notes: "AI engine + existing ai-studio/llm" },
+  { domain: "notifications", maturity: "planned" },
+  { domain: "achievements", maturity: "planned" },
+  { domain: "protect", maturity: "in_development", notes: "30-day guarantee policy" },
+  { domain: "learn", maturity: "in_development", notes: "Adaptive seams over LMS" },
+  { domain: "insight", maturity: "planned" },
+  { domain: "discovery", maturity: "planned" },
+  { domain: "successScore", maturity: "in_development", notes: "Formula ready" },
+  { domain: "community", maturity: "planned" }
+];
+
+// server/core/payments/providers/stripe-provider.ts
+var StripePaymentProvider = class {
+  id = "stripe";
+  async createIntent(_req) {
+    return {
+      provider: "stripe",
+      displayName: CONTENTFY_IDENTITY.paymentLabel,
+      status: "pending"
+    };
+  }
+  async refund(_req) {
+    return {
+      refundId: `cf_refund_pending_${Date.now()}`,
+      status: "pending"
+    };
+  }
+};
+
+// server/core/payments/payment-engine.ts
+var PaymentEngine = class {
+  providers = /* @__PURE__ */ new Map();
+  active = "stripe";
+  constructor() {
+    this.register(new StripePaymentProvider());
+  }
+  register(provider) {
+    this.providers.set(provider.id, provider);
+  }
+  setActive(id) {
+    if (!this.providers.has(id)) {
+      throw new Error(`Payment provider not registered: ${id}`);
+    }
+    this.active = id;
+  }
+  getActiveProvider() {
+    const provider = this.providers.get(this.active);
+    if (!provider) throw new Error("No active payment provider");
+    return provider;
+  }
+  getDisplayName() {
+    return CONTENTFY_IDENTITY.paymentLabel;
+  }
+  createIntent(req) {
+    return this.getActiveProvider().createIntent(req);
+  }
+  refund(req) {
+    return this.getActiveProvider().refund(req);
+  }
+  /** Split / wallet seams — planned, not wired to production yet. */
+  planSplit(_rules) {
+    return { status: "planned", engine: "contentfy-pay-split" };
+  }
+};
+var paymentEngine = new PaymentEngine();
+
+// server/core/protect/guarantee-engine.ts
+var GuaranteeEngine = class {
+  getPolicy() {
+    return {
+      days: CONTENTFY_IDENTITY.guaranteeDays,
+      label: CONTENTFY_IDENTITY.guaranteeLabel,
+      description: `Voc\xEA tem ${CONTENTFY_IDENTITY.guaranteeDays} dias para solicitar reembolso pela Garantia ContentFy.`
+    };
+  }
+  createRequest(input) {
+    return {
+      id: `cf_g_${Date.now()}`,
+      orderId: input.orderId,
+      userId: input.userId,
+      status: "requested",
+      requestedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      reason: input.reason
+    };
+  }
+  transition(record, status) {
+    return {
+      ...record,
+      status,
+      resolvedAt: status === "approved" || status === "refunded" || status === "denied" || status === "expired" ? (/* @__PURE__ */ new Date()).toISOString() : record.resolvedAt
+    };
+  }
+};
+var guaranteeEngine = new GuaranteeEngine();
+
+// server/core/ai/ai-engine.ts
+var AIEngine = class {
+  providers = /* @__PURE__ */ new Map();
+  templates = /* @__PURE__ */ new Map();
+  history = /* @__PURE__ */ new Map();
+  memory = /* @__PURE__ */ new Map();
+  registerProvider(provider) {
+    this.providers.set(provider.id, provider);
+  }
+  registerTemplate(template) {
+    this.templates.set(template.id, template);
+  }
+  getTemplate(id) {
+    return this.templates.get(id);
+  }
+  appendHistory(sessionId, message) {
+    const list = this.history.get(sessionId) ?? [];
+    list.push(message);
+    this.history.set(sessionId, list);
+    return list;
+  }
+  getHistory(sessionId) {
+    return this.history.get(sessionId) ?? [];
+  }
+  remember(key, value) {
+    this.memory.set(key, value);
+  }
+  recall(key) {
+    return this.memory.get(key);
+  }
+  productAISlug(productSlug) {
+    return `${productSlug}-ai`;
+  }
+  planAction(action, context) {
+    return {
+      status: "planned",
+      action,
+      context: context ?? null
+    };
+  }
+};
+var aiEngine = new AIEngine();
+
+// server/core/learn/learn-engine.ts
+var LearnEngine = class {
+  buildTrail(root) {
+    return root;
+  }
+  recommendNext(hint) {
+    return {
+      ...hint,
+      recommendedNext: [],
+      reason: "Architecture ready \u2014 adaptive ranking not wired yet."
+    };
+  }
+};
+var learnEngine = new LearnEngine();
+
+// server/core/insight/insight-engine.ts
+var InsightEngine = class {
+  emptyDashboard(audience) {
+    return {
+      audience,
+      generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      metrics: [
+        { key: "conversion", label: "Convers\xE3o", value: 0, unit: "percent" },
+        { key: "engagement", label: "Engajamento", value: 0, unit: "percent" },
+        { key: "retention", label: "Reten\xE7\xE3o", value: 0, unit: "percent" },
+        { key: "completion", label: "Conclus\xE3o", value: 0, unit: "percent" },
+        { key: "revenue", label: "Receita", value: 0, unit: "currency" },
+        { key: "ltv", label: "Lifetime Value", value: 0, unit: "currency" }
+      ]
+    };
+  }
+};
+var insightEngine = new InsightEngine();
+
+// server/core/discovery/discovery-engine.ts
+var DiscoveryEngine = class {
+  recommend(profile) {
+    if (profile.completedProductIds.length > 0) {
+      return {
+        productIds: [],
+        strategy: "related",
+        reason: "Related products seam ready \u2014 ranking not wired."
+      };
+    }
+    if (profile.goals.length > 0) {
+      return {
+        productIds: [],
+        strategy: "goals",
+        reason: "Goal-based discovery seam ready."
+      };
+    }
+    return {
+      productIds: [],
+      strategy: "fallback",
+      reason: "Fallback catalog discovery."
+    };
+  }
+};
+var discoveryEngine = new DiscoveryEngine();
+
+// server/core/success-score/success-score-engine.ts
+var SuccessScoreEngine = class {
+  compute(input) {
+    return computeSuccessScore(input);
+  }
+};
+var successScoreEngine = new SuccessScoreEngine();
+
+// server/core/media/media-engine.ts
+var MediaEngine = class {
+  planTransform(asset, options) {
+    return {
+      assetId: asset.id,
+      targetFormat: options.format ?? "webp",
+      maxWidth: options.maxWidth,
+      quality: options.quality ?? 80,
+      compress: options.compress ?? true,
+      cdnReady: Boolean(asset.cdnReady),
+      status: "planned"
+    };
+  }
+};
+var mediaEngine = new MediaEngine();
+
+// server/core/community/community-engine.ts
+var CommunityEngine = class {
+  createSpace(space) {
+    return { ...space, id: `cf_space_${Date.now()}` };
+  }
+  openThread(input) {
+    return {
+      ...input,
+      id: `cf_thread_${Date.now()}`,
+      createdAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+};
+var communityEngine = new CommunityEngine();
+
+// server/core/notifications/notification-center.ts
+var NotificationCenter = class {
+  inbox = /* @__PURE__ */ new Map();
+  enqueue(payload) {
+    const record = {
+      ...payload,
+      id: `cf_n_${Date.now()}`,
+      read: false,
+      createdAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    const list = this.inbox.get(payload.userId) ?? [];
+    list.unshift(record);
+    this.inbox.set(payload.userId, list);
+    return record;
+  }
+  list(userId) {
+    return this.inbox.get(userId) ?? [];
+  }
+  markRead(userId, id) {
+    const list = this.inbox.get(userId) ?? [];
+    const next = list.map((n) => n.id === id ? { ...n, read: true } : n);
+    this.inbox.set(userId, next);
+    return next.find((n) => n.id === id) ?? null;
+  }
+};
+var notificationCenter = new NotificationCenter();
+
+// server/core/products/product-ecosystem.ts
+var ProductEcosystemEngine = class {
+  forProduct(input) {
+    return {
+      productId: input.productId,
+      slug: input.slug,
+      surfaces: input.surfaces ?? [...DEFAULT_PRODUCT_SURFACES],
+      aiSlug: input.aiSlug ?? `${input.slug}-ai`
+    };
+  }
+};
+var productEcosystemEngine = new ProductEcosystemEngine();
+
+// server/routers/contentfy.ts
+var contentfyRouter = router({
+  identity: publicProcedure.query(() => CONTENTFY_IDENTITY),
+  capabilities: publicProcedure.query(() => ({
+    identity: CONTENTFY_IDENTITY,
+    domains: CONTENTFY_CORE_STATUS,
+    paymentDisplayName: paymentEngine.getDisplayName(),
+    guarantee: guaranteeEngine.getPolicy()
+  })),
+  guaranteePolicy: publicProcedure.query(() => guaranteeEngine.getPolicy()),
+  previewSuccessScore: publicProcedure.input(
+    z9.object({
+      videoProgress: z9.number().min(0).max(1).default(0),
+      activitiesCompleted: z9.number().min(0).default(0),
+      quizzesPassed: z9.number().min(0).default(0),
+      applicationTasks: z9.number().min(0).default(0),
+      consistencyDays: z9.number().min(0).default(0),
+      completionRate: z9.number().min(0).max(1).default(0)
+    })
+  ).query(({ input }) => successScoreEngine.compute(input))
+});
+
 // server/routers.ts
 var appRouter = router({
   // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -2671,7 +3037,9 @@ var appRouter = router({
   certificates: certificatesRouter,
   orders: ordersRouter,
   users: usersRouter,
-  creator: creatorRouter
+  creator: creatorRouter,
+  // ContentFy OS — Evolution X (additive meta layer)
+  contentfy: contentfyRouter
 });
 
 // server/_core/context.ts

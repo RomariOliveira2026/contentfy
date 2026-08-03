@@ -1,21 +1,27 @@
 # ContentFy — Architecture
 
-## Visão geral
+## Visão
 
-A ContentFy é uma plataforma de infoprodutos digitais com:
+A ContentFy é o **Sistema Operacional do Conhecimento Digital** (BuilderTudo Technologies).
 
-- **Client** — interface web (React / Vite)
-- **Server** — API e regras de negócio (Express / tRPC)
-- **Billing** — Stripe (checkout, webhooks, assinaturas)
-- **Auth** — OAuth / sessão
-- **LMS** — entrega e acesso a produtos digitais
+Ela não compete por cópia de marketplaces tradicionais — inaugura categoria própria.
+
+## Stack
+
+- **Client** — React / Vite / Experience Layer
+- **Server** — Express / tRPC / ContentFy Core engines
+- **Shared** — contratos `@shared/contentfy`
+- **Billing** — ContentFy Pay (Stripe internamente)
+- **Auth** — OAuth / sessão (inalterado)
+- **LMS** — entrega existente + Learn seams
 
 ## Princípios
 
-- Separar claramente UI, API e integrações externas
-- Não acoplar identidade visual a lógica de produto
-- Assets de marca vivem em `/brand` (Design Freeze v1.0)
+1. Evolução incremental — nunca reconstrução
+2. Não quebrar Stripe, Checkout, OAuth, LMS, Admin, Creator, Marketplace
+3. Marca e produto proprietários (Design Freeze v1.0)
+4. Novas capacidades nascem em Core + contracts tipados
 
-## Próximos documentos
+## Evolution X
 
-Detalhar fluxos de compra, afiliados, área do produtor e membros neste arquivo conforme o roadmap.
+Ver documentação completa em [`docs/evolution-x/`](./evolution-x/).

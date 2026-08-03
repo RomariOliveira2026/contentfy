@@ -27,7 +27,7 @@ export default function FAQ() {
         },
         {
           question: "Quanto custa usar a Contentfy?",
-          answer: "Não cobramos mensalidade! Você paga apenas quando vende: 3,99% + R$ 0,39 por transação (taxa do Stripe). Isso é 60% mais barato que plataformas como Hotmart (9,9%) e Eduzz (8,9%)."
+          answer: "Não cobramos mensalidade! Você paga apenas quando vende: 3,99% + R$ 0,39 por transação via Pagamento ContentFy. Taxas competitivas, sem mensalidade de plataforma."
         },
         {
           question: "Preciso de conhecimentos técnicos?",
@@ -115,7 +115,7 @@ export default function FAQ() {
         },
         {
           question: "Posso migrar de outra plataforma?",
-          answer: "Sim! Ajudamos você a migrar seus produtos e clientes de outras plataformas (Hotmart, Eduzz, Kiwify, etc.) de forma simples e segura."
+          answer: "Sim! Ajudamos você a migrar seus produtos e clientes de outras plataformas de forma simples e segura."
         },
         {
           question: "A plataforma tem atualizações?",

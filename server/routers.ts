@@ -10,6 +10,7 @@ import { certificatesRouter } from "./routers/certificates";
 import { ordersRouter } from "./routers/orders";
 import { usersRouter } from "./routers/users";
 import { creatorRouter } from "./routers/creator";
+import { contentfyRouter } from "./routers/contentfy";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -34,6 +35,9 @@ export const appRouter = router({
   orders: ordersRouter,
   users: usersRouter,
   creator: creatorRouter,
+
+  // ContentFy OS — Evolution X (additive meta layer)
+  contentfy: contentfyRouter,
 });
 
 export type AppRouter = typeof appRouter;
