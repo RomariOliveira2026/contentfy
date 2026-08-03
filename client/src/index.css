@@ -563,13 +563,20 @@
   }
 
   .cf-nav-link {
-    @apply relative text-sm font-medium text-muted-foreground;
+    @apply relative text-sm font-medium text-muted-foreground whitespace-nowrap;
     padding: 0.55rem 0.95rem;
     border-radius: 0.75rem;
     transition:
       color 220ms var(--cf-ease),
       background-color 220ms var(--cf-ease),
       transform 220ms var(--cf-ease);
+  }
+
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .cf-nav-link {
+      padding: 0.5rem 0.55rem;
+      font-size: 0.8125rem;
+    }
   }
 
   .cf-nav-link:hover {

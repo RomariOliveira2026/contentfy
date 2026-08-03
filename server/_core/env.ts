@@ -5,12 +5,17 @@ function resolveOAuthServerUrl() {
     /seu[_-]?oauth|sou[_-]?oauth|SEU_OAUTH|YOUR[_-]?OAUTH|example\.com/i.test(
       configured
     );
+  // :3010 mock is optional; token exchange must hit the same app's /api/dev-oauth.
+  const isOrphanLocalMock = /localhost:3010|127\.0\.0\.1:3010/i.test(
+    configured
+  );
 
-  if (isPlaceholder) {
+  if (isPlaceholder || isOrphanLocalMock) {
     if (process.env.VERCEL_URL) {
       return `https://${process.env.VERCEL_URL}/api/dev-oauth/`;
     }
-    return "http://localhost:3001/api/dev-oauth/";
+    const port = process.env.PORT || "3000";
+    return `http://localhost:${port}/api/dev-oauth/`;
   }
 
   return configured.endsWith("/") ? configured : `${configured}/`;

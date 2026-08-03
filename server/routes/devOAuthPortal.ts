@@ -21,7 +21,10 @@ export function registerDevOAuthPortal(app: Express) {
   });
 
   app.get("/api/dev-oauth/app-auth", (req: Request, res: Response) => {
-    const redirectUri = typeof req.query.redirectUri === "string" ? req.query.redirectUri : "";
+    const redirectUri =
+      (typeof req.query.redirectUri === "string" && req.query.redirectUri) ||
+      (typeof req.query.redirectUrl === "string" && req.query.redirectUrl) ||
+      "";
     const state = typeof req.query.state === "string" ? req.query.state : "";
     if (!redirectUri) {
       res.status(400).json({ error: "redirectUri is required" });

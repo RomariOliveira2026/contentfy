@@ -20,9 +20,16 @@ function resolveOAuthPortalUrl() {
     /seu[_-]?oauth|sou[_-]?oauth|SEU_OAUTH|YOUR[_-]?OAUTH|example\.com/i.test(
       configured
     );
+  // Separate mock on :3010 is optional — app already mounts /api/dev-oauth on :3000.
+  const isOrphanLocalMock = /localhost:3010|127\.0\.0\.1:3010/i.test(
+    configured
+  );
 
-  // Always fall back to the built-in mock portal on this same origin.
-  if (isPlaceholder && typeof window !== "undefined") {
+  // Prefer built-in portal on the same origin (Entrar works with only `npm run dev`).
+  if (
+    typeof window !== "undefined" &&
+    (isPlaceholder || isOrphanLocalMock)
+  ) {
     return `${window.location.origin}/api/dev-oauth`;
   }
 

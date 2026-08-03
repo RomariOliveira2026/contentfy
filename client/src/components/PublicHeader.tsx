@@ -125,13 +125,13 @@ export default function PublicHeader() {
           </a>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+        <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 flex-1 justify-center min-w-0 flex-nowrap">
           {navItems.map((item) =>
             "hash" in item && item.hash ? (
               <a
                 key={`${item.path}#${item.hash}`}
                 href={`${item.path}#${item.hash}`}
-                className={`cf-nav-link ${
+                className={`cf-nav-link whitespace-nowrap shrink-0 ${
                   isActive(item.path, item.hash) ? "cf-nav-link-active" : ""
                 }`}
                 onClick={(e) => {
@@ -144,7 +144,7 @@ export default function PublicHeader() {
             ) : (
               <Link key={item.path} href={item.path}>
                 <a
-                  className={`cf-nav-link ${
+                  className={`cf-nav-link whitespace-nowrap shrink-0 ${
                     isActive(item.path) ? "cf-nav-link-active" : ""
                   }`}
                 >
