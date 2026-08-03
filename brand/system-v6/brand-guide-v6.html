@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ContentFy Symbol Evolution V6 — Brand Guide</title>
+<style>
+  :root { --bg:#070b12; --card:#111827; --line:rgba(248,250,252,.08); --mute:#94a3b8; --snow:#f8fafc; --orange:#f97316; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--snow); line-height:1.5; }
+  .wrap { max-width:1040px; margin:0 auto; padding:40px 20px 100px; }
+  .badge { display:inline-block; border:1px solid rgba(249,115,22,.4); color:#f59e0b; padding:4px 10px; border-radius:999px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+  h1 { font-size:clamp(32px,5vw,48px); letter-spacing:-.04em; margin:10px 0; }
+  h2 { font-size:22px; margin:0 0 12px; }
+  h3 { font-size:14px; color:#e2e8f0; margin:0 0 8px; }
+  p { color:var(--mute); max-width:70ch; }
+  section { padding:36px 0; border-top:1px solid var(--line); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media (max-width:800px){ .grid2,.grid3{grid-template-columns:1fr;} }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  .stage { min-height:150px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:#0b1220; border:1px solid var(--line); }
+  .stage.light { background:#f8fafc; }
+  .sizes { display:flex; gap:14px; align-items:end; flex-wrap:wrap; }
+  .sizes figure { margin:0; text-align:center; }
+  .sizes figcaption { font-size:11px; color:#64748b; margin-top:6px; }
+  .print { position:fixed; right:16px; bottom:16px; background:var(--orange); color:#111; border:0; border-radius:999px; padding:12px 18px; font-weight:700; cursor:pointer; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+  a { color:#fdba74; }
+  @media print { .print{display:none;} }
+</style>
+</head>
+<body>
+<button class="print" onclick="window.print()">Exportar PDF</button>
+<div class="wrap">
+  <div class="badge">Symbol Evolution V6.2 · Base V5 lapidada</div>
+  <h1>ContentFy V6<br/><span style="background:linear-gradient(135deg,#f97316,#eab308);-webkit-background-clip:text;color:transparent">Mesma coruja. Mais autoridade.</span></h1>
+  <p>Wordmark, paleta e arquitetura de marca intactos. Ainda não implementado no app. Comparativo: <a href="./symbol-comparison.html">symbol-comparison.html</a></p>
+
+  <section>
+    <h2>Master</h2>
+    <div class="grid2">
+      <div class="card"><h3>Light</h3><div class="stage light"><img src="./png/symbol-master-512.png" height="120" alt="m"/></div></div>
+      <div class="card"><h3>Dark</h3><div class="stage"><img src="./png/symbol-master-dark-512.png" height="120" alt="md"/></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Variantes</h2>
+    <div class="grid3">
+      <div class="card"><h3>Mono Light</h3><div class="stage"><img src="./png/symbol-mono-light-512.png" height="88" alt="l"/></div></div>
+      <div class="card"><h3>Mono Dark</h3><div class="stage light"><img src="./png/symbol-mono-dark-512.png" height="88" alt="d"/></div></div>
+      <div class="card"><h3>Outline</h3><div class="stage light"><img src="./png/symbol-outline-512.png" height="88" alt="o"/></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Redução</h2>
+    <div class="card">
+      <div class="sizes">
+        <figure><img src="./png/micro-16.png" width="16" height="16" alt="16"/><figcaption>16</figcaption></figure>
+        <figure><img src="./png/micro-20.png" width="20" height="20" alt="20"/><figcaption>20</figcaption></figure>
+        <figure><img src="./png/micro-24.png" width="24" height="24" alt="24"/><figcaption>24</figcaption></figure>
+        <figure><img src="./png/micro-32.png" width="32" height="32" alt="32"/><figcaption>32</figcaption></figure>
+        <figure><img src="./png/symbol-master-512.png" width="64" height="64" alt="64"/><figcaption>64</figcaption></figure>
+        <figure><img src="./png/symbol-master-512.png" width="128" height="128" alt="128"/><figcaption>128</figcaption></figure>
+      </div>
+      <p style="margin-top:10px;font-size:13px">Safe area = 0.5× altura. Micro-mark obrigatório ≤24px.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>App · Favicon · Avatar · Grid</h2>
+    <div class="grid3">
+      <div class="card" style="text-align:center"><img src="./png/app-icon-512.png" width="96" style="border-radius:22px" alt="app"/></div>
+      <div class="card" style="text-align:center"><img src="./png/favicon-48.png" width="48" alt="fav"/></div>
+      <div class="card" style="text-align:center"><img src="./png/avatar-256.png" width="88" alt="av"/></div>
+    </div>
+    <div class="stage light" style="margin-top:12px"><img src="./png/construction-grid-512.png" height="160" alt="grid"/></div>
+  </section>
+
+  <section>
+    <h2>Lockups</h2>
+    <div class="stage"><img src="./png/logo-horizontal-840.png" style="height:48px" alt="h"/></div>
+    <div class="stage light" style="margin-top:10px"><img src="./png/logo-horizontal-on-light-840.png" style="height:48px" alt="hl"/></div>
+    <div class="stage" style="margin-top:10px"><img src="./png/logo-vertical-560.png" style="height:140px" alt="v"/></div>
+  </section>
+
+  <section>
+    <h2>Arquivos</h2>
+    <table>
+      <tr><th>Path</th><th>Uso</th></tr>
+      <tr><td>svg/symbol-master.svg</td><td>Master color V6</td></tr>
+      <tr><td>svg/symbol-filled.svg</td><td>Filled currentColor</td></tr>
+      <tr><td>svg/symbol-outline.svg</td><td>Outline ≥24px</td></tr>
+      <tr><td>svg/symbol-mono-*.svg</td><td>1 cor</td></tr>
+      <tr><td>svg/micro-mark.svg</td><td>16–24px (cabeça)</td></tr>
+      <tr><td>svg/app-icon.svg · favicon.svg · avatar.svg</td><td>Produto</td></tr>
+      <tr><td>svg/construction-grid.svg</td><td>Grid + safe area</td></tr>
+      <tr><td>svg/logo-*.svg</td><td>Lockups (wordmark congelado)</td></tr>
+      <tr><td>png/*</td><td>Raster</td></tr>
+      <tr><td>symbol-comparison.html</td><td>Original × V5 × V6</td></tr>
+    </table>
+  </section>
+</div>
+</body>
+</html>

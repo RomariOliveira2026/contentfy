@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="P1 Fold Aperture">
+  <!-- P1 v2 · dual soft peaks + fold body + apertures + wedge · clean base -->
+  <path
+    fill="currentColor"
+    fill-rule="evenodd"
+    d="M21 13.5 27.2 8.8c1.3-1 3.2-.7 4.1.6L32 10.2l.7-.8c.9-1.3 2.8-1.6 4.1-.6L43 13.5l8.4 13.8c1 1.7 1.1 3.8.2 5.6L46.4 43.2c-.6 1.2-.9 2.5-.9 3.9v2.8c0 1.6-1.7 2.6-3.1 1.8L32 47.2 21.6 51.7c-1.4.8-3.1-.2-3.1-1.8v-2.8c0-1.4-.3-2.7-.9-3.9L12.4 32.9c-.9-1.8-.8-3.9.2-5.6L21 13.5zM19.5 29.8a5.5 5.5 0 1 0 11 0a5.5 5.5 0 1 0-11 0zm14 0a5.5 5.5 0 1 0 11 0a5.5 5.5 0 1 0-11 0zM32 35.4l-2.7 4.8h5.4L32 35.4z"
+  />
+</svg>

@@ -19,7 +19,8 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
+import { ContentFyAvatar, ContentFySymbol } from "@/components/branding";
+import { APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -63,11 +64,7 @@ export default function DashboardLayout({
           <div className="flex flex-col items-center gap-6">
             <div className="relative group">
               <div className="relative">
-                <img
-                  src={APP_LOGO}
-                  alt={APP_TITLE}
-                  className="h-20 w-20 rounded-xl object-cover shadow"
-                />
+                <ContentFyAvatar size={80} className="rounded-xl shadow" />
               </div>
             </div>
             <div className="text-center space-y-2">
@@ -172,10 +169,11 @@ function DashboardLayoutContent({
             <div className="flex items-center gap-3 pl-2 group-data-[collapsible=icon]:px-0 transition-all w-full">
               {isCollapsed ? (
                 <div className="relative h-8 w-8 shrink-0 group">
-                  <img
-                    src={APP_LOGO}
-                    className="h-8 w-8 rounded-md object-cover ring-1 ring-border"
-                    alt="Logo"
+                  <ContentFySymbol
+                    level="micro"
+                    size={32}
+                    className="h-8 w-8 rounded-md ring-1 ring-border"
+                    decorative
                   />
                   <button
                     onClick={toggleSidebar}
@@ -187,10 +185,11 @@ function DashboardLayoutContent({
               ) : (
                 <>
                   <div className="flex items-center gap-3 min-w-0">
-                    <img
-                      src={APP_LOGO}
-                      className="h-8 w-8 rounded-md object-cover ring-1 ring-border shrink-0"
-                      alt="Logo"
+                    <ContentFySymbol
+                      level="micro"
+                      size={32}
+                      className="h-8 w-8 rounded-md ring-1 ring-border shrink-0"
+                      decorative
                     />
                     <span className="font-semibold tracking-tight truncate">
                       {APP_TITLE}

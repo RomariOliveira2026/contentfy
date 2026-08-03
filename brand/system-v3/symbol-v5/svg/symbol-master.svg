@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" role="img" aria-label="ContentFy">
+  <!--
+    ContentFy Symbol Evolution V5.1
+    Continuous bust silhouette matching original DNA
+    Flat planes only ? no texture / glow bloom / 3D
+  -->
+  <defs>
+    <linearGradient id="eyeRing" x1="18%" y1="12%" x2="82%" y2="88%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="55%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="sideAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ONE continuous silhouette: ears ? head ? body ? ears -->
+  <path
+    fill="#111827"
+    d="M32 10
+       L24 28
+       C18 36 14 46 14 56
+       V70
+       C14 78 17 85 22 90
+       L18 96
+       C15 100 14 106 14 111
+       C14 118 20 123 28 124.5
+       L48 128
+       H80
+       L100 124.5
+       C108 123 114 118 114 111
+       C114 106 113 100 110 96
+       L106 90
+       C111 85 114 78 114 70
+       V56
+       C114 46 110 36 104 28
+       L96 10
+       L84 16
+       L78 28
+       H50
+       L44 16
+       Z"
+  />
+
+  <!-- Aggressive brows ? original expression -->
+  <path fill="#0B1220" d="M28 36 C36 28 46 24 54 24 H58 L54 36 C44 38 36 44 32 52 Z"/>
+  <path fill="#0B1220" d="M100 36 C92 28 82 24 74 24 H70 L74 36 C84 38 92 44 96 52 Z"/>
+  <path fill="#0B1220" d="M54 34 H74 L70 42 H58 Z"/>
+
+  <!-- Chest plates ? flat leaf rhythm (no veins) -->
+  <path fill="#1A2332" d="M46 82 C50 72 58 66 64 65 C70 66 78 72 82 82 L78 108 C72 111 68 112 64 112 C60 112 56 111 50 108 Z"/>
+  <path fill="#151C28" d="M36 86 C40 78 46 74 52 73 L54 106 C48 107 44 107 40 105 Z"/>
+  <path fill="#151C28" d="M92 86 C88 78 82 74 76 73 L74 106 C80 107 84 107 88 105 Z"/>
+  <path fill="#0F1622" d="M56 90 C59 84 62 82 64 82 C66 82 69 84 72 90 L70 108 H58 Z"/>
+
+  <!-- Side accents ? flat (was glow) -->
+  <path stroke="url(#sideAccent)" stroke-width="3" stroke-linecap="round" fill="none" d="M26 62 C23 72 23 84 26 94"/>
+  <path stroke="url(#sideAccent)" stroke-width="3" stroke-linecap="round" fill="none" d="M102 62 C105 72 105 84 102 94"/>
+
+  <!-- Eyes ? same structure, solid fills -->
+  <circle cx="48" cy="56" r="15" fill="url(#eyeRing)"/>
+  <circle cx="80" cy="56" r="15" fill="url(#eyeRing)"/>
+  <circle cx="48" cy="56" r="9.5" fill="#070B12"/>
+  <circle cx="80" cy="56" r="9.5" fill="#070B12"/>
+  <circle cx="48" cy="56" r="4.8" fill="#F59E0B"/>
+  <circle cx="80" cy="56" r="4.8" fill="#F59E0B"/>
+  <circle cx="48" cy="56" r="2.5" fill="#070B12"/>
+  <circle cx="80" cy="56" r="2.5" fill="#070B12"/>
+
+  <!-- Beak -->
+  <path fill="#070B12" d="M64 66 L54.5 84 C53.7 85.4 54.7 87.2 56.3 87.2 H71.7 C73.3 87.2 74.3 85.4 73.5 84 Z"/>
+  <path fill="#1E293B" d="M64 69 L58 83 H70 Z"/>
+</svg>

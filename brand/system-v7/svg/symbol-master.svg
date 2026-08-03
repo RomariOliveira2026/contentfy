@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" role="img" aria-label="ContentFy">
+  <!--
+    ContentFy Symbol V7.1 — reverse-engineered restoration
+    favicon 512: eyes (160,188)/(353,188); body (54,14)-(456,498)
+    Mapped: eyes (40,51)/(88,51) r=15.2 · ear tips at bbox extremes
+    Solids only — no texture / glow / bevel / gradient
+  -->
+
+  <!-- Silhouette — wide ear flare + bust (original DNA) -->
+  <path
+    fill="#111827"
+    d="M20 6
+       L14 28
+       C10 38 8 48 8 58
+       V70
+       C8 79 12 87 18 93
+       L13 100
+       C10 105 8 111 8 116
+       C8 123 16 127 28 128
+       L48 128
+       H80
+       L100 128
+       C112 127 120 123 120 116
+       C120 111 118 105 115 100
+       L110 93
+       C116 87 120 79 120 70
+       V58
+       C120 48 118 38 114 28
+       L108 6
+       L92 14
+       L84 28
+       H44
+       L36 14
+       Z"
+  />
+
+  <!-- Brow plates — ~35° hooded V (authority) -->
+  <path fill="#0B1220" d="
+    M22 38
+    C32 26 44 21 55 20.5
+    H59
+    L55 37
+    C45 39 35 46 28 56
+    Z"/>
+  <path fill="#0B1220" d="
+    M106 38
+    C96 26 84 21 73 20.5
+    H69
+    L73 37
+    C83 39 93 46 100 56
+    Z"/>
+  <path fill="#0B1220" d="M54 35 H74 L69.5 46 H58.5 Z"/>
+
+  <!-- Chest feathers — flat leaf rows (geometry of original, no relief) -->
+  <path fill="#1A2332" d="M42 88 C48 75 56 68 64 67 C72 68 80 75 86 88 L80 118 C72 122 68 123.5 64 123.5 C60 123.5 56 122 48 118 Z"/>
+  <path fill="#151C28" d="M30 92 C36 80 44 74 52 73 L54 116 C46 117.5 40 117 34 114 Z"/>
+  <path fill="#151C28" d="M98 92 C92 80 84 74 76 73 L74 116 C82 117.5 88 117 94 114 Z"/>
+  <path fill="#0F1622" d="M54 96 C58 88 61 85 64 85 C67 85 70 88 74 96 L71 118 H57 Z"/>
+
+  <!-- Side accents — solid contour signature -->
+  <path stroke="#F97316" stroke-width="2.8" stroke-linecap="round" fill="none" d="M20 64 C16 78 16 92 21 104"/>
+  <path stroke="#F97316" stroke-width="2.8" stroke-linecap="round" fill="none" d="M108 64 C112 78 112 92 107 104"/>
+  <path stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" fill="none" d="M21 104 C23 110 27 115 32 118"/>
+  <path stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" fill="none" d="M107 104 C105 110 101 115 96 118"/>
+
+  <!-- Eyes — concentric solids for optical depth · cy=51 (47% body) -->
+  <circle cx="40" cy="51" r="15.2" fill="#F97316"/>
+  <circle cx="88" cy="51" r="15.2" fill="#F97316"/>
+  <circle cx="40" cy="51" r="13.1" fill="#EA580C"/>
+  <circle cx="88" cy="51" r="13.1" fill="#EA580C"/>
+  <circle cx="40" cy="51" r="10.6" fill="#070B12"/>
+  <circle cx="88" cy="51" r="10.6" fill="#070B12"/>
+  <circle cx="40" cy="51" r="4.4" fill="#F59E0B"/>
+  <circle cx="88" cy="51" r="4.4" fill="#F59E0B"/>
+  <circle cx="40" cy="51" r="2.2" fill="#070B12"/>
+  <circle cx="88" cy="51" r="2.2" fill="#070B12"/>
+
+  <!-- Beak — emerges from brow bridge -->
+  <path fill="#070B12" d="M64 56 L55 78 C54.2 79.6 55.4 81.5 57.2 81.5 H70.8 C72.6 81.5 73.8 79.6 73 78 Z"/>
+  <path fill="#1E293B" d="M64 59 L58.2 76.5 H69.8 Z"/>
+</svg>

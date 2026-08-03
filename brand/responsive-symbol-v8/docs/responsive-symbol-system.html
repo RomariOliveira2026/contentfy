@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ContentFy V8 — Responsive Symbol System</title>
+<style>
+  :root { --bg:#070b12; --card:#111827; --line:rgba(248,250,252,.08); --mute:#94a3b8; --snow:#f8fafc; --orange:#f97316; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--snow); line-height:1.5; }
+  .wrap { max-width:1140px; margin:0 auto; padding:40px 20px 100px; }
+  .badge { display:inline-block; border:1px solid rgba(249,115,22,.4); color:#f59e0b; padding:4px 10px; border-radius:999px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+  h1 { font-size:clamp(28px,5vw,44px); letter-spacing:-.04em; margin:10px 0; }
+  h2 { font-size:22px; margin:0 0 14px; letter-spacing:-.03em; }
+  h3 { font-size:14px; margin:0 0 8px; color:#e2e8f0; }
+  p { color:var(--mute); max-width:72ch; }
+  section { padding:36px 0; border-top:1px solid var(--line); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:900px){ .grid2,.grid3,.grid4 { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; }
+  .stage { min-height:180px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:#0b1220; border:1px solid var(--line); gap:10px; flex-wrap:wrap; }
+  .stage.light { background:#f8fafc; }
+  .sizes { display:flex; gap:16px; align-items:end; flex-wrap:wrap; }
+  .sizes figure { margin:0; text-align:center; }
+  .sizes figcaption { font-size:11px; color:#64748b; margin-top:6px; }
+  .mock { border-radius:12px; border:1px solid var(--line); overflow:hidden; background:#0b1220; }
+  .mock-bar { display:flex; align-items:center; gap:10px; padding:10px 14px; background:#111827; border-bottom:1px solid var(--line); }
+  .mock-side { display:flex; min-height:120px; }
+  .mock-nav { width:56px; background:#0b1220; border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:12px; }
+  .mock-main { flex:1; padding:16px; color:#64748b; font-size:12px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+  a { color:#fdba74; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="badge">ContentFy Responsive Symbol System V8</div>
+  <h1>Master · Compact · Micro</h1>
+  <p>Sistema responsivo vetorizado a partir da coruja original. Sem redesign. Sem V5–V7. Aguardando aprovação — não implementado no produto.</p>
+
+  <section>
+    <h2>1–4 · Níveis</h2>
+    <div class="grid4">
+      <div class="card"><h3>Original</h3><div class="stage"><img src="../../../client/public/favicon.png" height="120" alt="o"/></div></div>
+      <div class="card"><h3>Master ≥96px</h3><div class="stage light"><img src="../png/contentfy-symbol-master-on-light-512.png" height="120" alt="m"/></div></div>
+      <div class="card"><h3>Compact 32–95</h3><div class="stage light"><img src="../png/contentfy-symbol-compact-on-light-512.png" height="120" alt="c"/></div></div>
+      <div class="card"><h3>Micro 16–32</h3><div class="stage light"><img src="../png/contentfy-symbol-micro-on-light-256.png" height="100" alt="µ"/></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>5 · Sobreposição Original × Master</h2>
+    <div class="card">
+      <div class="stage" style="position:relative;min-height:260px">
+        <div style="position:relative;width:200px;height:240px">
+          <img src="../../../client/public/favicon.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain" alt="a"/>
+          <img src="../png/contentfy-symbol-master-512.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.5" alt="b"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>6 · Silhueta</h2>
+    <div class="stage light"><img src="../png/contentfy-symbol-silhouette-512.png" height="180" alt="s"/></div>
+  </section>
+
+  <section>
+    <h2>7 · Grade de construção</h2>
+    <div class="stage light"><img src="../png/contentfy-construction-grid-512.png" height="200" alt="g"/></div>
+  </section>
+
+  <section>
+    <h2>8 · Escala</h2>
+    <div class="card">
+      <h3>Micro</h3>
+      <div class="sizes">
+        <figure><img src="../png/micro-16.png" width="16" height="16" alt="16"/><figcaption>16</figcaption></figure>
+        <figure><img src="../png/micro-20.png" width="20" height="20" alt="20"/><figcaption>20</figcaption></figure>
+        <figure><img src="../png/micro-24.png" width="24" height="24" alt="24"/><figcaption>24</figcaption></figure>
+        <figure><img src="../png/micro-32.png" width="32" height="32" alt="32"/><figcaption>32</figcaption></figure>
+        <figure><img src="../png/contentfy-favicon-32.png" width="32" height="32" alt="f"/><figcaption>favicon</figcaption></figure>
+      </div>
+      <h3 style="margin-top:18px">Compact / Master</h3>
+      <div class="sizes">
+        <figure><img src="../png/contentfy-symbol-compact-on-light-512.png" width="48" alt="48"/><figcaption>48</figcaption></figure>
+        <figure><img src="../png/contentfy-symbol-compact-on-light-512.png" width="64" alt="64"/><figcaption>64</figcaption></figure>
+        <figure><img src="../png/contentfy-symbol-master-on-light-512.png" width="96" alt="96"/><figcaption>96</figcaption></figure>
+        <figure><img src="../png/contentfy-symbol-master-on-light-512.png" width="128" alt="128"/><figcaption>128</figcaption></figure>
+        <figure><img src="../png/contentfy-symbol-master-on-light-512.png" width="180" alt="256"/><figcaption>~256</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>9 · Aplicações reais</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3>Favicon / Avatar / App</h3>
+        <div class="stage">
+          <img src="../png/contentfy-favicon-32.png" width="32" alt="f"/>
+          <img src="../png/contentfy-avatar-256.png" width="64" alt="a"/>
+          <img src="../png/contentfy-app-icon-512.png" width="72" style="border-radius:16px" alt="app"/>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Header (Compact)</h3>
+        <div class="mock">
+          <div class="mock-bar">
+            <img src="../png/contentfy-symbol-compact-on-light-512.png" height="28" alt="h" style="filter:brightness(0) invert(1)"/>
+            <span style="font-size:13px;color:#e2e8f0">ContentFy</span>
+            <span style="margin-left:auto;font-size:11px;color:#64748b">Dashboard</span>
+          </div>
+          <div class="mock-main">Área do criador · biblioteca · marketplace</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Sidebar (Micro)</h3>
+        <div class="mock">
+          <div class="mock-side">
+            <div class="mock-nav">
+              <img src="../png/micro-24.png" width="24" height="24" alt="n"/>
+              <div style="width:18px;height:2px;background:#334155"></div>
+              <div style="width:18px;height:2px;background:#334155"></div>
+            </div>
+            <div class="mock-main">Painel administrativo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3>Landing (Master)</h3>
+      <div class="stage" style="min-height:140px;flex-direction:column;gap:8px">
+        <img src="../png/contentfy-symbol-master-512.png" height="88" alt="land"/>
+        <span style="font-size:12px;color:#94a3b8">Hero institucional · splash · campanha</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>10 · Lockups</h2>
+    <div class="stage"><img src="../png/logo-horizontal-master-880.png" style="height:56px" alt="hm"/></div>
+    <div class="stage light" style="margin-top:10px"><img src="../png/logo-horizontal-master-on-light-880.png" style="height:56px" alt="hl"/></div>
+    <div class="stage" style="margin-top:10px"><img src="../png/logo-horizontal-compact-800.png" style="height:48px" alt="hc"/></div>
+    <div class="stage" style="margin-top:10px"><img src="../png/logo-vertical-master-560.png" style="height:160px" alt="v"/></div>
+  </section>
+
+  <section>
+    <h2>Regra de uso</h2>
+    <table>
+      <tr><th>Contexto</th><th>Nível</th></tr>
+      <tr><td>Homepage, campanha, splash, mockup</td><td>Master</td></tr>
+      <tr><td>Header, dashboard, login, checkout</td><td>Compact</td></tr>
+      <tr><td>Favicon, avatar, 16–32px</td><td>Micro</td></tr>
+    </table>
+    <p style="margin-top:12px">
+      <a href="./original-vs-master.html">Original × Master</a> ·
+      <a href="./measurements.md">Medições</a> ·
+      <a href="./reduction-guide.md">Redução</a> ·
+      <a href="./restoration-decisions.md">Decisões</a>
+    </p>
+  </section>
+</div>
+</body>
+</html>

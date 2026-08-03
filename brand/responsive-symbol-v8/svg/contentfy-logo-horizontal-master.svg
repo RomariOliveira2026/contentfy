@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 90" role="img" aria-label="ContentFy">
+  <defs>
+    <linearGradient id="fyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="52%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(4,2) scale(0.55)"><!--
+    ContentFy Symbol V8 MASTER  faithful vectorization of original favicon
+    viewBox 128�154 matches original bbox aspect 1.204
+    Eyes @ (33.8,57.6)/(94.7,57.6) r=18.1  measured from 512� source
+    No texture / glow / bevel / 3D  solids only
+  -->
+
+  <!-- 1. Silhouette  tufts flare + vertical bust -->
+  <path fill="#111827" d="
+    M4 1
+    L2 22
+    C1 36 1 50 2 62
+    V78
+    C2 90 6 100 14 108
+    L8 118
+    C4 126 2 134 2 140
+    C2 148 12 153 26 154
+    H102
+    C116 153 126 148 126 140
+    C126 134 124 126 120 118
+    L114 108
+    C122 100 126 90 126 78
+    V62
+    C127 50 127 36 126 22
+    L124 1
+    L104 10
+    L96 26
+    H32
+    L24 10
+    Z"/>
+
+  <!-- 2. Brow plates  strong V, ~33�, hooded authority -->
+  <path fill="#0B1220" d="
+    M10 40
+    C22 24 36 18 48 17
+    H54
+    L48 38
+    C36 40 22 50 14 62
+    Z"/>
+  <path fill="#0B1220" d="
+    M118 40
+    C106 24 92 18 80 17
+    H74
+    L80 38
+    C92 40 106 50 114 62
+    Z"/>
+  <path fill="#0B1220" d="M50 36 H78 L72 50 H56 Z"/>
+
+  <!-- 3. Chest layers  3 leaf rows (geometry kept, texture removed) -->
+  <path fill="#1A2332" d="
+    M36 92
+    C44 76 54 68 64 67
+    C74 68 84 76 92 92
+    L84 142
+    C74 148 68 150 64 150
+    C60 150 54 148 44 142
+    Z"/>
+  <path fill="#151C28" d="
+    M22 98
+    C30 82 42 74 52 72
+    L54 140
+    C42 142 32 140 24 134
+    Z"/>
+  <path fill="#151C28" d="
+    M106 98
+    C98 82 86 74 76 72
+    L74 140
+    C86 142 96 140 104 134
+    Z"/>
+  <path fill="#0F1622" d="
+    M52 104
+    C57 92 61 88 64 88
+    C67 88 71 92 76 104
+    L72 144 H56 Z"/>
+
+  <!-- 4. Side accents  solid Orange + deep tip (no glow) -->
+  <path stroke="#F97316" stroke-width="3.2" stroke-linecap="round" fill="none"
+    d="M14 70 C8 88 8 108 14 124"/>
+  <path stroke="#F97316" stroke-width="3.2" stroke-linecap="round" fill="none"
+    d="M114 70 C120 88 120 108 114 124"/>
+  <path stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" fill="none"
+    d="M14 124 C16 132 22 140 30 146"/>
+  <path stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" fill="none"
+    d="M114 124 C112 132 106 140 98 146"/>
+
+  <!-- 5. Eyes  optical depth via concentric solids -->
+  <circle cx="33.8" cy="57.6" r="18.1" fill="#F97316"/>
+  <circle cx="94.7" cy="57.6" r="18.1" fill="#F97316"/>
+  <circle cx="33.8" cy="57.6" r="15.4" fill="#EA580C"/>
+  <circle cx="94.7" cy="57.6" r="15.4" fill="#EA580C"/>
+  <circle cx="33.8" cy="57.6" r="12.2" fill="#070B12"/>
+  <circle cx="94.7" cy="57.6" r="12.2" fill="#070B12"/>
+  <circle cx="33.8" cy="57.6" r="4.2" fill="#F59E0B"/>
+  <circle cx="94.7" cy="57.6" r="4.2" fill="#F59E0B"/>
+  <circle cx="33.8" cy="57.6" r="2.1" fill="#070B12"/>
+  <circle cx="94.7" cy="57.6" r="2.1" fill="#070B12"/>
+
+  <!-- 6. Beak  keystone from brow bridge -->
+  <path fill="#070B12" d="
+    M64 62
+    L52 86
+    C51 88.2 52.4 90.5 54.6 90.5
+    H73.4
+    C75.6 90.5 77 88.2 76 86
+    Z"/>
+  <path fill="#1E293B" d="M64 66 L55.5 84.5 H72.5 Z"/></g>
+  <g transform="translate(90,18) scale(1)"><!-- Proprietary CF lettering � Content solid � Fy gradient � optical unit -->
+  <g fill="#F8FAFC" fill-rule="evenodd">
+    <path d="M33.6 9.6c-11.2 0-20.2 8.5-20.2 19.4S22.4 48.4 33.6 48.4c6.6 0 12.5-3 16.1-7.8l-4.2-3.2c-2.5 3.3-6.7 5.4-11.3 5.4-7.6 0-13.5-5.9-13.5-13.8S26.6 15.2 33.6 15.2c4.6 0 8.8 2.1 11.3 5.4l4.2-3.2c-3.6-4.8-9.5-7.8-15.5-7.8z"/>
+    <path d="M63.8 17.6c-7.8 0-14.2 6.2-14.2 14s6.4 14 14.2 14 14.2-6.2 14.2-14-6.4-14-14.2-14zm0 5.6c4.5 0 8 3.6 8 8.4s-3.5 8.4-8 8.4-8-3.6-8-8.4 3.5-8.4 8-8.4z"/>
+    <path d="M86.4 18.4v4.4c1.7-2.7 4.7-4.6 8.4-4.6 6.8 0 10.9 4.4 10.9 11.5V45.6h-6V31.6c0-4.2-2.2-6.7-5.9-6.7-3.9 0-7.4 2.9-7.4 8.3v12.4h-6V18.4h6z"/>
+    <path d="M116.2 11.2v7.2h-5.4v5h5.4v14.6c0 5.4 2.5 8 7.4 8 1.7 0 3.3-.3 4.7-.9v-5.2c-.9.3-1.8.5-2.7.5-2 0-3.2-1.1-3.2-3.5V23.4h5.9v-5h-5.9v-7.2h-6.2z"/>
+    <path d="M144.2 17.4c-8.1 0-14.6 6.3-14.6 14.2 0 8.1 6.3 14.2 15 14.2 5.7 0 10.4-2.5 13-6.4l-4.3-3.1c-1.6 2.4-4.5 3.9-8.3 3.9-5 0-8.7-3.1-9.4-7.6h22.9c.1-.7.2-1.4.2-2.2 0-7.6-5.7-13-13.5-13zm-8.6 11.7c.7-4 3.9-6.6 8.4-6.6 4.3 0 7.4 2.6 7.8 6.6h-16.2z"/>
+    <path d="M168.2 18.4v4.4c1.7-2.7 4.7-4.6 8.4-4.6 6.8 0 10.9 4.4 10.9 11.5V45.6h-6V31.6c0-4.2-2.2-6.7-5.9-6.7-3.9 0-7.4 2.9-7.4 8.3v12.4h-6V18.4h6z"/>
+    <path d="M197.8 11.2v7.2h-5.4v5h5.4v14.6c0 5.4 2.5 8 7.4 8 1.7 0 3.3-.3 4.7-.9v-5.2c-.9.3-1.8.5-2.7.5-2 0-3.2-1.1-3.2-3.5V23.4h5.9v-5h-5.9v-7.2h-6.2z"/>
+  </g>
+  <g fill="url(#fyGrad)">
+    <!-- F starts immediately after Content optical end � integrated unit -->
+    <path d="M216.2 9.6h19.2v5.4h-13.2v9.4h11.8v5.2H222.2V45.6h-6V9.6z"/>
+    <path d="M241.2 18.4h6.3l6.1 14.6 6.1-14.6h6.4l-10.1 23c-2 4.5-4.4 6.8-8.9 6.8-1.5 0-3-.3-4.2-.8v-5.2c.8.3 1.8.5 2.7.5 2 0 3.1-.9 3.9-2.9l.4-.9-8.7-20.5z"/>
+  </g></g>
+</svg>

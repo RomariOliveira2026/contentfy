@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="ContentFy">
+  <rect width="1024" height="1024" rx="229" fill="#F97316"/>
+  <g transform="translate(168,48) scale(5.4)">
+    <path fill="#070B12" d="M4 1 L2 22 C1 36 1 50 2 62 V78 C2 90 6 100 14 108 L8 118 C4 126 2 134 2 140 C2 148 12 153 26 154 H102 C116 153 126 148 126 140 C126 134 124 126 120 118 L114 108 C122 100 126 90 126 78 V62 C127 50 127 36 126 22 L124 1 L104 10 L96 26 H32 L24 10 Z"/>
+    <path fill="#0B1220" d="M10 40 C22 24 36 18 48 17 H54 L48 38 C36 40 22 50 14 62 Z M118 40 C106 24 92 18 80 17 H74 L80 38 C92 40 106 50 114 62 Z M50 36 H78 L72 50 H56 Z"/>
+    <path fill="#1A2332" d="M36 92 C44 76 54 68 64 67 C74 68 84 76 92 92 L84 142 C74 148 68 150 64 150 C60 150 54 148 44 142 Z"/>
+    <path stroke="#FDBA74" stroke-width="3.2" stroke-linecap="round" fill="none" d="M14 70 C8 88 8 108 14 124 M114 70 C120 88 120 108 114 124"/>
+    <circle cx="33.8" cy="57.6" r="18.1" fill="#F8FAFC"/>
+    <circle cx="94.7" cy="57.6" r="18.1" fill="#F8FAFC"/>
+    <circle cx="33.8" cy="57.6" r="12.2" fill="#070B12"/>
+    <circle cx="94.7" cy="57.6" r="12.2" fill="#070B12"/>
+    <circle cx="33.8" cy="57.6" r="5.2" fill="#F59E0B"/>
+    <circle cx="94.7" cy="57.6" r="5.2" fill="#F59E0B"/>
+    <circle cx="33.8" cy="57.6" r="2.6" fill="#070B12"/>
+    <circle cx="94.7" cy="57.6" r="2.6" fill="#070B12"/>
+    <path fill="#E2E8F0" d="M64 62 L52 86 C51 88.2 52.4 90.5 54.6 90.5 H73.4 C75.6 90.5 77 88.2 76 86 Z"/>
+  </g>
+</svg>

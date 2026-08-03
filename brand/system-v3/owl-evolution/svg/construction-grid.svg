@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Owl construction grid">
+  <rect width="64" height="64" fill="#F8FAFC"/>
+  <g stroke="#F97316" stroke-opacity=".22" stroke-width=".5">
+    <path d="M0 8H64M0 16H64M0 24H64M0 32H64M0 40H64M0 48H64M0 56H64"/>
+    <path d="M8 0V64M16 0V64M24 0V64M32 0V64M40 0V64M48 0V64M56 0V64"/>
+  </g>
+  <rect x="4" y="4" width="56" height="56" fill="none" stroke="#F97316" stroke-dasharray="2 2" stroke-width=".75"/>
+  <circle cx="23.5" cy="27.8" r="7.4" fill="none" stroke="#F97316" stroke-width=".8"/>
+  <circle cx="40.5" cy="27.8" r="7.4" fill="none" stroke="#F97316" stroke-width=".8"/>
+  <path d="M32 4V60M4 32H60" stroke="#F97316" stroke-opacity=".35" stroke-width=".6"/>
+  <path fill="#111827" fill-rule="evenodd" opacity=".9" d="M19.2 4.8 15.1 13.6C11.4 16.2 9 20.6 9 25.6v6.4c0 2.8 1 5.4 2.8 7.4l-1.2 1.6C9.2 43.2 8.4 46 8.4 49c0 4.4 3.2 8 7.8 9.2l6.2 1.6c2.1.55 4.3.8 6.6.8h2c2.3 0 4.5-.25 6.6-.8l6.2-1.6c4.6-1.2 7.8-4.8 7.8-9.2 0-3-.8-5.8-2.2-8.2l-1.2-1.6c1.8-2 2.8-4.6 2.8-7.4v-6.4c0-5-2.4-9.4-6.1-12L44.8 4.8l-5.4 2.2-2.2 5.2H26.8l-2.2-5.2-5.4-2.2zM16.1 27.8a7.4 7.4 0 1 0 14.8 0a7.4 7.4 0 1 0-14.8 0zm17 0a7.4 7.4 0 1 0 14.8 0a7.4 7.4 0 1 0-14.8 0zM23.5 24.6a3.2 3.2 0 1 0 0 6.4a3.2 3.2 0 1 0 0-6.4zm17 0a3.2 3.2 0 1 0 0 6.4a3.2 3.2 0 1 0 0-6.4zM32 33.4l-3.6 6.6h7.2L32 33.4z"/>
+</svg>

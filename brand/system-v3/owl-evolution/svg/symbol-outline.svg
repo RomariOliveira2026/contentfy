@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="ContentFy Owl Outline">
+  <path stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" d="M19.5 5.6 15.6 13.9C12.2 16.4 10 20.5 10 25.2v6c0 2.6.95 5 2.6 6.9l-1.1 1.5C10.1 42.2 9.4 44.8 9.4 47.6c0 4.1 3 7.4 7.2 8.5l5.8 1.5c2 .5 4.1.75 6.2.75h2.8c2.1 0 4.2-.25 6.2-.75l5.8-1.5c4.2-1.1 7.2-4.4 7.2-8.5 0-2.8-.7-5.4-2.1-7.6l-1.1-1.5c1.65-1.9 2.6-4.3 2.6-6.9v-6c0-4.7-2.2-8.8-5.6-11.3L44.5 5.6l-5 2-2 4.8H26.5l-2-4.8-5-2z"/>
+  <circle cx="23.5" cy="27.8" r="6.4" stroke="currentColor" stroke-width="2.2"/>
+  <circle cx="40.5" cy="27.8" r="6.4" stroke="currentColor" stroke-width="2.2"/>
+  <circle cx="23.5" cy="27.8" r="2" fill="currentColor"/>
+  <circle cx="40.5" cy="27.8" r="2" fill="currentColor"/>
+  <path stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" d="M29.2 35.2 32 40.4l2.8-5.2"/>
+  <path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M12.6 31c-1 3-1.2 6.4-.3 9.6M51.4 31c1 3 1.2 6.4.3 9.6"/>
+</svg>

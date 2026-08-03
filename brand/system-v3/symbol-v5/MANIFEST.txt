@@ -1,0 +1,14 @@
+ContentFy Symbol Evolution V5.1
+Modernização da coruja ORIGINAL — não reinvenção.
+
+OPEN
+  brand-guide-v5.html
+
+DNA (~90%)
+  Orelhas · sobrancelhas agressivas · olhar em anéis · bico · peito · acentos laterais · simetria frontal
+
+REMOVED
+  Textura · glow bloom · bevel · escamas detalhadas · 3D
+
+TEST
+  micro 16/20/24 · master 32–1024 · lockups · app · favicon · avatar

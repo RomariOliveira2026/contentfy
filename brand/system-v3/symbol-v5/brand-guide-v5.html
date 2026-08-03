@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ContentFy Symbol Evolution V5</title>
+<style>
+  :root { --bg:#070b12; --card:#111827; --line:rgba(248,250,252,.08); --mute:#94a3b8; --snow:#f8fafc; --orange:#f97316; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--snow); line-height:1.5; }
+  .wrap { max-width:1040px; margin:0 auto; padding:40px 20px 100px; }
+  .badge { display:inline-block; border:1px solid rgba(249,115,22,.4); color:#f59e0b; padding:4px 10px; border-radius:999px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+  h1 { font-size:clamp(32px,5vw,48px); letter-spacing:-.04em; margin:10px 0; }
+  h2 { font-size:22px; margin:0 0 12px; letter-spacing:-.03em; }
+  h3 { font-size:14px; color:#e2e8f0; margin:0 0 8px; }
+  p { color:var(--mute); max-width:70ch; }
+  section { padding:40px 0; border-top:1px solid var(--line); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media (max-width:800px){ .grid2,.grid3 { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  .stage { min-height:160px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:#0b1220; border:1px solid var(--line); }
+  .stage.light { background:#f8fafc; }
+  .sizes { display:flex; gap:16px; align-items:end; flex-wrap:wrap; }
+  .sizes figure { margin:0; text-align:center; }
+  .sizes figcaption { font-size:11px; color:#64748b; margin-top:6px; }
+  .print { position:fixed; right:16px; bottom:16px; background:var(--orange); color:#111; border:0; border-radius:999px; padding:12px 18px; font-weight:700; cursor:pointer; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+  .ok { color:#4ade80; } .no { color:#fb7185; }
+  @media print { .print { display:none; } }
+</style>
+</head>
+<body>
+<button class="print" onclick="window.print()">Exportar PDF</button>
+<div class="wrap">
+  <div class="badge">Symbol Evolution V5 · Modernizar, não reinventar</div>
+  <h1>A mesma coruja.<br/><span style="background:linear-gradient(135deg,#f97316,#eab308);-webkit-background-clip:text;color:transparent">Mais sofisticada.</span></h1>
+  <p>Patrimônio visual preservado (~90% DNA). Textura, glow, 3D e aspecto gamer removidos. Pronto para 15 anos.</p>
+
+  <section>
+    <h2>01 · Antes → Depois</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>Original</h3>
+        <div class="stage"><img src="../../../client/public/favicon.png" height="120" alt="original" /></div>
+        <p style="margin-top:10px">Textura, bevel, glow, escamas — personalidade forte.</p>
+      </div>
+      <div class="card">
+        <h3>V5 Master</h3>
+        <div class="stage light"><img src="./svg/symbol-master.svg" height="120" alt="v5" /></div>
+        <p style="margin-top:10px">Mesma expressão, olhar, sobrancelhas, bico, presença — flat SVG.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>02 · DNA preservado</h2>
+    <table>
+      <tr><th>Manter</th><th>Remover</th></tr>
+      <tr><td class="ok">Expressão inteligente · olhar · sobrancelhas agressivas</td><td class="no">Textura / couro / escamas</td></tr>
+      <tr><td class="ok">Formato da cabeça · orelhas · proporção · bico</td><td class="no">Glow bloom · bevel · 3D</td></tr>
+      <tr><td class="ok">Presença · imponência · simetria frontal</td><td class="no">Excesso de linhas / sombras / gamer</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>03 · Variantes</h2>
+    <div class="grid3">
+      <div class="card"><h3>Master</h3><div class="stage light"><img src="./svg/symbol-master.svg" height="88" alt="m"/></div></div>
+      <div class="card"><h3>Mono Light</h3><div class="stage"><img src="./svg/symbol-mono-light.svg" height="88" alt="l"/></div></div>
+      <div class="card"><h3>Mono Dark</h3><div class="stage light"><img src="./svg/symbol-mono-dark.svg" height="88" alt="d"/></div></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="card"><h3>Outline</h3><div class="stage light"><img src="./svg/symbol-outline.svg" height="88" alt="o" style="color:#070b12"/></div></div>
+      <div class="card"><h3>Construction + Safe Area</h3><div class="stage light"><img src="./svg/construction-grid.svg" height="120" alt="g"/></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>04 · Manual de redução</h2>
+    <p>Safe area = 0.5× altura do mark. Abaixo de 24px usar micro-mark. Outline ≥24px.</p>
+    <div class="card" style="margin-top:12px">
+      <div class="sizes">
+        <figure><img src="./svg/micro-mark.svg" width="16" style="filter:invert(1)" alt="16"/><figcaption>16</figcaption></figure>
+        <figure><img src="./svg/micro-mark.svg" width="20" style="filter:invert(1)" alt="20"/><figcaption>20</figcaption></figure>
+        <figure><img src="./svg/micro-mark.svg" width="24" style="filter:invert(1)" alt="24"/><figcaption>24</figcaption></figure>
+        <figure><img src="./svg/symbol-mono-light.svg" width="32" alt="32"/><figcaption>32</figcaption></figure>
+        <figure><img src="./svg/symbol-mono-light.svg" width="48" alt="48"/><figcaption>48</figcaption></figure>
+        <figure><img src="./svg/symbol-master.svg" width="64" alt="64"/><figcaption>64</figcaption></figure>
+        <figure><img src="./svg/symbol-master.svg" width="128" alt="128"/><figcaption>128</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>05 · App · Favicon · Avatar · Lockups</h2>
+    <div class="grid3">
+      <div class="card" style="text-align:center"><img src="./svg/app-icon.svg" width="96" style="border-radius:22px" alt="app"/></div>
+      <div class="card" style="text-align:center"><img src="./svg/favicon.svg" width="48" alt="fav"/></div>
+      <div class="card" style="text-align:center"><img src="./svg/avatar.svg" width="88" alt="av"/></div>
+    </div>
+    <div class="stage" style="margin-top:12px"><img src="./svg/logo-horizontal.svg" style="height:48px" alt="h"/></div>
+    <div class="stage light" style="margin-top:10px"><img src="./svg/logo-horizontal-on-light.svg" style="height:48px" alt="hl"/></div>
+    <div class="stage" style="margin-top:10px"><img src="./svg/logo-vertical.svg" style="height:140px" alt="v"/></div>
+  </section>
+
+  <section>
+    <h2>06 · Arquivos</h2>
+    <table>
+      <tr><th>Path</th><th>Uso</th></tr>
+      <tr><td>svg/symbol-master.svg</td><td>Master color</td></tr>
+      <tr><td>svg/symbol-filled.svg</td><td>Filled currentColor</td></tr>
+      <tr><td>svg/symbol-outline.svg</td><td>Outline ≥24px</td></tr>
+      <tr><td>svg/symbol-mono-*.svg</td><td>1 cor</td></tr>
+      <tr><td>svg/micro-mark.svg</td><td>16–24px</td></tr>
+      <tr><td>svg/app-icon.svg · favicon.svg · avatar.svg</td><td>Produto</td></tr>
+      <tr><td>svg/construction-grid.svg</td><td>Grid + safe area</td></tr>
+      <tr><td>svg/logo-horizontal*.svg · logo-vertical.svg</td><td>Lockups</td></tr>
+      <tr><td>png/*</td><td>Raster</td></tr>
+    </table>
+  </section>
+
+  <p style="font-size:12px;color:#64748b;margin-top:32px">ContentFy Symbol Evolution V5 · Modernização do patrimônio · BuilderTudo Technologies</p>
+</div>
+</body>
+</html>

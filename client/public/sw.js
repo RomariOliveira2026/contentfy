@@ -1,10 +1,12 @@
 // ContentFy Service Worker - PWA Cache Strategy
-const CACHE_NAME = 'contentfy-v4';
+const CACHE_NAME = 'contentfy-v5-brand';
 const urlsToCache = [
   '/',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
+  '/favicon.svg',
+  '/brand/svg/logo-horizontal.svg',
 ];
 
 // Install event - cache essential files

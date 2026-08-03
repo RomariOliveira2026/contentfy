@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="ContentFy">
+  <defs>
+    <linearGradient id="av" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+  </defs>
+  <circle cx="128" cy="128" r="128" fill="url(#av)"/>
+  <g transform="translate(32,20) scale(1.5)">
+    <path fill="#070B12" d="M36 5 L29 20 C23 28 20 38 20 48 V60 C20 68 22 74 25.5 78.5 L23 84 C20.5 88 19.5 93 19.5 98 C19.5 106 25.5 112 34 113.5 L52 118 H76 L94 113.5 C102.5 112 108.5 106 108.5 98 C108.5 93 107.5 88 105 84 L102.5 78.5 C106 74 108 68 108 60 V48 C108 38 105 28 99 20 L92 5 L83 9.5 L78.5 20 H49.5 L45 9.5 Z"/>
+    <path fill="#0B1220" d="M29.5 27 L43.5 14.5 L54.5 14.5 L56.5 19 L49.5 31.5 C41 33.5 34.5 39.5 30.5 48 Z M98.5 27 L84.5 14.5 L73.5 14.5 L71.5 19 L78.5 31.5 C87 33.5 93.5 39.5 97.5 48 Z M52 25.5 H76 L71.5 37 H56.5 Z"/>
+    <circle cx="49.2" cy="52" r="17.6" fill="#F8FAFC"/>
+    <circle cx="78.8" cy="52" r="17.6" fill="#F8FAFC"/>
+    <circle cx="49.2" cy="52" r="14.8" fill="#070B12"/>
+    <circle cx="78.8" cy="52" r="14.8" fill="#070B12"/>
+    <circle cx="49.2" cy="52" r="3.4" fill="#F59E0B"/>
+    <circle cx="78.8" cy="52" r="3.4" fill="#F59E0B"/>
+    <circle cx="49.2" cy="52" r="1.55" fill="#070B12"/>
+    <circle cx="78.8" cy="52" r="1.55" fill="#070B12"/>
+    <path fill="#E2E8F0" d="M64 63.5 L60.6 87.5 C60.4 88.5 61.1 89.3 62.1 89.3 H65.9 C66.9 89.3 67.6 88.5 67.4 87.5 Z"/>
+  </g>
+</svg>

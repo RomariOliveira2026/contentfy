@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ContentFy — Owl Evolution v4 | Brand Guide</title>
+<link rel="stylesheet" href="../tokens/brand-tokens.css" />
+<style>
+  @page { size: A4; margin: 14mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #070b12; color: #f8fafc; line-height: 1.55; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 40px 24px 100px; }
+  .badge { display: inline-block; border: 1px solid rgba(249,115,22,.4); color: #f59e0b; padding: 4px 10px; border-radius: 999px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  h1 { font-size: clamp(36px, 6vw, 56px); letter-spacing: -.04em; line-height: 1.05; margin: 12px 0; }
+  h2 { font-size: 26px; letter-spacing: -.03em; margin: 0 0 12px; }
+  h3 { font-size: 15px; color: #e2e8f0; margin: 0 0 8px; }
+  p { color: #94a3b8; max-width: 68ch; }
+  section { padding: 48px 0; border-top: 1px solid rgba(248,250,252,.08); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 800px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+  .panel { background: #111827; border: 1px solid rgba(248,250,252,.08); border-radius: 16px; padding: 20px; }
+  .stage { min-height: 160px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #0b1220; border: 1px solid rgba(248,250,252,.06); padding: 20px; }
+  .stage.light { background: #f8fafc; }
+  .sizes { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; }
+  .sizes figure { margin: 0; text-align: center; }
+  .sizes figcaption { font-size: 11px; color: #64748b; margin-top: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid rgba(248,250,252,.08); }
+  th { color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+  .do { color: #4ade80; } .dont { color: #fb7185; }
+  .print { position: fixed; right: 16px; bottom: 16px; background: #f97316; color: #111; border: 0; border-radius: 999px; padding: 12px 18px; font-weight: 700; cursor: pointer; }
+  @media print { .print { display: none; } body { background: #fff; color: #111; } }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .compare img { max-width: 100%; height: auto; border-radius: 12px; }
+</style>
+</head>
+<body>
+<button class="print" onclick="window.print()">Exportar PDF</button>
+<div class="wrap">
+  <div class="badge">Evolution · not replacement</div>
+  <h1>ContentFy Owl<br/><span style="background:linear-gradient(135deg,#f97316,#eab308);-webkit-background-clip:text;color:transparent">Evolution v4</span></h1>
+  <p>A coruja original refinada ao nível internacional. Mesmo DNA. Zero textura, glow ou mascote. Wordmark, paleta e ecossistema <strong style="color:#e2e8f0">inalterados</strong>.</p>
+
+  <section>
+    <h2>01 · Antes → Depois (DNA)</h2>
+    <div class="compare">
+      <div class="panel">
+        <h3>Original (referência)</h3>
+        <div class="stage"><img src="../../../client/public/favicon.png" alt="original" style="height:120px" /></div>
+        <p style="margin-top:10px">Textura, escalas, brilho 3D, glow gamer — personalidade forte.</p>
+      </div>
+      <div class="panel">
+        <h3>Evolução v4</h3>
+        <div class="stage light"><img src="./svg/symbol-master.svg" alt="evolved" style="height:120px" /></div>
+        <p style="margin-top:10px">Mesmo olhar, orelhas, bico e simetria — geometria limpa, 15 anos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>02 · Símbolo</h2>
+    <div class="grid-3">
+      <div class="panel"><h3>Master</h3><div class="stage light"><img src="./svg/symbol-master.svg" height="100" alt="m" /></div></div>
+      <div class="panel"><h3>Mono Light</h3><div class="stage"><img src="./svg/symbol-mono-light.svg" height="100" alt="l" /></div></div>
+      <div class="panel"><h3>Mono Dark</h3><div class="stage light"><img src="./svg/symbol-mono-dark.svg" height="100" alt="d" /></div></div>
+    </div>
+    <div class="grid-2" style="margin-top:12px">
+      <div class="panel"><h3>Outline</h3><div class="stage light"><img src="./svg/symbol-outline.svg" height="100" alt="o" style="color:#070b12" /></div></div>
+      <div class="panel"><h3>Construction grid</h3><div class="stage light"><img src="./svg/construction-grid.svg" height="120" alt="g" /></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>03 · Manual de redução</h2>
+    <p>Área de proteção = 0.5× altura do símbolo. Abaixo de 24px use micro-mark / filled. Outline só ≥24px.</p>
+    <div class="panel" style="margin-top:12px">
+      <div class="sizes">
+        <figure><img src="./svg/micro-mark.svg" width="16" height="16" style="filter:invert(1)" alt="16" /><figcaption>16</figcaption></figure>
+        <figure><img src="./svg/micro-mark.svg" width="20" height="20" style="filter:invert(1)" alt="20" /><figcaption>20</figcaption></figure>
+        <figure><img src="./svg/micro-mark.svg" width="24" height="24" style="filter:invert(1)" alt="24" /><figcaption>24</figcaption></figure>
+        <figure><img src="./svg/symbol-mono-light.svg" width="32" height="32" alt="32" /><figcaption>32</figcaption></figure>
+        <figure><img src="./svg/symbol-mono-light.svg" width="48" height="48" alt="48" /><figcaption>48</figcaption></figure>
+        <figure><img src="./svg/symbol-mono-light.svg" width="64" height="64" alt="64" /><figcaption>64</figcaption></figure>
+        <figure><img src="./svg/symbol-master.svg" width="128" height="128" alt="128" /><figcaption>128</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>04 · App · Favicon · Avatar</h2>
+    <div class="grid-3">
+      <div class="panel" style="text-align:center"><img src="./svg/app-icon.svg" width="96" style="border-radius:22px" alt="app" /></div>
+      <div class="panel" style="text-align:center"><img src="./svg/favicon.svg" width="48" alt="fav" /></div>
+      <div class="panel" style="text-align:center"><img src="./svg/avatar.svg" width="88" alt="av" /></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>05 · Lockups (wordmark congelado)</h2>
+    <p>Wordmark v3 permanece. Apenas o símbolo evoluiu.</p>
+    <div class="stage" style="margin-top:12px"><img src="./svg/logo-horizontal.svg" style="height:52px" alt="h" /></div>
+    <div class="stage light" style="margin-top:10px"><img src="./svg/logo-horizontal-on-light.svg" style="height:52px" alt="hl" /></div>
+  </section>
+
+  <section>
+    <h2>06 · Regras</h2>
+    <div class="grid-2">
+      <div class="panel">
+        <h3 class="do">✓ Faça</h3>
+        <p>Manter orelhas, anéis oculares, bico central, simetria frontal. Usar master em digital colorido. Mono em impressão 1 cor. Micro abaixo de 24px.</p>
+      </div>
+      <div class="panel">
+        <h3 class="dont">✗ Não faça</h3>
+        <p>Não recolocar textura, glow, escalas, reflexos 3D. Não deixar o olhar agressivo. Não alterar wordmark/paleta. Não usar a Athena geomérica abstrata no lugar desta evolução.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <h3>Arquivos</h3>
+      <table>
+        <tr><th>Path</th><th>Uso</th></tr>
+        <tr><td>svg/symbol-master.svg</td><td>Master color</td></tr>
+        <tr><td>svg/symbol-filled.svg</td><td>Filled currentColor</td></tr>
+        <tr><td>svg/symbol-outline.svg</td><td>Outline ≥24px</td></tr>
+        <tr><td>svg/symbol-mono-*.svg</td><td>1 cor</td></tr>
+        <tr><td>svg/micro-mark.svg</td><td>16–24px</td></tr>
+        <tr><td>svg/app-icon.svg · favicon.svg · avatar.svg</td><td>Produto</td></tr>
+        <tr><td>svg/construction-grid.svg</td><td>Grid + safe area</td></tr>
+        <tr><td>png/*</td><td>Raster</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <p style="font-size:12px;margin-top:40px;color:#64748b">ContentFy Owl Evolution v4.0 · Wordmark & palette frozen · BuilderTudo Technologies</p>
+</div>
+</body>
+</html>

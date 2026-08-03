@@ -1,0 +1,16 @@
+<!--
+  ContentFy Athena Symbol  Master Construction Notes
+  Grid: 64×64 · Unit: 4 · Safe area: 4u (outer) · Min reduce: 16px filled
+  Anatomy: Hex head (architecture) · Ocular nodes (AI) · Knowledge chevron (beak)
+  Easter eggs (negative space only): open-book fold at center seam; hex = knowledge cell
+  Discarded: pupils/shine, feathers, cartoon ears, obvious C/F overlays, neural webs
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Athena construction reference</title>
+  <!-- Construction grid (not for production) -->
+  <g id="grid" opacity="0.15" stroke="#888" stroke-width="0.5">
+    <path d="M0 16H64M0 32H64M0 48H64M16 0V64M32 0V64M48 0V64"/>
+  </g>
+  <!-- Optical center -->
+  <circle cx="32" cy="30" r="1" fill="#f00"/>
+</svg>

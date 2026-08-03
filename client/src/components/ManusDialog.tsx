@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { APP_LOGO, APP_TITLE } from "@/const";
+import { APP_AVATAR, APP_TITLE } from "@/const";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ interface ManusDialogProps {
 
 export function ManusDialog({
   title = APP_TITLE,
-  logo = APP_LOGO,
+  logo = APP_AVATAR,
   open = false,
   onLogin,
   onOpenChange,

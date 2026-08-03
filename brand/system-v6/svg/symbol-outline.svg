@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" role="img" aria-label="ContentFy Outline">
+  <path stroke="currentColor" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round" d="M36 7 L29.5 21 C23.5 29 20.5 38.5 20.5 48.5 V60 C20.5 67.5 22.5 73.5 26 78 L23.5 83.5 C21 87.5 20 92.5 20 97.5 C20 105.5 26 111.5 34.5 113 L52 117.5 H76 L93.5 113 C102 111.5 108 105.5 108 97.5 C108 92.5 107 87.5 104.5 83.5 L102 78 C105.5 73.5 107.5 67.5 107.5 60 V48.5 C107.5 38.5 104.5 29 98.5 21 L92 7 L83.5 11.5 L79 21 H49 L44.5 11.5 Z"/>
+  <path stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" d="M30.5 28 L43.5 16 H54 L55.5 20 L49 32 M97.5 28 L84.5 16 H74 L72.5 20 L79 32 M52.5 26.5 H75.5"/>
+  <circle cx="49.2" cy="52" r="16.8" stroke="currentColor" stroke-width="3.1"/>
+  <circle cx="78.8" cy="52" r="16.8" stroke="currentColor" stroke-width="3.1"/>
+  <circle cx="49.2" cy="52" r="2.7" fill="currentColor"/>
+  <circle cx="78.8" cy="52" r="2.7" fill="currentColor"/>
+  <path stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M64 64.5 L61 87 H67 Z"/>
+  <path stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M30.5 49 L29 55.5 L28.5 68 L29.5 87 M97.5 49 L99 55.5 L99.5 68 L98.5 87"/>
+</svg>

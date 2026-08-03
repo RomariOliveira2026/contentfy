@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ContentFy Athena">
+  <!--
+    Athena v3.2 — ear peaks (architectural, not cartoon) · hex body · ocular nodes · knowledge chevron
+    Critiques applied: avoid pin/shield-only reading; keep 16px legibility
+  -->
+  <path
+    fill="currentColor"
+    fill-rule="evenodd"
+    d="M22.2 8.4c1.1-2.4 3.2-4 5.6-4.2.9-.1 1.8.1 2.6.6L32 6.2l1.6-1.4c.8-.5 1.7-.7 2.6-.6 2.4.2 4.5 1.8 5.6 4.2l8.8 8.2c1.5 1.4 2.4 3.4 2.4 5.6v13.6c0 4.5-2.3 8.7-6.1 11.3L32 61.2 17.1 47.1c-3.8-2.6-6.1-6.8-6.1-11.3V22.2c0-2.2.9-4.2 2.4-5.6l8.8-8.2zM19.4 29a4.3 4.3 0 1 0 8.6 0a4.3 4.3 0 1 0-8.6 0zm16.6 0a4.3 4.3 0 1 0 8.6 0a4.3 4.3 0 1 0-8.6 0zM32 35.8l-3.5 6.8h7L32 35.8z"
+  />
+</svg>

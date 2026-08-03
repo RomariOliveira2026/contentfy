@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="ContentFy">
+  <!--
+    ContentFy Symbol V8 MICRO  1632px
+    Head + brows + eyes + beak only. No full body.
+  -->
+  <path fill="#111827" d="
+    M8 4
+    L5 16
+    C4 24 4 32 6 38
+    C8 46 14 52 22 54
+    H42
+    C50 52 56 46 58 38
+    C60 32 60 24 59 16
+    L56 4
+    L44 9
+    L40 18
+    H24
+    L20 9
+    Z"/>
+
+  <path fill="#0B1220" d="M10 20 L22 12 H30 L28 22 C22 23 15 28 12 34 Z"/>
+  <path fill="#0B1220" d="M54 20 L42 12 H34 L36 22 C42 23 49 28 52 34 Z"/>
+  <path fill="#0B1220" d="M28 19 H36 L34 26 H30 Z"/>
+
+  <circle cx="22" cy="30" r="11" fill="#F97316"/>
+  <circle cx="42" cy="30" r="11" fill="#F97316"/>
+  <circle cx="22" cy="30" r="9.2" fill="#EA580C"/>
+  <circle cx="42" cy="30" r="9.2" fill="#EA580C"/>
+  <circle cx="22" cy="30" r="7.2" fill="#070B12"/>
+  <circle cx="42" cy="30" r="7.2" fill="#070B12"/>
+  <circle cx="22" cy="30" r="3.2" fill="#F59E0B"/>
+  <circle cx="42" cy="30" r="3.2" fill="#F59E0B"/>
+  <circle cx="22" cy="30" r="1.5" fill="#070B12"/>
+  <circle cx="42" cy="30" r="1.5" fill="#070B12"/>
+
+  <path fill="#070B12" d="M32 34 L26 48 H38 Z"/>
+</svg>

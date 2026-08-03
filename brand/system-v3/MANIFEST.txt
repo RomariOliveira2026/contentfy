@@ -1,0 +1,32 @@
+ContentFy Global Brand System v3.0 — Brand Freeze
+BuilderTudo Technologies
+
+OPEN FIRST
+  brand-guide.html     → visual system + Exportar PDF
+  tokens/brand-tokens.css
+
+SVG (masters)
+  svg/symbol-filled.svg
+  svg/symbol-outline.svg
+  svg/symbol-outline-light.svg
+  svg/symbol-mono-dark.svg
+  svg/symbol-mono-light.svg
+  svg/micro-mark.svg
+  svg/wordmark.svg
+  svg/wordmark-on-light.svg
+  svg/logo-horizontal.svg
+  svg/logo-horizontal-on-light.svg
+  svg/logo-vertical.svg
+  svg/app-icon.svg
+  svg/favicon.svg
+  svg/avatar.svg
+
+PNG
+  Run: node brand/system-v3/rasterize-chrome.mjs
+  Output: png/
+
+FREEZE
+  Structure: A — Global Minimal
+  Personality: B — Premium Luxury Tech
+  AI Native: detail only (ocular nodes ≥32px outline)
+  Symbol: Athena (owl redesigned from zero)

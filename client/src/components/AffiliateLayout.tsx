@@ -11,7 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { APP_LOGO, APP_TITLE } from "@/const";
+import { ContentFyLogo } from "@/components/branding";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -63,7 +63,14 @@ export default function AffiliateLayout({ children }: AffiliateLayoutProps) {
       <div className="md:hidden flex items-center justify-between p-4 border-b">
         <Link href="/">
           <div className="flex items-center gap-2">
-            <img src={APP_LOGO} alt={APP_TITLE} className="h-8" />
+            <ContentFyLogo
+              variant="horizontal"
+              theme="dark"
+              symbol="compact"
+              size={32}
+              className="!h-8 !max-h-8 !w-auto"
+              wrapClassName="!h-8"
+            />
           </div>
         </Link>
         <Button
@@ -84,7 +91,14 @@ export default function AffiliateLayout({ children }: AffiliateLayoutProps) {
         {/* Logo */}
         <Link href="/">
           <div className="hidden md:flex items-center gap-2 mb-8">
-            <img src={APP_LOGO} alt={APP_TITLE} className="h-8" />
+            <ContentFyLogo
+              variant="horizontal"
+              theme="dark"
+              symbol="compact"
+              size={32}
+              className="!h-8 !max-h-8 !w-auto"
+              wrapClassName="!h-8"
+            />
           </div>
         </Link>
 

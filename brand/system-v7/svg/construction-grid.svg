@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="V7 construction grid">
+  <rect width="128" height="128" fill="#F8FAFC"/>
+  <g stroke="#F97316" stroke-opacity=".2" stroke-width="1">
+    <path d="M0 16H128M0 32H128M0 48H128M0 64H128M0 80H128M0 96H128M0 112H128"/>
+    <path d="M16 0V128M32 0V128M48 0V128M64 0V128M80 0V128M96 0V128M112 0V128"/>
+  </g>
+  <rect x="4" y="2" width="120" height="124" fill="none" stroke="#F97316" stroke-dasharray="3 3" stroke-width="1.2"/>
+  <path d="M64 2V126M4 51H124" stroke="#F97316" stroke-opacity=".4" stroke-width=".8"/>
+  <circle cx="40" cy="51" r="15.2" fill="none" stroke="#F97316" stroke-width="1"/>
+  <circle cx="88" cy="51" r="15.2" fill="none" stroke="#F97316" stroke-width="1"/>
+  <path fill="#111827" opacity=".92" d="M20 6 L14 28 C10 38 8 48 8 58 V70 C8 79 12 87 18 93 L13 100 C10 105 8 111 8 116 C8 123 16 127 28 128 L48 128 H80 L100 128 C112 127 120 123 120 116 C120 111 118 105 115 100 L110 93 C116 87 120 79 120 70 V58 C120 48 118 38 114 28 L108 6 L92 14 L84 28 H44 L36 14 Z"/>
+  <path fill="#0B1220" d="M22 38 C32 26 44 21 55 20.5 H59 L55 37 C45 39 35 46 28 56 Z M106 38 C96 26 84 21 73 20.5 H69 L73 37 C83 39 93 46 100 56 Z M54 35 H74 L69.5 46 H58.5 Z"/>
+  <circle cx="40" cy="51" r="15.2" fill="#F97316"/>
+  <circle cx="88" cy="51" r="15.2" fill="#F97316"/>
+  <circle cx="40" cy="51" r="10.6" fill="#111827"/>
+  <circle cx="88" cy="51" r="10.6" fill="#111827"/>
+  <circle cx="40" cy="51" r="4.4" fill="#F59E0B"/>
+  <circle cx="88" cy="51" r="4.4" fill="#F59E0B"/>
+  <path fill="#111827" d="M64 56 L55 78 C54.2 79.6 55.4 81.5 57.2 81.5 H70.8 C72.6 81.5 73.8 79.6 73 78 Z"/>
+  <text x="64" y="11" text-anchor="middle" font-family="ui-sans-serif,system-ui" font-size="5" fill="#EA580C">SAFE · eyes 40/88 @51 · r15.2</text>
+</svg>

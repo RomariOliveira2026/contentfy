@@ -1,0 +1,17 @@
+ContentFy Owl Evolution v4.2
+Natural evolution of the original owl — not a replacement.
+
+OPEN
+  brand-guide-owl.html
+
+DNA KEPT
+  Frontal · ear tufts · intense ringed eyes · central beak · symmetry · serious gaze · premium
+
+REMOVED
+  Texture · scales · cracks · glow bloom · 3D reflections · cartoon / gamer / mascot noise
+
+FROZEN (unchanged)
+  Wordmark · Palette · BuilderTudo ecosystem rules
+
+PNG
+  node brand/system-v3/owl-evolution/rasterize-chrome.mjs

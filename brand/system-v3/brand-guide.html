@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ContentFy — Global Brand System v3.0 | Brand Freeze</title>
+<link rel="stylesheet" href="./tokens/brand-tokens.css" />
+<style>
+  @page { size: A4; margin: 14mm; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+    background: var(--cf-midnight);
+    color: var(--cf-snow);
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  a { color: var(--cf-orange); text-decoration: none; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 28px 120px; }
+  .nav {
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(12px);
+    background: rgba(7,11,18,.85);
+    border-bottom: 1px solid var(--cf-dark-border);
+    padding: 12px 28px;
+    display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+    font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .nav a { color: var(--cf-dark-muted); }
+  .nav a:hover { color: var(--cf-snow); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(249,115,22,.35);
+    color: var(--cf-amber); padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  }
+  h1 { font-size: clamp(40px, 7vw, 72px); line-height: 1.05; letter-spacing: -0.04em; margin: 16px 0; font-weight: 650; }
+  h2 { font-size: 28px; letter-spacing: -0.03em; margin: 0 0 12px; }
+  h3 { font-size: 16px; letter-spacing: -0.02em; margin: 0 0 8px; color: var(--cf-mist); }
+  p { color: var(--cf-dark-muted); max-width: 68ch; }
+  .lead { font-size: 18px; color: #cbd5e1; max-width: 56ch; }
+  section { padding: 64px 0; border-top: 1px solid var(--cf-dark-border); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 860px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--cf-charcoal);
+    border: 1px solid var(--cf-dark-border);
+    border-radius: var(--cf-radius-lg);
+    padding: 24px;
+  }
+  .panel.light { background: var(--cf-snow); color: var(--cf-ink); }
+  .panel.light p, .panel.light h3 { color: var(--cf-slate); }
+  .panel.orange {
+    background: linear-gradient(135deg, #f97316, #eab308);
+    color: white; border: 0;
+  }
+  .stage {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 180px; border-radius: var(--cf-radius-md);
+    background: #0b1220; border: 1px solid var(--cf-dark-border);
+    padding: 28px;
+  }
+  .stage.light { background: #f8fafc; }
+  .stage img, .stage object, .mark { max-width: 100%; height: auto; }
+  .swatch {
+    border-radius: 12px; overflow: hidden; border: 1px solid var(--cf-dark-border);
+  }
+  .swatch .chip { height: 88px; }
+  .swatch .meta { padding: 10px 12px; font-size: 12px; background: var(--cf-charcoal); }
+  .swatch .meta strong { display: block; color: var(--cf-snow); font-size: 13px; }
+  .meta code { color: var(--cf-amber); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--cf-dark-border); vertical-align: top; }
+  th { color: var(--cf-dark-muted); font-weight: 560; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+  .do { color: #4ade80; }
+  .dont { color: #fb7185; }
+  .mock {
+    border-radius: 16px; overflow: hidden; border: 1px solid var(--cf-dark-border);
+    background: #0b1220; min-height: 220px; position: relative;
+  }
+  .mock-bar {
+    height: 44px; display: flex; align-items: center; gap: 10px;
+    padding: 0 14px; border-bottom: 1px solid var(--cf-dark-border);
+    background: rgba(255,255,255,.02);
+  }
+  .mock-bar img { height: 22px; }
+  .mock-body { padding: 20px; }
+  .kpi {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px;
+  }
+  .kpi div {
+    background: rgba(255,255,255,.03); border: 1px solid var(--cf-dark-border);
+    border-radius: 10px; padding: 12px;
+  }
+  .kpi strong { display: block; font-size: 18px; color: var(--cf-snow); }
+  .kpi span { font-size: 11px; color: var(--cf-dark-muted); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 40px; padding: 0 18px; border-radius: 10px; font-weight: 600; font-size: 13px;
+    border: 0; cursor: default;
+  }
+  .btn-primary { background: var(--cf-gradient-fy); color: #111; }
+  .btn-ghost { background: transparent; color: var(--cf-snow); border: 1px solid var(--cf-dark-border); }
+  .input {
+    height: 40px; border-radius: 10px; border: 1px solid var(--cf-dark-border);
+    background: rgba(0,0,0,.25); color: var(--cf-snow); padding: 0 12px; width: 100%;
+  }
+  .device {
+    border: 8px solid #1e293b; border-radius: 28px; background: #020617;
+    aspect-ratio: 9/19; max-width: 220px; margin: 0 auto; overflow: hidden;
+  }
+  .device .top { height: 48px; display: flex; align-items: center; justify-content: center; }
+  .device .top img { height: 20px; }
+  .shirt, .mug, .card, .outdoor {
+    border-radius: 14px; border: 1px solid var(--cf-dark-border);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 160px; background: #0b1220;
+  }
+  .shirt { background: #1a2332; }
+  .mug { background: radial-gradient(circle at 30% 30%, #1e293b, #070b12); }
+  .outdoor {
+    min-height: 200px;
+    background: linear-gradient(120deg, #0b1220, #111827 50%, #1a0f08);
+  }
+  .crit { border-left: 3px solid var(--cf-orange); padding-left: 14px; margin: 12px 0; }
+  .foot {
+    margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--cf-dark-border);
+    font-size: 12px; color: var(--cf-dark-muted);
+  }
+  .print-hint {
+    position: fixed; right: 16px; bottom: 16px; z-index: 30;
+    background: var(--cf-orange); color: #111; border: 0; border-radius: 999px;
+    padding: 12px 18px; font-weight: 700; font-size: 13px; cursor: pointer;
+  }
+  @media print {
+    .nav, .print-hint { display: none !important; }
+    body { background: white; color: #111; }
+    .panel, .stage, .mock { break-inside: avoid; }
+    section { break-before: page; }
+    section:first-of-type { break-before: auto; }
+  }
+  .grid-lines {
+    background-image:
+      linear-gradient(rgba(249,115,22,.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(249,115,22,.12) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .safe-box {
+    outline: 1px dashed rgba(249,115,22,.5);
+    outline-offset: 16px;
+  }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <span class="badge">Brand Freeze v3.0</span>
+    <a href="#freeze">Freeze</a>
+    <a href="#symbol">Símbolo</a>
+    <a href="#wordmark">Wordmark</a>
+    <a href="#palette">Paleta</a>
+    <a href="#system">Design System</a>
+    <a href="#ecosystem">Ecossistema</a>
+    <a href="#mockups">Mockups</a>
+    <a href="#manual">Manual</a>
+  </nav>
+
+  <button class="print-hint" onclick="window.print()">Exportar PDF</button>
+
+  <div class="wrap">
+    <header>
+      <div class="badge">BuilderTudo Technologies · ContentFy Global Brand System</div>
+      <h1>ContentFy<br/><span style="background:var(--cf-gradient-fy);-webkit-background-clip:text;background-clip:text;color:transparent;">Brand Freeze</span></h1>
+      <p class="lead">Sistema de identidade visual preparado para 10+ anos. Nível Stripe / Linear / OpenAI — sem cartoon, sem mascote, sem efeitos datados.</p>
+      <div class="panel" style="margin-top:20px;border-color:rgba(249,115,22,.35)">
+        <h3>Update — Symbol Evolution V5 (oficial)</h3>
+        <p>Modernização da coruja original (~90% DNA). Não é reinvenção. Guia: <a href="./symbol-v5/brand-guide-v5.html">symbol-v5/brand-guide-v5.html</a></p>
+      </div>
+      <div style="margin-top:28px" class="stage" >
+        <img src="./svg/logo-horizontal.svg" alt="ContentFy logo horizontal" style="height:56px" />
+      </div>
+    </header>
+
+    <section id="freeze">
+      <h2>01 · Decisão de Freeze</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Estrutura — A Global Minimal</h3>
+          <p>Grid, proporções, construção matemática, micro-mark 16px, escalabilidade absoluta.</p>
+        </div>
+        <div class="panel">
+          <h3>Personalidade — B Premium Luxury Tech</h3>
+          <p>Elegância, sofisticação enterprise, acabamento premium. IA Native apenas nos detalhes (nós oculares ≥32px).</p>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Conceito central — Athena</h3>
+        <p>A coruja permanece como arquétipo de inteligência e conhecimento — redesenhada do zero como objeto Apple: poucas linhas, muita inteligência, zero excesso. Geometria × origami × arquitetura × negative space.</p>
+        <div class="crit">
+          <strong>Crítica interna aplicada</strong>
+          <p>Descartado: penas, brilho, pupilas cartoon, C/F óbvios, teia neural, orelhas ilustrativas fofas, gradiente no símbolo base, leitura só de “pin/escudo”. Mantido: hex arquitetônico com ear-peaks geométricos, nós oculares, chevron de conhecimento, dobra central (livro aberto implícito). Versão congelada: Athena v3.2.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="symbol">
+      <h2>02 · Símbolo Athena</h2>
+      <p>Deve funcionar sozinho — como Apple, Nike, Stripe, Airbnb, OpenAI.</p>
+      <div class="grid-3" style="margin-top:20px">
+        <div class="panel">
+          <h3>Filled · Dark</h3>
+          <div class="stage"><img src="./svg/symbol-mono-light.svg" width="96" height="96" alt="symbol light" style="color:#fff;filter:none" /></div>
+        </div>
+        <div class="panel light">
+          <h3>Filled · Light</h3>
+          <div class="stage light"><img src="./svg/symbol-mono-dark.svg" width="96" height="96" alt="symbol dark" /></div>
+        </div>
+        <div class="panel orange">
+          <h3>Brand Orange</h3>
+          <div class="stage" style="background:transparent;border:0">
+            <img src="./svg/symbol-mono-light.svg" width="96" height="96" alt="symbol on orange" />
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px">
+        <div class="panel">
+          <h3>Outline (≥24px)</h3>
+          <div class="stage"><img src="./svg/symbol-outline.svg" width="96" height="96" alt="outline" style="filter: invert(1)" /></div>
+          <p style="margin-top:12px">Nós AI Native nos centros oculares — remover abaixo de 32px.</p>
+        </div>
+        <div class="panel">
+          <h3>Micro-mark (16–20px)</h3>
+          <div class="stage grid-lines">
+            <div class="safe-box"><img src="./svg/micro-mark.svg" width="32" height="32" alt="micro" style="filter: invert(1)" /></div>
+          </div>
+          <p style="margin-top:12px">Safe area = 0.5× altura do mark. Redução mínima filled: 16px.</p>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <h3>Construção matemática</h3>
+        <table>
+          <tr><th>Elemento</th><th>Regra</th></tr>
+          <tr><td>Canvas</td><td>64×64 master · módulo 4u</td></tr>
+          <tr><td>Cabeça</td><td>Hexágono arquitetônico arredondado (não cartoon)</td></tr>
+          <tr><td>Olhos</td><td>Círculos idênticos · negative space · nós em outline ≥32px</td></tr>
+          <tr><td>Bico</td><td>Chevron / triângulo de conhecimento</td></tr>
+          <tr><td>Easter eggs</td><td>Dobra central = livro aberto; hex = célula de conhecimento; nós = IA</td></tr>
+          <tr><td>Espessura outline</td><td>2.4u no master 64 (proporcional)</td></tr>
+          <tr><td>Raio app icon</td><td>22.5% (continuidade iOS)</td></tr>
+        </table>
+      </div>
+
+      <div class="grid-4" style="margin-top:16px">
+        <div class="panel" style="text-align:center"><div style="font-size:11px;color:#94a3b8;margin-bottom:8px">16px</div><img src="./svg/micro-mark.svg" width="16" height="16" style="filter:invert(1)" alt="16" /></div>
+        <div class="panel" style="text-align:center"><div style="font-size:11px;color:#94a3b8;margin-bottom:8px">24px</div><img src="./svg/micro-mark.svg" width="24" height="24" style="filter:invert(1)" alt="24" /></div>
+        <div class="panel" style="text-align:center"><div style="font-size:11px;color:#94a3b8;margin-bottom:8px">32px</div><img src="./svg/symbol-mono-light.svg" width="32" height="32" alt="32" /></div>
+        <div class="panel" style="text-align:center"><div style="font-size:11px;color:#94a3b8;margin-bottom:8px">64px</div><img src="./svg/symbol-mono-light.svg" width="64" height="64" alt="64" /></div>
+      </div>
+    </section>
+
+    <section id="wordmark">
+      <h2>03 · Wordmark proprietário</h2>
+      <p>Lettering exclusivo — não é Google Font, não é Inter/Roboto. Construído no mesmo módulo geométrico do símbolo.</p>
+      <div class="stage" style="margin-top:16px"><img src="./svg/wordmark.svg" alt="wordmark dark" style="height:48px" /></div>
+      <div class="stage light" style="margin-top:12px"><img src="./svg/wordmark-on-light.svg" alt="wordmark light" style="height:48px" /></div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="panel">
+          <h3>Content</h3>
+          <p>Branco (#F8FAFC) em dark · Midnight (#070B12) em light. Peso leve, tracking ligeiramente negativo, terminais geométricos.</p>
+        </div>
+        <div class="panel">
+          <h3>Fy</h3>
+          <p>Gradiente Orange → Amber → Gold. Mesmo eixo óptico e espessura de haste — nunca “colado”. Unidade tipográfica contínua.</p>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Lockups</h3>
+        <div class="stage"><img src="./svg/logo-horizontal.svg" style="height:52px" alt="horizontal" /></div>
+        <div class="stage" style="margin-top:12px"><img src="./svg/logo-vertical.svg" style="height:140px" alt="vertical" /></div>
+      </div>
+    </section>
+
+    <section id="palette">
+      <h2>04 · Sistema de cores</h2>
+      <div class="grid-3">
+        <div class="swatch"><div class="chip" style="background:#070B12"></div><div class="meta"><strong>Midnight</strong><code>#070B12</code></div></div>
+        <div class="swatch"><div class="chip" style="background:#111827"></div><div class="meta"><strong>Charcoal</strong><code>#111827</code></div></div>
+        <div class="swatch"><div class="chip" style="background:#F8FAFC"></div><div class="meta"><strong>Snow / White</strong><code>#F8FAFC</code></div></div>
+        <div class="swatch"><div class="chip" style="background:#F97316"></div><div class="meta"><strong>Orange</strong><code>#F97316</code></div></div>
+        <div class="swatch"><div class="chip" style="background:#F59E0B"></div><div class="meta"><strong>Amber</strong><code>#F59E0B</code></div></div>
+        <div class="swatch"><div class="chip" style="background:#EAB308"></div><div class="meta"><strong>Gold</strong><code>#EAB308</code></div></div>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="panel">
+          <h3>Dark Theme</h3>
+          <p>BG Midnight · Surface Charcoal · Text Snow · Accent Orange · Borders 8% white.</p>
+        </div>
+        <div class="panel light">
+          <h3>Light Theme</h3>
+          <p>BG Snow · Surface White · Text Ink · Accent Orange · Borders 8% ink.</p>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Monocromático</h3>
+        <p>Símbolo e wordmark em 100% Midnight ou 100% Snow. Gradiente Fy vira sólido Orange (#F97316) ou mono total em impressão 1 cor / laser / bordado.</p>
+      </div>
+    </section>
+
+    <section id="system">
+      <h2>05 · Design System</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Tipografia UI (companheira)</h3>
+          <p>O wordmark é SVG proprietário. Para produto, usar família geométrica sans com métricas próximas: pesos 400/500/600; tracking −1% em display; line-height 1.4 body / 1.1 display.</p>
+          <p><strong>Proibido no logo:</strong> Inter, Roboto, Arial, Poppins, Montserrat como substituto do wordmark.</p>
+        </div>
+        <div class="panel">
+          <h3>Geometria</h3>
+          <p>Radius: 4 / 8 / 12 / 16 / 24. Stroke hair 1 · thin 1.5 · mark 2. Espaçamento base 4px. Motion: 180ms · cubic-bezier(0.22,1,0.36,1). Sombras discretas — nunca glow exagerado no logo.</p>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <h3>Componentes — linguagem visual</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0">
+          <span class="btn btn-primary">Começar agora</span>
+          <span class="btn btn-ghost">Explorar</span>
+          <span class="btn btn-ghost" style="border-color:rgba(249,115,22,.5);color:#fdba74">Badge Pro</span>
+        </div>
+        <div style="max-width:320px;display:grid;gap:10px">
+          <input class="input" placeholder="seu@email.com" readonly />
+          <input class="input" placeholder="Senha" type="password" value="••••••••" readonly />
+        </div>
+        <p style="margin-top:16px">Cards: surface + border 8% — sem sombra multicamada. Charts: Orange/Amber em série primária, charcoal para grid. Modais: radius 16, scrim 60% midnight. Player: controls minimal, progress em gradiente Fy. Checkout: confiança > ornamentação.</p>
+      </div>
+
+      <div class="grid-3" style="margin-top:16px">
+        <div class="panel"><h3>Homepage</h3><p>Hero dark, logo horizontal, CTA primary gradient, mock produto à direita.</p></div>
+        <div class="panel"><h3>Dashboard / Admin</h3><p>Micro-mark 20px + wordmark; densidade enterprise; accent só em KPI positivos.</p></div>
+        <div class="panel"><h3>Creator / Marketplace / LMS</h3><p>Mesma geometria; avatar Athena; badges amber para status premium.</p></div>
+      </div>
+    </section>
+
+    <section id="ecosystem">
+      <h2>06 · Ecossistema BuilderTudo</h2>
+      <p>ContentFy é a marca-mãe de produto. Submarcas herdam grid, espessuras, curvas, construção e família tipográfica — diferenciam-se por acento cromático e monograma.</p>
+      <table>
+        <tr><th>Submarca</th><th>Acento sugerido</th><th>Regra</th></tr>
+        <tr><td>JurisMind</td><td>Slate Blue</td><td>Mesmo grid · monograma JM geométrico</td></tr>
+        <tr><td>DiagramaFy</td><td>Violet sóbrio</td><td>Sufixo Fy com gradiente da marca-mãe ou sólido da submarca</td></tr>
+        <tr><td>PrevenPro</td><td>Teal</td><td>Sem mascote · ícone abstrato 64 grid</td></tr>
+        <tr><td>PetMind IA</td><td>Soft Coral</td><td>IA só em detalhe · nunca cartoon pet</td></tr>
+        <tr><td>OdontoSmart IA</td><td>Clinical Cyan</td><td>Clean medical-tech</td></tr>
+        <tr><td>CardapIA</td><td>Warm Terracotta discreto</td><td>Evitar food-illustration</td></tr>
+        <tr><td>BuilderLeads IA</td><td>Electric Lime contido</td><td>Performance B2B</td></tr>
+        <tr><td>Rep4.0CRM</td><td>Orange herdado ContentFy</td><td>Lockup produto dentro do ecossistema</td></tr>
+      </table>
+      <div class="panel" style="margin-top:16px">
+        <h3>Arquitetura de naming</h3>
+        <p><strong>BuilderTudo Technologies</strong> = holding / corporate.<br/>
+        <strong>ContentFy</strong> = plataforma flagship.<br/>
+        Produtos verticais = submarcas com sistema visual compartilhado, nunca identidades isoladas genéricas.</p>
+      </div>
+    </section>
+
+    <section id="mockups">
+      <h2>07 · Aplicações simuladas</h2>
+      <div class="grid-2">
+        <div class="mock">
+          <div class="mock-bar">
+            <img src="./svg/logo-horizontal.svg" alt="logo" />
+            <span style="margin-left:auto;font-size:11px;color:#94a3b8">Homepage</span>
+          </div>
+          <div class="mock-body">
+            <div style="font-size:28px;letter-spacing:-.03em;font-weight:650;max-width:16ch">A plataforma da Creator Economy</div>
+            <p style="margin:10px 0 16px">Venda cursos, softwares, comunidades e IA com infraestrutura global.</p>
+            <span class="btn btn-primary">Começar grátis</span>
+            <div class="kpi">
+              <div><strong>R$ 2.4M</strong><span>GMV demo</span></div>
+              <div><strong>12.8k</strong><span>Creators</span></div>
+              <div><strong>99.95%</strong><span>Uptime</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-bar">
+            <img src="./svg/micro-mark.svg" height="20" style="filter:invert(1);height:20px" alt="m" />
+            <img src="./svg/wordmark.svg" style="height:16px" alt="w" />
+            <span style="margin-left:auto;font-size:11px;color:#94a3b8">Dashboard</span>
+          </div>
+          <div class="mock-body">
+            <div class="kpi">
+              <div><strong>R$ 184k</strong><span>Receita 30d</span></div>
+              <div><strong>1.284</strong><span>Vendas</span></div>
+              <div><strong>4.8%</strong><span>Conv.</span></div>
+            </div>
+            <div style="margin-top:14px;height:72px;border-radius:10px;background:linear-gradient(90deg,rgba(249,115,22,.15),rgba(234,179,8,.08));border:1px solid rgba(249,115,22,.2)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:16px">
+        <div class="device">
+          <div class="top"><img src="./svg/logo-horizontal.svg" alt="m" /></div>
+          <div style="padding:16px">
+            <div style="font-size:18px;font-weight:650;letter-spacing:-.02em">Biblioteca</div>
+            <div style="margin-top:12px;height:80px;border-radius:12px;background:#111827;border:1px solid rgba(255,255,255,.06)"></div>
+            <div style="margin-top:8px;height:80px;border-radius:12px;background:#111827;border:1px solid rgba(255,255,255,.06)"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Login</h3>
+          <div class="stage" style="min-height:120px;flex-direction:column;gap:12px">
+            <img src="./svg/logo-vertical.svg" style="height:100px" alt="v" />
+          </div>
+          <input class="input" style="margin-top:12px" placeholder="Email" readonly />
+        </div>
+        <div class="panel">
+          <h3>App Icon · Favicon · Avatar</h3>
+          <div style="display:flex;gap:16px;align-items:center;justify-content:center;padding:20px 0">
+            <img src="./svg/app-icon.svg" width="72" height="72" alt="app" style="border-radius:16px" />
+            <img src="./svg/favicon.svg" width="32" height="32" alt="fav" />
+            <img src="./svg/avatar.svg" width="56" height="56" alt="av" />
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-top:16px">
+        <div class="shirt"><img src="./svg/symbol-mono-light.svg" width="56" alt="tee" /></div>
+        <div class="mug"><img src="./svg/symbol-mono-light.svg" width="48" alt="mug" /></div>
+        <div class="card"><img src="./svg/logo-horizontal.svg" style="height:28px;width:80%" alt="card" /></div>
+        <div class="outdoor"><img src="./svg/logo-horizontal.svg" style="height:36px;width:70%" alt="outdoor" /></div>
+      </div>
+      <p style="margin-top:10px;font-size:12px">Camiseta · Caneca · Cartão · Outdoor — símbolo sozinho ou lockup horizontal conforme escala.</p>
+    </section>
+
+    <section id="manual">
+      <h2>08 · Manual de uso</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <h3 class="do">✓ Faça</h3>
+          <p>· Respeite a área de proteção (0.5× altura do mark)<br/>
+          · Use filled abaixo de 24px<br/>
+          · Prefira logo horizontal em headers<br/>
+          · Símbolo sozinho em favicon, app, avatar, mobile nav<br/>
+          · Gradiente Fy apenas no wordmark / CTAs / hero digital<br/>
+          · Em bordado/laser: versão mono</p>
+        </div>
+        <div class="panel">
+          <h3 class="dont">✗ Não faça</h3>
+          <p>· Não recolorir olhos / adicionar pupilas<br/>
+          · Não aplicar sombra, bevel, glow no logo<br/>
+          · Não distorcer, rotacionar ou outline externo<br/>
+          · Não substituir o wordmark por fonte do sistema<br/>
+          · Não usar a coruja antiga<br/>
+          · Não deixar a IA dominar (sem teias, sem chips, sem robô)</p>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <h3>Arquivos entregues</h3>
+        <table>
+          <tr><th>Arquivo</th><th>Uso</th></tr>
+          <tr><td>svg/symbol-filled.svg</td><td>Master filled (currentColor)</td></tr>
+          <tr><td>svg/symbol-outline.svg</td><td>Outline ≥24px</td></tr>
+          <tr><td>svg/micro-mark.svg</td><td>16–20px</td></tr>
+          <tr><td>svg/wordmark.svg / wordmark-on-light.svg</td><td>Lettering</td></tr>
+          <tr><td>svg/logo-horizontal*.svg</td><td>Primary lockup</td></tr>
+          <tr><td>svg/logo-vertical.svg</td><td>Login / splash</td></tr>
+          <tr><td>svg/app-icon.svg</td><td>iOS/Android 1024</td></tr>
+          <tr><td>svg/favicon.svg</td><td>Browser</td></tr>
+          <tr><td>svg/avatar.svg</td><td>Social</td></tr>
+          <tr><td>svg/symbol-mono-*.svg</td><td>1 cor</td></tr>
+          <tr><td>tokens/brand-tokens.css</td><td>Design tokens</td></tr>
+          <tr><td>png/*</td><td>Export raster (via script)</td></tr>
+        </table>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <h3>Critério de aprovação — checklist</h3>
+        <p>✓ Parece estúdio internacional<br/>
+        ✓ Símbolo 16px → outdoor<br/>
+        ✓ Tecnologia + inteligência + sofisticação imediatas<br/>
+        ✓ Preparada para 10 anos<br/>
+        ✓ Nível Apple / Stripe / Linear / OpenAI / Shopify</p>
+      </div>
+    </section>
+
+    <div class="foot">
+      ContentFy Global Brand System v3.0 — Brand Freeze Edition<br/>
+      BuilderTudo Technologies · Uso interno e parceiros autorizados<br/>
+      Para PDF: abra este arquivo no Chrome → Exportar PDF (botão) ou Ctrl/Cmd+P → Save as PDF.
+    </div>
+  </div>
+</body>
+</html>

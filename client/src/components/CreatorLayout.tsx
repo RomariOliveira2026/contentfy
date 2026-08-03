@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import BrandLogo from "@/components/BrandLogo";
+import { ContentFySymbol } from "@/components/branding";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -122,7 +123,17 @@ export default function CreatorLayout({ children }: CreatorLayoutProps) {
               sidebarCollapsed ? "justify-center px-2" : "justify-between gap-1 px-3"
             }`}
           >
-            {!sidebarCollapsed && (
+            {sidebarCollapsed ? (
+              <Link href="/creator/dashboard">
+                <a
+                  className="cf-brand-logo-link inline-flex items-center py-0"
+                  title="ContentFy"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <ContentFySymbol level="micro" size={28} theme="dark" />
+                </a>
+              </Link>
+            ) : (
               <Link href="/creator/dashboard">
                 <a
                   className="cf-brand-logo-link inline-flex min-w-0 flex-1 items-center py-0"

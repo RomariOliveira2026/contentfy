@@ -63,11 +63,13 @@ import Privacy from "./pages/Privacy";
 import Desacelere from "./pages/Desacelere";
 import Explore from "./pages/Explore";
 import ShowcaseProductPage from "./pages/ShowcaseProductPage";
+import BrandQa from "./pages/dev/BrandQa";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
+      <Route path="/dev/brand-qa" component={BrandQa} />
       <Route path={"/"} component={Home} />
       <Route path="/explorar" component={Explore} />
       <Route path="/produto/:slug" component={ShowcaseProductPage} />

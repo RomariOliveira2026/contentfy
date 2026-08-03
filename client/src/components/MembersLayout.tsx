@@ -10,7 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { APP_LOGO, APP_TITLE } from "@/const";
+import { ContentFyLogo } from "@/components/branding";
+import { APP_TITLE } from "@/const";
 import { useAuth } from "@/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import {
@@ -74,8 +75,14 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer">
-              <img src={APP_LOGO} alt={APP_TITLE} className="h-9 w-auto" />
-              <span className="font-bold text-lg tracking-tight hidden sm:inline">{APP_TITLE}</span>
+              <ContentFyLogo
+                variant="horizontal"
+                theme="dark"
+                symbol="compact"
+                size={36}
+                className="!h-9 !max-h-9 !w-auto"
+                wrapClassName="!h-9"
+              />
             </div>
           </Link>
 

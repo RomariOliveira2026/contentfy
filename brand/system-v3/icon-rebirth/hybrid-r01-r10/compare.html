@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ContentFy · Híbrido R01+R10 · 3 Propostas</title>
+<style>
+  :root { --bg:#070b12; --card:#111827; --line:rgba(248,250,252,.08); --mute:#94a3b8; --snow:#f8fafc; --orange:#f97316; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--snow); line-height:1.5; }
+  .wrap { max-width:1100px; margin:0 auto; padding:40px 20px 100px; }
+  h1 { font-size:clamp(28px,5vw,44px); letter-spacing:-.04em; margin:8px 0 12px; }
+  h2 { font-size:22px; letter-spacing:-.03em; margin:0 0 12px; }
+  h3 { font-size:15px; margin:0 0 8px; color:#e2e8f0; }
+  p { color:var(--mute); max-width:70ch; }
+  .badge { display:inline-block; border:1px solid rgba(249,115,22,.4); color:#f59e0b; padding:4px 10px; border-radius:999px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+  section { padding:40px 0; border-top:1px solid var(--line); }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  @media (max-width:900px){ .grid3 { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  .stage { min-height:140px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:#0b1220; border:1px solid var(--line); }
+  .stage.light { background:#f8fafc; }
+  .stage svg { width:96px; height:96px; color:#f8fafc; }
+  .stage.light svg { color:#070b12; }
+  .sizes { display:flex; gap:18px; align-items:end; flex-wrap:wrap; margin-top:12px; }
+  .sizes figure { margin:0; text-align:center; }
+  .sizes figcaption { font-size:11px; color:#64748b; margin-top:6px; }
+  .facade {
+    position:relative; height:280px; border-radius:16px; overflow:hidden;
+    background: linear-gradient(180deg,#1e293b 0%, #0f172a 40%, #020617 100%);
+    border:1px solid var(--line);
+  }
+  .facade::before {
+    content:""; position:absolute; inset:0;
+    background-image: repeating-linear-gradient(90deg, transparent 0 28px, rgba(255,255,255,.04) 28px 29px),
+      repeating-linear-gradient(0deg, transparent 0 36px, rgba(255,255,255,.03) 36px 37px);
+    opacity:.7;
+  }
+  .facade .mark { position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); width:72px; height:72px; color:#f8fafc; opacity:.95; }
+  .facade .caption { position:absolute; bottom:16px; left:0; right:0; text-align:center; font-size:12px; color:#64748b; }
+  .score { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .score span { font-size:11px; padding:4px 8px; border-radius:999px; background:rgba(249,115,22,.12); color:#fdba74; }
+  .callout { border-left:3px solid var(--orange); padding:10px 14px; margin:16px 0; color:#cbd5e1; font-size:14px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="badge">Híbrido R01 Aperture Dual + R10 Axis Fold</div>
+  <h1>3 propostas geométricas</h1>
+  <p>Marca corporativa global primeiro. Coruja como descoberta em <strong style="color:#e2e8f0">poucos segundos</strong> — não mascote, não enigma que precisa de explicação.</p>
+  <div class="callout">Validação obrigatória: 16 · 32 · 64 · 512 px + fachada. Wordmark fora de escopo.</div>
+
+  <section>
+    <h2>Leitura visual alvo</h2>
+    <table>
+      <tr><th>Segundo</th><th>O que deve acontecer</th></tr>
+      <tr><td>0–1s</td><td>“Símbolo elegante / corporativo”</td></tr>
+      <tr><td>1–4s</td><td>“Há vigilância / lente / dobra inteligente”</td></tr>
+      <tr><td>~3–6s</td><td>“Ah — é uma coruja” (sem precisar contar)</td></tr>
+    </table>
+  </section>
+
+  <!-- P1 -->
+  <section id="p1">
+    <h2>P1 — Fold Aperture</h2>
+    <p>Coroa de dois picos (eixo R10) + duas aberturas (R01) + cunha. A forma já sugere vigilância rapidamente; ainda assim não desenha asas/penas/bochechas.</p>
+    <div class="grid3">
+      <div class="card"><h3>Dark</h3><div class="stage"><img src="./svg/P1-fold-aperture.svg" width="96" height="96" alt="P1" style="filter:invert(1)" /></div></div>
+      <div class="card"><h3>Light</h3><div class="stage light"><img src="./svg/P1-fold-aperture.svg" width="96" height="96" alt="P1l" /></div></div>
+      <div class="card"><h3>Orange brand</h3><div class="stage" style="background:#0b1220"><img src="./svg/P1-fold-aperture.svg" width="96" height="96" alt="P1o" style="filter:invert(48%) sepia(98%) saturate(2000%) hue-rotate(2deg) brightness(105%)" /></div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3>Escala</h3>
+      <div class="sizes">
+        <figure><img src="./svg/P1-micro.svg" width="16" height="16" style="filter:invert(1)" alt="16"/><figcaption>16</figcaption></figure>
+        <figure><img src="./svg/P1-micro.svg" width="32" height="32" style="filter:invert(1)" alt="32"/><figcaption>32</figcaption></figure>
+        <figure><img src="./svg/P1-fold-aperture.svg" width="64" height="64" style="filter:invert(1)" alt="64"/><figcaption>64</figcaption></figure>
+        <figure><img src="./svg/P1-fold-aperture.svg" width="128" height="128" style="filter:invert(1)" alt="128"/><figcaption>128≈512*</figcaption></figure>
+      </div>
+      <p style="font-size:12px;margin-top:8px">*512 usa o mesmo path master — validação óptica idêntica ao 128 em tela.</p>
+      <div class="facade" style="margin-top:14px">
+        <img class="mark" src="./svg/P1-fold-aperture.svg" alt="facade P1" style="filter:invert(1)" />
+        <div class="caption">Simulação fachada · P1</div>
+      </div>
+      <div class="score">
+        <span>Memorabilidade alta</span><span>Escalabilidade alta</span><span>Descoberta ~3s</span><span>Risco: coroa um pouco “animal”</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- P2 -->
+  <section id="p2">
+    <h2>P2 — Axis Lens</h2>
+    <p>Ápice único de dobra (R10) + anéis ópticos (R01). Mais “lente / precisão”. A coruja aparece pelos anéis + cunha — sem orelhas.</p>
+    <div class="grid3">
+      <div class="card"><h3>Dark</h3><div class="stage"><img src="./svg/P2-axis-lens.svg" width="96" height="96" alt="P2" style="filter:invert(1)" /></div></div>
+      <div class="card"><h3>Light</h3><div class="stage light"><img src="./svg/P2-axis-lens.svg" width="96" height="96" alt="P2l" /></div></div>
+      <div class="card"><h3>Orange brand</h3><div class="stage"><img src="./svg/P2-axis-lens.svg" width="96" height="96" alt="P2o" style="filter:invert(48%) sepia(98%) saturate(2000%) hue-rotate(2deg) brightness(105%)" /></div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3>Escala</h3>
+      <div class="sizes">
+        <figure><img src="./svg/P2-micro.svg" width="16" height="16" style="filter:invert(1)" alt="16"/><figcaption>16</figcaption></figure>
+        <figure><img src="./svg/P2-micro.svg" width="32" height="32" style="filter:invert(1)" alt="32"/><figcaption>32</figcaption></figure>
+        <figure><img src="./svg/P2-axis-lens.svg" width="64" height="64" style="filter:invert(1)" alt="64"/><figcaption>64</figcaption></figure>
+        <figure><img src="./svg/P2-axis-lens.svg" width="128" height="128" style="filter:invert(1)" alt="128"/><figcaption>128≈512*</figcaption></figure>
+      </div>
+      <div class="facade" style="margin-top:14px">
+        <img class="mark" src="./svg/P2-axis-lens.svg" alt="facade P2" style="filter:invert(1)" />
+        <div class="caption">Simulação fachada · P2</div>
+      </div>
+      <div class="score">
+        <span>Elegância máxima</span><span>R01 mais puro</span><span>Descoberta ~4s</span><span>Anéis fortes em 32+</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- P3 -->
+  <section id="p3">
+    <h2>P3 — Twin Pane</h2>
+    <p>Dois painéis arquitetônicos (R10) com aberturas (R01). Lê como janela/portal corporativo; a coruja surge da simetria + cunha central.</p>
+    <div class="grid3">
+      <div class="card"><h3>Dark</h3><div class="stage"><img src="./svg/P3-twin-pane.svg" width="96" height="96" alt="P3" style="filter:invert(1)" /></div></div>
+      <div class="card"><h3>Light</h3><div class="stage light"><img src="./svg/P3-twin-pane.svg" width="96" height="96" alt="P3l" /></div></div>
+      <div class="card"><h3>Orange brand</h3><div class="stage"><img src="./svg/P3-twin-pane.svg" width="96" height="96" alt="P3o" style="filter:invert(48%) sepia(98%) saturate(2000%) hue-rotate(2deg) brightness(105%)" /></div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3>Escala</h3>
+      <div class="sizes">
+        <figure><img src="./svg/P3-micro.svg" width="16" height="16" style="filter:invert(1)" alt="16"/><figcaption>16</figcaption></figure>
+        <figure><img src="./svg/P3-micro.svg" width="32" height="32" style="filter:invert(1)" alt="32"/><figcaption>32</figcaption></figure>
+        <figure><img src="./svg/P3-twin-pane.svg" width="64" height="64" style="filter:invert(1)" alt="64"/><figcaption>64</figcaption></figure>
+        <figure><img src="./svg/P3-twin-pane.svg" width="128" height="128" style="filter:invert(1)" alt="128"/><figcaption>128≈512*</figcaption></figure>
+      </div>
+      <div class="facade" style="margin-top:14px">
+        <img class="mark" src="./svg/P3-twin-pane.svg" alt="facade P3" style="filter:invert(1)" />
+        <div class="caption">Simulação fachada · P3</div>
+      </div>
+      <div class="score">
+        <span>Mais institucional</span><span>Fachada forte</span><span>Descoberta ~3–5s</span><span>Risco: parecer “app window”</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Scorecard editorial (0–100)</h2>
+    <table>
+      <tr><th>Proposta</th><th>Memorabilidade</th><th>Escalabilidade</th><th>Elegância</th><th>Descoberta rápida</th><th>Corporativo</th><th>Média</th></tr>
+      <tr><td><strong>P1 Fold Aperture</strong></td><td>91</td><td>89</td><td>89</td><td>93</td><td>88</td><td><strong>90.0</strong></td></tr>
+      <tr><td><strong>P2 Axis Lens</strong></td><td>89</td><td>92</td><td>96</td><td>88</td><td>94</td><td><strong>91.8</strong></td></tr>
+      <tr><td><strong>P3 Twin Pane</strong></td><td>87</td><td>94</td><td>91</td><td>90</td><td>95</td><td><strong>91.4</strong></td></tr>
+    </table>
+    <p style="margin-top:14px">Após ajuste de descoberta rápida: <strong style="color:#e2e8f0">P2</strong> lidera elegância+lente; <strong style="color:#e2e8f0">P3</strong> lidera institucional/fachada; <strong style="color:#e2e8f0">P1</strong> lidera revelação da coruja (~3s). Escolha uma para produção definitiva.</p>
+  </section>
+</div>
+</body>
+</html>

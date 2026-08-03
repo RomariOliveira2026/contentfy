@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ContentFy Signature Edition — Brand Book</title>
+<style>
+  :root { --bg:#070b12; --card:#111827; --line:rgba(248,250,252,.08); --mute:#94a3b8; --snow:#f8fafc; --orange:#f97316; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--snow); line-height:1.5; }
+  .wrap { max-width:1140px; margin:0 auto; padding:40px 20px 120px; }
+  .badge { display:inline-block; border:1px solid rgba(249,115,22,.4); color:#f59e0b; padding:4px 10px; border-radius:999px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+  h1 { font-size:clamp(30px,5vw,48px); letter-spacing:-.04em; margin:12px 0; }
+  h2 { font-size:22px; margin:0 0 14px; letter-spacing:-.03em; }
+  h3 { font-size:14px; margin:0 0 8px; color:#e2e8f0; }
+  p { color:var(--mute); max-width:72ch; }
+  section { padding:36px 0; border-top:1px solid var(--line); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:900px){ .grid2,.grid3,.grid4{grid-template-columns:1fr;} }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; }
+  .stage { min-height:170px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:#0b1220; border:1px solid var(--line); gap:12px; flex-wrap:wrap; position:relative; }
+  .stage.light { background:#f8fafc; }
+  .sizes { display:flex; gap:14px; align-items:end; flex-wrap:wrap; }
+  .sizes figure { margin:0; text-align:center; }
+  .sizes figcaption { font-size:11px; color:#64748b; margin-top:6px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+  .mock { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#0b1220; width:100%; }
+  .mock-bar { display:flex; align-items:center; gap:10px; padding:10px 14px; background:#111827; border-bottom:1px solid var(--line); }
+  .mock-side { display:flex; min-height:110px; }
+  .mock-nav { width:52px; border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:10px; }
+  .mock-main { flex:1; padding:14px; font-size:12px; color:#64748b; }
+  a { color:#fdba74; }
+  .print { position:fixed; right:16px; bottom:16px; background:var(--orange); color:#111; border:0; border-radius:999px; padding:12px 18px; font-weight:700; cursor:pointer; z-index:9; }
+  @media print { .print{display:none;} body{background:#fff;color:#111;} .card,.stage{break-inside:avoid;} }
+</style>
+</head>
+<body>
+<button class="print" onclick="window.print()">Exportar PDF</button>
+<div class="wrap">
+  <div class="badge">CONTENTFY VISUAL IDENTITY · LOCKED · v1.0 · Design Freeze</div>
+  <h1>ContentFy Brand Book<br/><span style="background:linear-gradient(135deg,#f97316,#eab308);-webkit-background-clip:text;color:transparent">Patrimônio permanente.</span></h1>
+  <p><strong style="color:#4ade80">STATUS: LOCKED · VERSION 1.0</strong> — V11 Optical Lock. Olhos e favicon congelados. Compact/Micro derivadas da Master. Sem alteração estrutural daqui em diante.</p>
+
+  <section>
+    <h2>1 · Comparativo Original × Final</h2>
+    <div class="grid2">
+      <div class="card"><h3>Original</h3><div class="stage"><img src="../../../client/public/favicon.png" height="160" alt="original"/></div></div>
+      <div class="card"><h3>Signature Master</h3><div class="stage light"><img src="../png/symbol-master-512.png" height="160" alt="master"/></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2 · Sobreposição + Heatmap</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>Overlay 50%</h3>
+        <div class="stage" style="min-height:240px">
+          <div style="position:relative;width:180px;height:216px">
+            <img src="../../../client/public/favicon.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain" alt="a"/>
+            <img src="../png/symbol-master-dark-512.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.5" alt="b"/>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Heatmap (difference)</h3>
+        <div class="stage light" style="min-height:240px">
+          <div style="position:relative;width:180px;height:216px">
+            <img src="../../../client/public/favicon.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:grayscale(1);opacity:.9" alt="h1"/>
+            <img src="../png/symbol-master-512.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;mix-blend-mode:difference;opacity:.7" alt="h2"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3 · Sistema responsivo</h2>
+    <div class="grid3">
+      <div class="card"><h3>Master ≥96</h3><div class="stage light"><img src="../png/symbol-master-512.png" height="120" alt="m"/></div><p style="font-size:12px;margin:8px 0 0">Landing · Hero · Brand</p></div>
+      <div class="card"><h3>Compact 32–95</h3><div class="stage light"><img src="../png/symbol-compact-512.png" height="120" alt="c"/></div><p style="font-size:12px;margin:8px 0 0">Header · Dashboard · Checkout</p></div>
+      <div class="card"><h3>Micro 16–32</h3><div class="stage light"><img src="../png/symbol-micro-256.png" height="96" alt="µ"/></div><p style="font-size:12px;margin:8px 0 0">Favicon · Sidebar · Avatar</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>4 · Construção + Safe Area</h2>
+    <div class="grid2">
+      <div class="card"><h3>Grade</h3><div class="stage light"><img src="../png/construction-grid-512.png" height="180" alt="g"/></div></div>
+      <div class="card"><h3>Área de proteção</h3><div class="stage light"><img src="../png/safe-area-480.png" height="180" alt="s"/></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>5 · Variantes</h2>
+    <div class="grid4">
+      <div class="card"><h3>Light</h3><div class="stage light"><img src="../png/symbol-master-512.png" height="90" alt="l"/></div></div>
+      <div class="card"><h3>Dark</h3><div class="stage"><img src="../png/symbol-master-dark-512.png" height="90" alt="d"/></div></div>
+      <div class="card"><h3>Mono Dark</h3><div class="stage light"><img src="../png/mono-dark-512.png" height="90" alt="md"/></div></div>
+      <div class="card"><h3>Mono Light</h3><div class="stage"><img src="../png/mono-light-512.png" height="90" alt="ml"/></div></div>
+      <div class="card"><h3>Outline</h3><div class="stage light"><img src="../png/outline-512.png" height="90" alt="o"/></div></div>
+      <div class="card"><h3>Silhueta</h3><div class="stage light"><img src="../png/silhouette-512.png" height="90" alt="si"/></div></div>
+      <div class="card"><h3>P&amp;B</h3><div class="stage light"><img src="../png/mono-dark-512.png" height="90" style="filter:grayscale(1)" alt="pb"/></div></div>
+      <div class="card"><h3>App / Fav / Avatar</h3>
+        <div class="stage">
+          <img src="../png/app-icon-512.png" width="64" style="border-radius:14px" alt="app"/>
+          <img src="../png/favicon-32.png" width="32" alt="f"/>
+          <img src="../png/avatar-256.png" width="56" alt="av"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>6 · Redução mínima</h2>
+    <div class="card">
+      <div class="sizes">
+        <figure><img src="../png/micro-16.png" width="16" height="16" alt="16"/><figcaption>16</figcaption></figure>
+        <figure><img src="../png/micro-20.png" width="20" height="20" alt="20"/><figcaption>20</figcaption></figure>
+        <figure><img src="../png/micro-24.png" width="24" height="24" alt="24"/><figcaption>24</figcaption></figure>
+        <figure><img src="../png/micro-32.png" width="32" height="32" alt="32"/><figcaption>32</figcaption></figure>
+        <figure><img src="../png/favicon-16.png" width="16" height="16" alt="f16"/><figcaption>fav 16</figcaption></figure>
+        <figure><img src="../png/favicon-32.png" width="32" height="32" alt="f32"/><figcaption>fav 32</figcaption></figure>
+        <figure><img src="../png/symbol-master-32.png" width="32" alt="32m"/><figcaption>32 M</figcaption></figure>
+        <figure><img src="../png/symbol-master-64.png" width="48" alt="48"/><figcaption>48</figcaption></figure>
+        <figure><img src="../png/symbol-master-64.png" width="64" alt="64"/><figcaption>64</figcaption></figure>
+        <figure><img src="../png/symbol-master-128.png" width="96" alt="96"/><figcaption>96</figcaption></figure>
+        <figure><img src="../png/symbol-master-128.png" width="128" alt="128"/><figcaption>128</figcaption></figure>
+        <figure><img src="../png/symbol-master-256.png" width="180" alt="256"/><figcaption>256</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>7 · Aplicações reais</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3>Header (Compact)</h3>
+        <div class="mock">
+          <div class="mock-bar">
+            <img src="../png/symbol-compact-512.png" height="26" alt="h" style="filter:brightness(0) invert(1)"/>
+            <span style="font-size:13px">ContentFy</span>
+            <span style="margin-left:auto;font-size:11px;color:#64748b">Marketplace</span>
+          </div>
+          <div class="mock-main">Dashboard · checkout · login</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Sidebar (Micro)</h3>
+        <div class="mock">
+          <div class="mock-side">
+            <div class="mock-nav"><img src="../png/micro-24.png" width="24" height="24" alt="n"/></div>
+            <div class="mock-main">Menu mobile / painel</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Splash (Master)</h3>
+        <div class="stage" style="min-height:140px;flex-direction:column">
+          <img src="../png/symbol-master-dark-512.png" height="88" alt="sp"/>
+          <span style="font-size:11px;color:#94a3b8">Hero · institucional · vídeo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>8 · Lockups</h2>
+    <div class="stage"><img src="../png/logo-horizontal-880.png" style="height:52px" alt="hd"/></div>
+    <div class="stage light" style="margin-top:10px"><img src="../png/logo-horizontal-on-light-880.png" style="height:52px" alt="hl"/></div>
+    <div class="stage" style="margin-top:10px"><img src="../png/logo-horizontal-compact-800.png" style="height:44px" alt="hc"/></div>
+    <div class="stage" style="margin-top:10px"><img src="../png/logo-vertical-560.png" style="height:150px" alt="v"/></div>
+  </section>
+
+  <section>
+    <h2>9 · Optical decisions (V11 LOCK)</h2>
+    <table>
+      <tr><th>Element</th><th>Action</th><th>Status</th></tr>
+      <tr><td>Eyebrows</td><td>+2% curvature</td><td>V11</td></tr>
+      <tr><td>Head</td><td>−2px optical</td><td>V11</td></tr>
+      <tr><td>Body</td><td>−2.5% lower mass</td><td>V11</td></tr>
+      <tr><td>Eyes</td><td>34/94 r18</td><td>LOCKED</td></tr>
+      <tr><td>Favicon</td><td>file unchanged</td><td>LOCKED</td></tr>
+      <tr><td>Compact / Micro</td><td>auto-derived from Master</td><td>synced</td></tr>
+    </table>
+    <p style="margin-top:10px"><a href="./optical-decisions-final.md">optical-decisions-final.md</a></p>
+  </section>
+
+  <section>
+    <h2>10 · Export table</h2>
+    <table>
+      <tr><th>Asset</th><th>Path</th></tr>
+      <tr><td>Master</td><td>svg/symbol-master.svg · png/symbol-master-{512,256,128,64,32}.png</td></tr>
+      <tr><td>Compact</td><td>svg/symbol-compact.svg · png/symbol-compact-512.png</td></tr>
+      <tr><td>Micro</td><td>svg/symbol-micro.svg · png/micro-{16,20,24,32}.png</td></tr>
+      <tr><td>Mono / Outline / Silhouette</td><td>svg/mono-*.svg · outline.svg · silhouette.svg</td></tr>
+      <tr><td>Favicon / App / Avatar</td><td>svg/favicon.svg · app-icon.svg · avatar.svg</td></tr>
+      <tr><td>Lockups</td><td>svg/logo-horizontal*.svg · logo-vertical.svg</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>11 · Usage rules</h2>
+    <table>
+      <tr><th>Contexto</th><th>Nível</th><th>Mínimo</th></tr>
+      <tr><td>Landing, campanha, splash, brand</td><td>Master</td><td>96px</td></tr>
+      <tr><td>Header, dashboard, marketplace, checkout</td><td>Compact</td><td>32px</td></tr>
+      <tr><td>Favicon, sidebar, avatar, app pequeno</td><td>Micro</td><td>16px</td></tr>
+    </table>
+    <p style="margin-top:12px">Safe area = 0.5× altura. Não distorcer. Sem glow/sombra no mark. Wordmark congelado.</p>
+  </section>
+</div>
+</body>
+</html>

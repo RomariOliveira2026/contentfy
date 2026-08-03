@@ -1,0 +1,76 @@
+/**
+ * ContentFy Global Brand System v3.0 — Brand Freeze
+ * BuilderTudo Technologies
+ * Do not alter tokens without Brand Board approval.
+ */
+
+:root {
+  /* —— Core —— */
+  --cf-midnight: #070b12;
+  --cf-charcoal: #111827;
+  --cf-ink: #0f172a;
+  --cf-slate: #334155;
+  --cf-mist: #e2e8f0;
+  --cf-white: #ffffff;
+  --cf-snow: #f8fafc;
+
+  /* —— Accent (Premium Luxury Tech) —— */
+  --cf-orange: #f97316;
+  --cf-orange-deep: #ea580c;
+  --cf-amber: #f59e0b;
+  --cf-gold: #eab308;
+
+  /* —— Gradients —— */
+  --cf-gradient-fy: linear-gradient(135deg, #f97316 0%, #f59e0b 52%, #eab308 100%);
+  --cf-gradient-surface-dark: linear-gradient(165deg, #0b1220 0%, #070b12 48%, #111827 100%);
+  --cf-gradient-surface-light: linear-gradient(165deg, #ffffff 0%, #f8fafc 55%, #f1f5f9 100%);
+
+  /* —— Semantic dark —— */
+  --cf-dark-bg: var(--cf-midnight);
+  --cf-dark-surface: var(--cf-charcoal);
+  --cf-dark-elevated: #1a2332;
+  --cf-dark-border: rgba(248, 250, 252, 0.08);
+  --cf-dark-text: var(--cf-snow);
+  --cf-dark-muted: #94a3b8;
+
+  /* —— Semantic light —— */
+  --cf-light-bg: var(--cf-snow);
+  --cf-light-surface: var(--cf-white);
+  --cf-light-elevated: #ffffff;
+  --cf-light-border: rgba(15, 23, 42, 0.08);
+  --cf-light-text: var(--cf-ink);
+  --cf-light-muted: #64748b;
+
+  /* —— Geometry —— */
+  --cf-radius-xs: 4px;
+  --cf-radius-sm: 8px;
+  --cf-radius-md: 12px;
+  --cf-radius-lg: 16px;
+  --cf-radius-xl: 24px;
+  --cf-radius-app: 22.5%; /* iOS-style app icon */
+
+  --cf-stroke-hair: 1px;
+  --cf-stroke-thin: 1.5px;
+  --cf-stroke-mark: 2px;
+  --cf-stroke-bold: 2.5px;
+
+  --cf-space-1: 4px;
+  --cf-space-2: 8px;
+  --cf-space-3: 12px;
+  --cf-space-4: 16px;
+  --cf-space-5: 24px;
+  --cf-space-6: 32px;
+  --cf-space-7: 48px;
+  --cf-space-8: 64px;
+
+  --cf-shadow-sm: 0 1px 2px rgba(7, 11, 18, 0.06);
+  --cf-shadow-md: 0 8px 24px rgba(7, 11, 18, 0.12);
+  --cf-shadow-glow: 0 0 0 1px rgba(249, 115, 22, 0.35);
+
+  --cf-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --cf-duration: 180ms;
+
+  /* —— Type scale (UI companion — wordmark is proprietary SVG) —— */
+  --cf-font-ui: "CF Sans", ui-sans-serif, system-ui, sans-serif;
+  --cf-font-mono: "CF Mono", ui-monospace, monospace;
+}

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { APP_LOGO } from "@/const";
+import { ContentFyLogo } from "@/components/branding";
 import { Menu, X, ChevronDown, Sun, Moon } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
@@ -35,10 +35,13 @@ export default function Header() {
           {/* Logo - responsiva */}
           <Link href="/">
             <a className="flex items-center cursor-pointer hover:opacity-90 transition-opacity">
-              <img 
-                src={APP_LOGO} 
-                alt="ContentFy" 
-                className="!h-7 !w-auto object-contain" 
+              <ContentFyLogo
+                variant="horizontal"
+                theme="dark"
+                symbol="compact"
+                size={28}
+                className="!h-7 !max-h-7 !w-auto object-contain"
+                wrapClassName="!h-7"
               />
             </a>
           </Link>

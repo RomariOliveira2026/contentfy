@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" role="img" aria-label="ContentFy Outline">
+  <path stroke="currentColor" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round" d="M20 8 L15 29 C11 38.5 9.5 48.5 9.5 58 V70 C9.5 78.5 13.5 86 19 91.5 L14.5 99 C11.5 104 10 110 10 115.5 C10 122.5 17.5 126.5 29 127.5 L48 127.5 H80 L99 127.5 C110.5 126.5 118 122.5 118 115.5 C118 110 116.5 104 113.5 99 L109 91.5 C114.5 86 118.5 78.5 118.5 70 V58 C118.5 48.5 117 38.5 113 29 L108 8 L93 15.5 L85 28.5 H43 L35 15.5 Z"/>
+  <path stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" d="M24 39 L38 24 H55 L57 30 L53 40 M104 39 L90 24 H73 L71 30 L75 40 M55 37 H73"/>
+  <circle cx="40" cy="51" r="14.4" stroke="currentColor" stroke-width="3.2"/>
+  <circle cx="88" cy="51" r="14.4" stroke="currentColor" stroke-width="3.2"/>
+  <circle cx="40" cy="51" r="3.2" fill="currentColor"/>
+  <circle cx="88" cy="51" r="3.2" fill="currentColor"/>
+  <path stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" d="M57 60 L64 78 L71 60"/>
+  <path stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M20 66 C17 80 17 94 22 104 M108 66 C111 80 111 94 106 104"/>
+</svg>
