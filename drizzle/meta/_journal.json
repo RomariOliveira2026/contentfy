@@ -71,6 +71,34 @@
       "when": 1772885892363,
       "tag": "0009_funny_rawhide_kid",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1775400000000,
+      "tag": "0010_contentfy_protect",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1775401000000,
+      "tag": "0011_contentfy_protect_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1775500000000,
+      "tag": "0012_contentfy_discovery",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1775600000000,
+      "tag": "0013_contentfy_learn",
+      "breakpoints": true
     }
   ]
 }

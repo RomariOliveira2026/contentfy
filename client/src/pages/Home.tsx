@@ -20,6 +20,7 @@ import {
   Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { DiscoveryHomeFeed } from "@/components/discovery";
 
 /** Mockup oficial já usado na marca — sem inventar arte nova. */
 const DESACELERE_MOCKUP =
@@ -170,6 +171,11 @@ export default function Home() {
               </motion.div>
             </div>
           </div>
+        </section>
+
+        {/* Home personalizada — motor Discovery (comportamento/regras) */}
+        <section className="py-10 lg:py-14 border-y border-border/40 bg-background/40">
+          <DiscoveryHomeFeed />
         </section>
 
         <section className="py-20 lg:py-24">

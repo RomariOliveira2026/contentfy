@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Sparkles,
+  LineChart,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import BrandLogo from "@/components/BrandLogo";
@@ -30,6 +31,7 @@ const menuItems = [
   { icon: BookOpen, label: "Cursos", path: "/creator/courses" },
   { icon: ShoppingCart, label: "Vendas", path: "/creator/sales" },
   { icon: Users, label: "Alunos", path: "/creator/students" },
+  { icon: LineChart, label: "Success", path: "/creator/success" },
   { icon: LinkIcon, label: "Afiliados", path: "/creator/affiliates" },
   { icon: Settings, label: "Configurações", path: "/creator/settings" },
 ];

@@ -22,6 +22,9 @@ import {
   Menu,
   X,
   Award,
+  ShoppingBag,
+  Sparkles,
+  LineChart,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -47,9 +50,24 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
       icon: LayoutDashboard,
     },
     {
+      name: "Evolução",
+      href: "/my-account/evolucao",
+      icon: Sparkles,
+    },
+    {
+      name: "Minha Evolução",
+      href: "/my-account/sucesso",
+      icon: LineChart,
+    },
+    {
       name: "Meus Produtos",
       href: "/my-account/products",
       icon: BookOpen,
+    },
+    {
+      name: "Compras / Protect",
+      href: "/my-account/purchases",
+      icon: ShoppingBag,
     },
     {
       name: "Certificados",

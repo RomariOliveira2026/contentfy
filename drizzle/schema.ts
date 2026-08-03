@@ -112,6 +112,74 @@ export type Order = typeof orders.$inferSelect;
 export type InsertOrder = typeof orders.$inferInsert;
 
 // ============================================================================
+// CONTENTFY PROTECT — REFUND REQUESTS
+// ============================================================================
+
+export const refundRequests = mysqlTable("refund_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  orderId: int("orderId").notNull(),
+  userId: int("userId").notNull(),
+  productId: int("productId").notNull(),
+  reason: mysqlEnum("reason", [
+    "content_mismatch",
+    "access_issue",
+    "accidental_purchase",
+    "not_needed",
+    "other",
+  ]).notNull(),
+  details: text("details"),
+  status: mysqlEnum("status", [
+    "requested",
+    "under_review",
+    "approved",
+    "rejected",
+    "processing",
+    "refunded",
+    "failed",
+    "cancelled",
+  ])
+    .default("requested")
+    .notNull(),
+  requestedAt: timestamp("requestedAt").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewedBy: int("reviewedBy"),
+  refundAmount: int("refundAmount"), // centavos
+  providerRefundId: varchar("providerRefundId", { length: 255 }),
+  adminNotes: text("adminNotes"),
+  idempotencyKey: varchar("idempotencyKey", { length: 128 }),
+  accessRevocationStatus: mysqlEnum("accessRevocationStatus", [
+    "pending",
+    "revoked",
+    "failed",
+    "not_applicable",
+  ])
+    .default("not_applicable")
+    .notNull(),
+  reconciliationNeeded: boolean("reconciliationNeeded").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RefundRequest = typeof refundRequests.$inferSelect;
+export type InsertRefundRequest = typeof refundRequests.$inferInsert;
+
+export const refundAuditEvents = mysqlTable("refund_audit_events", {
+  id: int("id").autoincrement().primaryKey(),
+  refundRequestId: int("refundRequestId"),
+  orderId: int("orderId"),
+  actorUserId: int("actorUserId"),
+  eventType: varchar("eventType", { length: 64 }).notNull(),
+  fromStatus: varchar("fromStatus", { length: 32 }),
+  toStatus: varchar("toStatus", { length: 32 }),
+  message: text("message"),
+  metadataJson: text("metadataJson"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type RefundAuditEvent = typeof refundAuditEvents.$inferSelect;
+export type InsertRefundAuditEvent = typeof refundAuditEvents.$inferInsert;
+
+// ============================================================================
 // USER PRODUCTS (Produtos adquiridos pelo usuário)
 // ============================================================================
 
@@ -322,3 +390,111 @@ export const userSubscriptions = mysqlTable("user_subscriptions", {
 
 export type UserSubscription = typeof userSubscriptions.$inferSelect;
 export type InsertUserSubscription = typeof userSubscriptions.$inferInsert;
+
+// ============================================================================
+// CONTENTFY DISCOVERY — metadata, relationships, favorites, events
+// Additive tables; does not alter `products` columns.
+// ============================================================================
+
+export const productDiscoveryMeta = mysqlTable("product_discovery_meta", {
+  id: int("id").autoincrement().primaryKey(),
+  productId: int("productId"),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  tagsJson: text("tagsJson"),
+  category: varchar("category", { length: 255 }),
+  subcategory: varchar("subcategory", { length: 255 }),
+  level: varchar("level", { length: 64 }),
+  durationLabel: varchar("durationLabel", { length: 128 }),
+  author: varchar("author", { length: 255 }),
+  collectionsJson: text("collectionsJson"),
+  keywordsJson: text("keywordsJson"),
+  objectivesJson: text("objectivesJson"),
+  audienceJson: text("audienceJson"),
+  skillsJson: text("skillsJson"),
+  isFeatured: boolean("isFeatured").default(false).notNull(),
+  isLaunch: boolean("isLaunch").default(false).notNull(),
+  isBeginnerFriendly: boolean("isBeginnerFriendly").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProductDiscoveryMeta = typeof productDiscoveryMeta.$inferSelect;
+export type InsertProductDiscoveryMeta = typeof productDiscoveryMeta.$inferInsert;
+
+export const productDiscoveryRelationships = mysqlTable(
+  "product_discovery_relationships",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    fromSlug: varchar("fromSlug", { length: 255 }).notNull(),
+    toSlug: varchar("toSlug", { length: 255 }).notNull(),
+    relationType: mysqlEnum("relationType", [
+      "next",
+      "prerequisite",
+      "companion",
+      "upsell",
+      "bundle",
+    ])
+      .default("next")
+      .notNull(),
+    weight: int("weight").default(1).notNull(),
+    label: varchar("label", { length: 255 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  }
+);
+
+export type ProductDiscoveryRelationship =
+  typeof productDiscoveryRelationships.$inferSelect;
+export type InsertProductDiscoveryRelationship =
+  typeof productDiscoveryRelationships.$inferInsert;
+
+export const userFavorites = mysqlTable("user_favorites", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  productId: int("productId"),
+  productSlug: varchar("productSlug", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UserFavorite = typeof userFavorites.$inferSelect;
+export type InsertUserFavorite = typeof userFavorites.$inferInsert;
+
+export const discoveryEvents = mysqlTable("discovery_events", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  sessionId: varchar("sessionId", { length: 64 }),
+  eventType: varchar("eventType", { length: 32 }).notNull(),
+  productId: int("productId"),
+  productSlug: varchar("productSlug", { length: 255 }),
+  category: varchar("category", { length: 255 }),
+  query: varchar("query", { length: 512 }),
+  dwellMs: int("dwellMs"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DiscoveryEvent = typeof discoveryEvents.$inferSelect;
+export type InsertDiscoveryEvent = typeof discoveryEvents.$inferInsert;
+
+export const discoverySearchStats = mysqlTable("discovery_search_stats", {
+  id: int("id").autoincrement().primaryKey(),
+  queryNormalized: varchar("queryNormalized", { length: 255 }).notNull().unique(),
+  hitCount: int("hitCount").default(1).notNull(),
+  lastSearchedAt: timestamp("lastSearchedAt").defaultNow().notNull(),
+});
+
+export type DiscoverySearchStat = typeof discoverySearchStats.$inferSelect;
+export type InsertDiscoverySearchStat = typeof discoverySearchStats.$inferInsert;
+
+// ============================================================================
+// CONTENTFY LEARN — learner goal preference (additive)
+// ============================================================================
+
+export const learnUserGoals = mysqlTable("learn_user_goals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  goalId: varchar("goalId", { length: 64 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LearnUserGoal = typeof learnUserGoals.$inferSelect;
+export type InsertLearnUserGoal = typeof learnUserGoals.$inferInsert;

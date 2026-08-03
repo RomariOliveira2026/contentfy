@@ -16,6 +16,8 @@ import ProductGallery from "@/components/showcase/ProductGallery";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import { DiscoveryRail } from "@/components/discovery";
 
 export default function ShowcaseProductPage() {
   const params = useParams<{ slug: string }>();
@@ -23,6 +25,22 @@ export default function ShowcaseProductPage() {
   const { getBySlug, visible, isLoading } = useShowcaseCatalog();
   const product = getBySlug(slug);
   const image = product ? resolveProductImage(product) : null;
+  const track = trpc.discovery.track.useMutation();
+  const { data: discoveryRelated } = trpc.discovery.related.useQuery(
+    { slug },
+    { enabled: Boolean(slug) }
+  );
+
+  useEffect(() => {
+    if (!slug) return;
+    track.mutate({
+      eventType: "view",
+      productSlug: slug,
+      category: product?.category,
+    });
+    // track once per slug mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
   useEffect(() => {
     if (!product || !image) return;
@@ -276,7 +294,13 @@ export default function ShowcaseProductPage() {
           </Section>
         </div>
 
-        {related.length > 0 && (
+        {discoveryRelated && discoveryRelated.length > 0 ? (
+          <DiscoveryRail
+            title="Continue nesta trilha"
+            subtitle="Relacionamentos do ContentFy Discovery"
+            items={discoveryRelated}
+          />
+        ) : related.length > 0 ? (
           <section className="container pb-8">
             <h2 className="text-xl font-semibold mb-4">Produtos relacionados</h2>
             <div className="flex flex-wrap gap-4">
@@ -285,7 +309,7 @@ export default function ShowcaseProductPage() {
               ))}
             </div>
           </section>
-        )}
+        ) : null}
       </main>
 
       <PublicFooter />

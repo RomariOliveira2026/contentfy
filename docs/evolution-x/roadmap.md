@@ -15,15 +15,15 @@
 ## Em desenvolvimento
 
 - [ ] Wire ContentFy Pay display across checkout UI
-- [ ] Guarantee request flow (Protect) with persistence
-- [ ] Success Score surfaced in member area
+- [x] Guarantee request flow (Protect) with persistence + admin review
+- [x] Success Score surfaced in member area (Success Engine v1 — `/my-account/sucesso`; see docs/evolution-xii/)
 - [ ] Design System pattern kits (Hero, Pricing, FAQ blocks)
 - [ ] Insight dashboards (student / creator / admin)
 
 ## Planejado
 
-- [ ] Adaptive Learn trails / missions / challenges
-- [ ] Discovery ranking by behavior & goals
+- [x] Adaptive Learn trails / missions / challenges (Learn v1 — goals/competencies/journey; see docs/evolution-xi/)
+- [x] Discovery ranking by behavior & goals (v1 rules/graph/trending — see discovery-v1.md)
 - [ ] Notification Center (email / push / WhatsApp)
 - [ ] Community spaces
 - [ ] Media compression + CDN pipeline

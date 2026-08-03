@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PublicHeader from "@/components/PublicHeader";
 import PublicFooter from "@/components/PublicFooter";
 import ShowcaseHero from "@/components/showcase/ShowcaseHero";
@@ -15,6 +15,16 @@ import {
   useShowcaseCatalog,
 } from "@/lib/showcase";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DiscoveryHomeFeed } from "@/components/discovery/DiscoveryHomeFeed";
+import { DiscoverySeo } from "@/components/discovery";
+
+function scrollToFiltrosSection() {
+  if (typeof window === "undefined") return;
+  if (window.location.hash !== "#filtros") return;
+  const el = document.getElementById("filtros");
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 const DEFAULT_FILTERS: ShowcaseFilters = {
   query: "",
@@ -86,12 +96,31 @@ export default function Explore() {
     setModalOpen(true);
   };
 
+  // SPA: hash #filtros does not auto-scroll after client navigation / when already on page
+  useEffect(() => {
+    if (isLoading) return;
+    const run = () => scrollToFiltrosSection();
+    const t0 = window.setTimeout(run, 50);
+    const t1 = window.setTimeout(run, 250);
+    window.addEventListener("hashchange", run);
+    return () => {
+      window.clearTimeout(t0);
+      window.clearTimeout(t1);
+      window.removeEventListener("hashchange", run);
+    };
+  }, [isLoading]);
+
   return (
     <div className="min-h-screen flex flex-col bg-background cf-showcase-page">
       <ShowcaseSeo
         title="Explorar | ContentFy"
         description="Explore conteúdos cuidadosamente desenvolvidos para transformar conhecimento em ação."
         path="/explorar"
+      />
+      <DiscoverySeo
+        title="Explorar | ContentFy Discovery"
+        description="Trilhos personalizados, tendências e recomendações proprietárias da ContentFy."
+        canonicalPath="/explorar"
       />
       <PublicHeader />
 
@@ -119,6 +148,10 @@ export default function Explore() {
             conhecimento em ação.
           </p>
         </section>
+
+        {!hasActiveFilters && !isLoading && (
+          <DiscoveryHomeFeed />
+        )}
 
         <ShowcaseDiscoveryBar
           filters={filters}
@@ -166,17 +199,19 @@ export default function Explore() {
                 onDetails={openDetails}
               />
             )}
-
-            {presentation.rails.map((r) => (
-              <ShowcaseRail
-                key={r.id}
-                title={r.title}
-                subtitle={r.subtitle}
-                products={r.products}
-                onDetails={openDetails}
-                cardVariant={r.cardVariant}
-              />
-            ))}
+            {/* Trilhos Discovery (motor proprietário) já renderizados acima.
+                Mantém rails de showcase apenas quando Discovery não cobrir o modo full. */}
+            {presentation.mode === "full" &&
+              presentation.rails.map((r) => (
+                <ShowcaseRail
+                  key={r.id}
+                  title={r.title}
+                  subtitle={r.subtitle}
+                  products={r.products}
+                  onDetails={openDetails}
+                  cardVariant={r.cardVariant}
+                />
+              ))}
           </div>
         )}
       </main>

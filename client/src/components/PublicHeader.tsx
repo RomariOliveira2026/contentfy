@@ -23,6 +23,9 @@ export default function PublicHeader() {
   const [location, navigate] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hash, setHash] = useState(
+    () => (typeof window !== "undefined" ? window.location.hash : "")
+  );
   const { data: user } = trpc.auth.me.useQuery();
   const logoutMutation = trpc.auth.logout.useMutation();
   const { theme, toggleTheme } = useTheme();
@@ -32,6 +35,13 @@ export default function PublicHeader() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash);
+    onHash();
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
   const handleLogout = async () => {
@@ -47,13 +57,50 @@ export default function PublicHeader() {
   const navItems = [
     { label: "Início", path: "/" },
     { label: "Explorar", path: "/explorar" },
-    { label: "Categorias", path: "/explorar#filtros" },
+    { label: "Categorias", path: "/explorar", hash: "filtros" },
+    { label: "Minha Lista", path: "/minha-lista" },
     { label: "Para Criadores", path: "/creator/dashboard" },
-  ];
+  ] as const;
 
-  const isActive = (path: string) => {
-    if (path === "/") return location === "/";
-    return location === path || location.startsWith(`${path}/`);
+  const isActive = (path: string, itemHash?: string) => {
+    if (path === "/") return location === "/" && !hash;
+    const onPath = location === path || location.startsWith(`${path}/`);
+    if (!onPath) return false;
+    if (itemHash) return hash === `#${itemHash}`;
+    // Keep "Explorar" inactive while viewing categorias (#filtros)
+    if (path === "/explorar" && hash === "#filtros") return false;
+    return true;
+  };
+
+  /** Wouter ignores hash scroll when already on /explorar — handle explicitly. */
+  const goToCategories = () => {
+    setMobileMenuOpen(false);
+    const scrollToFiltros = () => {
+      const el = document.getElementById("filtros");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    if (location === "/explorar") {
+      if (window.location.hash !== "#filtros") {
+        window.location.hash = "filtros";
+      } else {
+        setHash("#filtros");
+      }
+      // Re-scroll even if hash was already set
+      requestAnimationFrame(scrollToFiltros);
+      window.setTimeout(scrollToFiltros, 100);
+      return;
+    }
+
+    navigate("/explorar");
+    window.setTimeout(() => {
+      window.location.hash = "filtros";
+      setHash("#filtros");
+      scrollToFiltros();
+      window.setTimeout(scrollToFiltros, 250);
+    }, 50);
   };
 
   return (
@@ -79,17 +126,33 @@ export default function PublicHeader() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
-          {navItems.map((item) => (
-            <Link key={item.path} href={item.path}>
+          {navItems.map((item) =>
+            "hash" in item && item.hash ? (
               <a
+                key={`${item.path}#${item.hash}`}
+                href={`${item.path}#${item.hash}`}
                 className={`cf-nav-link ${
-                  isActive(item.path) ? "cf-nav-link-active" : ""
+                  isActive(item.path, item.hash) ? "cf-nav-link-active" : ""
                 }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToCategories();
+                }}
               >
                 {item.label}
               </a>
-            </Link>
-          ))}
+            ) : (
+              <Link key={item.path} href={item.path}>
+                <a
+                  className={`cf-nav-link ${
+                    isActive(item.path) ? "cf-nav-link-active" : ""
+                  }`}
+                >
+                  {item.label}
+                </a>
+              </Link>
+            )
+          )}
         </nav>
 
         <div className="hidden xl:flex w-full max-w-[17.5rem] cf-header-search shrink-0">
@@ -185,20 +248,38 @@ export default function PublicHeader() {
             <div className="container py-5 cf-header-search">
               <SearchBar />
               <nav className="flex flex-col gap-1 mt-4">
-                {navItems.map((item) => (
-                  <Link key={item.path} href={item.path}>
+                {navItems.map((item) =>
+                  "hash" in item && item.hash ? (
                     <a
+                      key={`${item.path}#${item.hash}`}
+                      href={`${item.path}#${item.hash}`}
                       className={`block px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                        isActive(item.path)
+                        isActive(item.path, item.hash)
                           ? "text-foreground bg-primary/10"
                           : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
                       }`}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goToCategories();
+                      }}
                     >
                       {item.label}
                     </a>
-                  </Link>
-                ))}
+                  ) : (
+                    <Link key={item.path} href={item.path}>
+                      <a
+                        className={`block px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                          isActive(item.path)
+                            ? "text-foreground bg-primary/10"
+                            : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.label}
+                      </a>
+                    </Link>
+                  )
+                )}
               </nav>
               <div className="pt-4 mt-4 border-t border-border flex flex-col gap-2">
                 <Button variant="outline" className="w-full" onClick={toggleTheme}>

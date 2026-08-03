@@ -173,7 +173,7 @@ export default function MyAccount() {
                   {subscriptions.slice(0, 5).map((order: any) => (
                     <div 
                       key={order.id} 
-                      className="flex items-center justify-between p-3 border rounded-lg"
+                      className="flex items-center justify-between gap-3 p-3 border rounded-lg"
                     >
                       <div>
                         <p className="font-medium">Pedido #{order.id}</p>
@@ -181,7 +181,7 @@ export default function MyAccount() {
                           {new Date(order.createdAt).toLocaleDateString('pt-BR')}
                         </p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right space-y-2">
                         <p className="font-medium">R$ {(order.amount / 100).toFixed(2)}</p>
                         <Badge 
                           variant={
@@ -194,9 +194,30 @@ export default function MyAccount() {
                            order.status === "pending" ? "Pendente" : 
                            order.status === "failed" ? "Falhou" : "Reembolsado"}
                         </Badge>
+                        {order.status === "completed" ? (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="w-full"
+                            onClick={() =>
+                              setLocation(
+                                `/my-account/purchases/${order.id}/protection`
+                              )
+                            }
+                          >
+                            ContentFy Protect
+                          </Button>
+                        ) : null}
                       </div>
                     </div>
                   ))}
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setLocation("/my-account/purchases")}
+                  >
+                    Ver todas as compras
+                  </Button>
                 </div>
               ) : (
                 <div className="text-center py-8">

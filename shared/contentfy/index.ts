@@ -12,6 +12,7 @@ export * from "./contracts/learn";
 export * from "./contracts/insight";
 export * from "./contracts/discovery";
 export * from "./contracts/success-score";
+export * from "./contracts/success";
 export * from "./contracts/media";
 export * from "./contracts/community";
 export * from "./contracts/notifications";

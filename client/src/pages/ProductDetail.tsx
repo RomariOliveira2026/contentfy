@@ -411,26 +411,32 @@ export default function ProductDetail() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <Shield className="w-5 h-5 text-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium">
-                            Garantia de{" "}
-                            {(product as { guaranteeDays?: number }).guaranteeDays ||
-                              30}{" "}
-                            Dias
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            100% do seu dinheiro de volta
-                          </p>
+                      {((product as { guaranteeDays?: number }).guaranteeDays ??
+                        30) > 0 && (
+                        <div className="flex items-start gap-3">
+                          <Shield className="w-5 h-5 text-primary mt-0.5" />
+                          <div className="space-y-2">
+                            <p className="font-medium">
+                              ContentFy Protect · Garantia de{" "}
+                              {(product as { guaranteeDays?: number })
+                                .guaranteeDays || 30}{" "}
+                              dias
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Compra protegida pela ContentFy. Você poderá
+                              solicitar o reembolso dentro do prazo informado,
+                              conforme a Política de Garantia ContentFy.
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       <div className="flex items-start gap-3">
                         <CheckCircle2 className="w-5 h-5 text-primary mt-0.5" />
                         <div>
-                          <p className="font-medium">Pagamento Seguro</p>
+                          <p className="font-medium">Pagamento ContentFy</p>
                           <p className="text-sm text-muted-foreground">
-                            Seus dados protegidos
+                            Pagamento processado com segurança pela
+                            infraestrutura integrada da ContentFy.
                           </p>
                         </div>
                       </div>

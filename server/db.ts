@@ -1,4 +1,4 @@
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, sql, inArray, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -48,6 +48,11 @@ import {
   userSubscriptions,
   UserSubscription,
   InsertUserSubscription,
+  refundRequests,
+  RefundRequest,
+  InsertRefundRequest,
+  refundAuditEvents,
+  InsertRefundAuditEvent,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -484,6 +489,279 @@ export async function hasProductAccess(userId: number, productId: number): Promi
     .limit(1);
 
   return result.length > 0;
+}
+
+export async function revokeProductAccessByOrder(orderId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(userProducts)
+    .set({ isActive: false })
+    .where(eq(userProducts.orderId, orderId));
+}
+
+/**
+ * Finalize refund + revoke access. Soft-deactivates access rows (never deletes history).
+ * Returns revocation outcome for reconciliation.
+ */
+export async function finalizeRefundAndRevokeAccess(input: {
+  orderId: number;
+  requestId: number;
+  providerRefundId: string;
+  refundAmount: number;
+  reviewedBy: number;
+}) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  let accessRevocationStatus: "revoked" | "failed" = "revoked";
+  let reconciliationNeeded = false;
+
+  try {
+    await database.transaction(async (tx) => {
+      await tx
+        .update(orders)
+        .set({ status: "refunded" })
+        .where(eq(orders.id, input.orderId));
+
+      await tx
+        .update(userProducts)
+        .set({ isActive: false })
+        .where(eq(userProducts.orderId, input.orderId));
+
+      await tx
+        .update(refundRequests)
+        .set({
+          status: "refunded",
+          providerRefundId: input.providerRefundId,
+          refundAmount: input.refundAmount,
+          reviewedBy: input.reviewedBy,
+          reviewedAt: new Date(),
+          accessRevocationStatus: "revoked",
+          reconciliationNeeded: false,
+        })
+        .where(eq(refundRequests.id, input.requestId));
+    });
+  } catch (error) {
+    console.error(
+      "[ContentFy Protect] finalizeRefundAndRevokeAccess transaction failed:",
+      error instanceof Error ? error.message : error
+    );
+    // Stripe already refunded — mark inconsistency for admin repair
+    accessRevocationStatus = "failed";
+    reconciliationNeeded = true;
+    await database
+      .update(refundRequests)
+      .set({
+        status: "refunded",
+        providerRefundId: input.providerRefundId,
+        refundAmount: input.refundAmount,
+        reviewedBy: input.reviewedBy,
+        reviewedAt: new Date(),
+        accessRevocationStatus: "failed",
+        reconciliationNeeded: true,
+      })
+      .where(eq(refundRequests.id, input.requestId));
+    try {
+      await database
+        .update(orders)
+        .set({ status: "refunded" })
+        .where(eq(orders.id, input.orderId));
+    } catch {
+      /* keep reconciliation flag */
+    }
+    try {
+      await database
+        .update(userProducts)
+        .set({ isActive: false })
+        .where(eq(userProducts.orderId, input.orderId));
+      accessRevocationStatus = "revoked";
+      reconciliationNeeded = false;
+      await database
+        .update(refundRequests)
+        .set({
+          accessRevocationStatus: "revoked",
+          reconciliationNeeded: false,
+        })
+        .where(eq(refundRequests.id, input.requestId));
+    } catch {
+      /* leave failed */
+    }
+  }
+
+  return { accessRevocationStatus, reconciliationNeeded };
+}
+
+export async function insertRefundAuditEvent(
+  event: InsertRefundAuditEvent
+): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  // Never persist secrets — callers must sanitize metadataJson
+  const result = await database.insert(refundAuditEvents).values(event);
+  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
+  return Number(insertId || 0);
+}
+
+export async function listRefundAuditEvents(refundRequestId: number) {
+  const database = await getDb();
+  if (!database) return [];
+
+  return database
+    .select()
+    .from(refundAuditEvents)
+    .where(eq(refundAuditEvents.refundRequestId, refundRequestId))
+    .orderBy(desc(refundAuditEvents.createdAt));
+}
+
+export async function getUserProductByOrder(orderId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(userProducts)
+    .where(eq(userProducts.orderId, orderId))
+    .limit(1);
+
+  return result[0] ?? null;
+}
+
+// ============================================================================
+// CONTENTFY PROTECT — REFUND REQUESTS
+// ============================================================================
+
+const ACTIVE_REFUND_DB_STATUSES = [
+  "requested",
+  "under_review",
+  "approved",
+  "processing",
+] as const;
+
+export async function createRefundRequest(data: InsertRefundRequest) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(refundRequests).values(data);
+  const insertId = (result as any)[0]?.insertId || (result as any).insertId;
+  if (!insertId) throw new Error("Failed to create refund request");
+  return Number(insertId);
+}
+
+export async function getRefundRequestById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(refundRequests)
+    .where(eq(refundRequests.id, id))
+    .limit(1);
+
+  return result[0] ?? null;
+}
+
+export async function getRefundRequestsByOrderId(orderId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(refundRequests)
+    .where(eq(refundRequests.orderId, orderId))
+    .orderBy(desc(refundRequests.createdAt));
+}
+
+export async function getActiveRefundRequestForOrder(orderId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(refundRequests)
+    .where(
+      and(
+        eq(refundRequests.orderId, orderId),
+        inArray(refundRequests.status, [...ACTIVE_REFUND_DB_STATUSES])
+      )
+    )
+    .orderBy(desc(refundRequests.createdAt))
+    .limit(1);
+
+  return result[0] ?? null;
+}
+
+export async function listRefundRequests(filters?: {
+  status?: string;
+  productId?: number;
+  userId?: number;
+  from?: Date;
+  to?: Date;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [];
+  if (filters?.status) {
+    conditions.push(eq(refundRequests.status, filters.status as RefundRequest["status"]));
+  }
+  if (filters?.productId) {
+    conditions.push(eq(refundRequests.productId, filters.productId));
+  }
+  if (filters?.userId) {
+    conditions.push(eq(refundRequests.userId, filters.userId));
+  }
+  if (filters?.from) {
+    conditions.push(gte(refundRequests.requestedAt, filters.from));
+  }
+  if (filters?.to) {
+    conditions.push(lte(refundRequests.requestedAt, filters.to));
+  }
+
+  const base = db
+    .select({
+      request: refundRequests,
+      order: {
+        id: orders.id,
+        amount: orders.amount,
+        status: orders.status,
+        createdAt: orders.createdAt,
+        stripePaymentIntentId: orders.stripePaymentIntentId,
+      },
+      product: {
+        id: products.id,
+        name: products.name,
+        guaranteeDays: products.guaranteeDays,
+      },
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+      },
+    })
+    .from(refundRequests)
+    .leftJoin(orders, eq(refundRequests.orderId, orders.id))
+    .leftJoin(products, eq(refundRequests.productId, products.id))
+    .leftJoin(users, eq(refundRequests.userId, users.id));
+
+  const rows = conditions.length
+    ? await base.where(and(...conditions)).orderBy(desc(refundRequests.requestedAt))
+    : await base.orderBy(desc(refundRequests.requestedAt));
+
+  return rows;
+}
+
+export async function updateRefundRequest(
+  id: number,
+  data: Partial<InsertRefundRequest>
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(refundRequests).set(data).where(eq(refundRequests.id, id));
+  return getRefundRequestById(id);
 }
 
 // ============================================================================

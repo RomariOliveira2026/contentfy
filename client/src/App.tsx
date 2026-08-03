@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
+import { lazy, Suspense } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import GoogleAnalytics from "./components/GoogleAnalytics";
@@ -64,6 +65,18 @@ import Desacelere from "./pages/Desacelere";
 import Explore from "./pages/Explore";
 import ShowcaseProductPage from "./pages/ShowcaseProductPage";
 import BrandQa from "./pages/dev/BrandQa";
+import MyPurchases from "./pages/members/MyPurchases";
+import OrderProtection from "./pages/members/OrderProtection";
+import AdminRefunds from "./pages/admin/Refunds";
+import GuaranteePolicy from "./pages/GuaranteePolicy";
+import MyListPage from "./pages/MyListPage";
+import DiscoveryCategoryPage from "./pages/DiscoveryCategoryPage";
+import AdminDiscovery from "./pages/admin/Discovery";
+
+const EvolutionPage = lazy(() => import("./pages/members/Evolution"));
+const MyEvolutionPage = lazy(() => import("./pages/members/MyEvolution"));
+const AdminSuccess = lazy(() => import("./pages/admin/Success"));
+const CreatorSuccess = lazy(() => import("./pages/creator/Success"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -71,7 +84,9 @@ function Router() {
     <Switch>
       <Route path="/dev/brand-qa" component={BrandQa} />
       <Route path={"/"} component={Home} />
+      <Route path="/explorar/categoria/:slug" component={DiscoveryCategoryPage} />
       <Route path="/explorar" component={Explore} />
+      <Route path="/minha-lista" component={MyListPage} />
       <Route path="/produto/:slug" component={ShowcaseProductPage} />
       <Route path="/products" component={Products} />
       <Route path="/products/:slug/plans" component={ProductPlans} />
@@ -85,6 +100,8 @@ function Router() {
       <Route path="/contact" component={Contact} />
       <Route path="/terms" component={Terms} />
       <Route path="/privacy" component={Privacy} />
+      <Route path="/garantia" component={GuaranteePolicy} />
+      <Route path="/politica-de-reembolso" component={GuaranteePolicy} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/desacelere" component={Desacelere} />
@@ -96,7 +113,23 @@ function Router() {
       <Route path="/my-account" component={MyAccount} />
       <Route path="/dashboard" component={MembersDashboard} />
       <Route path="/my-account/products" component={MyProducts} />
+      <Route path="/my-account/purchases/:orderId/protection" component={OrderProtection} />
+      <Route path="/my-account/purchases" component={MyPurchases} />
       <Route path="/my-account/certificates" component={Certificates} />
+      <Route path="/my-account/evolucao">
+        {() => (
+          <Suspense fallback={null}>
+            <EvolutionPage />
+          </Suspense>
+        )}
+      </Route>
+      <Route path="/my-account/sucesso">
+        {() => (
+          <Suspense fallback={null}>
+            <MyEvolutionPage />
+          </Suspense>
+        )}
+      </Route>
       <Route path="/my-account/course/:id" component={CourseViewer} />
       <Route path="/my-account/product/:id" component={ProductViewer} />
       
@@ -113,6 +146,15 @@ function Router() {
       <Route path="/admin/products/:id/edit" component={ProductForm} />
       <Route path="/admin/affiliates" component={AdminAffiliates} />
       <Route path="/admin/sales" component={AdminSales} />
+      <Route path="/admin/refunds" component={AdminRefunds} />
+      <Route path="/admin/discovery" component={AdminDiscovery} />
+      <Route path="/admin/success">
+        {() => (
+          <Suspense fallback={null}>
+            <AdminSuccess />
+          </Suspense>
+        )}
+      </Route>
       <Route path="/admin/customers" component={AdminCustomers} />
       <Route path="/admin/courses" component={AdminCourses} />
       <Route path="/admin/settings" component={AdminSettings} />
@@ -134,6 +176,13 @@ function Router() {
       <Route path="/creator/courses" component={CreatorCourses} />
       <Route path="/creator/sales" component={CreatorSales} />
       <Route path="/creator/students" component={CreatorStudents} />
+      <Route path="/creator/success">
+        {() => (
+          <Suspense fallback={null}>
+            <CreatorSuccess />
+          </Suspense>
+        )}
+      </Route>
       <Route path="/creator/affiliates" component={CreatorAffiliates} />
       <Route path="/creator/settings" component={CreatorSettings} />
       

@@ -1,5 +1,7 @@
 /**
- * Learning components namespace (Evolution X).
- * Existing LMS lives in @/components/lms — migrate gradually, never break.
+ * Learning components namespace (Evolution X → XI).
+ * Prefer @/components/learn for ContentFy Learn UI.
+ * Existing LMS remains in @/components/lms — never break.
  */
-export {};
+
+export * from "@/components/learn";

@@ -1,3 +1,122 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
+// server/core/discovery/seed-metadata.ts
+var seed_metadata_exports = {};
+__export(seed_metadata_exports, {
+  DISCOVERY_META_SEED: () => DISCOVERY_META_SEED,
+  getSeedMetaBySlug: () => getSeedMetaBySlug,
+  listSeedMeta: () => listSeedMeta
+});
+function getSeedMetaBySlug(slug) {
+  return DISCOVERY_META_SEED.find((m) => m.slug === slug);
+}
+function listSeedMeta() {
+  return [...DISCOVERY_META_SEED];
+}
+var DISCOVERY_META_SEED;
+var init_seed_metadata = __esm({
+  "server/core/discovery/seed-metadata.ts"() {
+    "use strict";
+    DISCOVERY_META_SEED = [
+      {
+        slug: "desacelere",
+        tags: [
+          "desacelera\xE7\xE3o",
+          "equil\xEDbrio",
+          "rotina",
+          "bem-estar",
+          "qualidade de vida",
+          "ansiedade",
+          "sono",
+          "mindfulness"
+        ],
+        category: "Desenvolvimento Pessoal",
+        subcategory: "Bem-estar",
+        level: "beginner",
+        duration: "Leitura pr\xE1tica",
+        type: "ebook",
+        author: "ContentFy",
+        collections: [
+          "launches",
+          "featured",
+          "personal_dev",
+          "productivity",
+          "start_here"
+        ],
+        keywords: ["desacelere", "presen\xE7a", "ritmo", "equil\xEDbrio"],
+        objectives: [
+          "Reduzir ritmo acelerado",
+          "Recuperar presen\xE7a",
+          "Construir rotina sustent\xE1vel"
+        ],
+        audience: [
+          "Profissionais com rotina acelerada",
+          "Pessoas buscando equil\xEDbrio"
+        ],
+        skills: ["autoconhecimento", "gest\xE3o de energia", "h\xE1bitos"],
+        isFeatured: true,
+        isLaunch: true,
+        isBeginnerFriendly: true
+      },
+      {
+        slug: "manual-do-representante-comercial",
+        tags: [
+          "representa\xE7\xE3o comercial",
+          "vendas B2B",
+          "prospec\xE7\xE3o",
+          "negocia\xE7\xE3o",
+          "carreira",
+          "representante 4.0",
+          "CRM",
+          "IA"
+        ],
+        category: "Neg\xF3cios",
+        subcategory: "Representa\xE7\xE3o Comercial",
+        level: "intermediate",
+        duration: "Manual + ecossistema",
+        type: "ebook",
+        author: "Rom\xE1rio Oliveira",
+        collections: [
+          "launches",
+          "featured",
+          "business",
+          "sales_rep",
+          "ai",
+          "bestsellers"
+        ],
+        keywords: [
+          "manual representante",
+          "rep4crm",
+          "vendas",
+          "carteira",
+          "prompts"
+        ],
+        objectives: [
+          "Organizar opera\xE7\xE3o comercial",
+          "Vender com m\xE9todo",
+          "Usar IA no dia a dia comercial"
+        ],
+        audience: [
+          "Representantes comerciais",
+          "Profissionais de vendas B2B"
+        ],
+        skills: ["vendas", "CRM", "prospec\xE7\xE3o", "negocia\xE7\xE3o", "IA aplicada"],
+        isFeatured: true,
+        isLaunch: true,
+        isBeginnerFriendly: false
+      }
+    ];
+  }
+});
+
 // server/vercel-app.ts
 import "dotenv/config";
 
@@ -13,7 +132,7 @@ var UNAUTHED_ERR_MSG = "Please login (10001)";
 var NOT_ADMIN_ERR_MSG = "You do not have required permission (10002)";
 
 // server/db.ts
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, sql, inArray, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 
 // drizzle/schema.ts
@@ -108,6 +227,59 @@ var orders = mysqlTable("orders", {
   // Stripe Checkout Session ID
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull()
+});
+var refundRequests = mysqlTable("refund_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  orderId: int("orderId").notNull(),
+  userId: int("userId").notNull(),
+  productId: int("productId").notNull(),
+  reason: mysqlEnum("reason", [
+    "content_mismatch",
+    "access_issue",
+    "accidental_purchase",
+    "not_needed",
+    "other"
+  ]).notNull(),
+  details: text("details"),
+  status: mysqlEnum("status", [
+    "requested",
+    "under_review",
+    "approved",
+    "rejected",
+    "processing",
+    "refunded",
+    "failed",
+    "cancelled"
+  ]).default("requested").notNull(),
+  requestedAt: timestamp("requestedAt").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewedBy: int("reviewedBy"),
+  refundAmount: int("refundAmount"),
+  // centavos
+  providerRefundId: varchar("providerRefundId", { length: 255 }),
+  adminNotes: text("adminNotes"),
+  idempotencyKey: varchar("idempotencyKey", { length: 128 }),
+  accessRevocationStatus: mysqlEnum("accessRevocationStatus", [
+    "pending",
+    "revoked",
+    "failed",
+    "not_applicable"
+  ]).default("not_applicable").notNull(),
+  reconciliationNeeded: boolean("reconciliationNeeded").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull()
+});
+var refundAuditEvents = mysqlTable("refund_audit_events", {
+  id: int("id").autoincrement().primaryKey(),
+  refundRequestId: int("refundRequestId"),
+  orderId: int("orderId"),
+  actorUserId: int("actorUserId"),
+  eventType: varchar("eventType", { length: 64 }).notNull(),
+  fromStatus: varchar("fromStatus", { length: 32 }),
+  toStatus: varchar("toStatus", { length: 32 }),
+  message: text("message"),
+  metadataJson: text("metadataJson"),
+  createdAt: timestamp("createdAt").defaultNow().notNull()
 });
 var userProducts = mysqlTable("user_products", {
   id: int("id").autoincrement().primaryKey(),
@@ -271,6 +443,77 @@ var userSubscriptions = mysqlTable("user_subscriptions", {
   currentPeriodEnd: timestamp("currentPeriodEnd"),
   cancelAtPeriodEnd: boolean("cancelAtPeriodEnd").default(false).notNull(),
   canceledAt: timestamp("canceledAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull()
+});
+var productDiscoveryMeta = mysqlTable("product_discovery_meta", {
+  id: int("id").autoincrement().primaryKey(),
+  productId: int("productId"),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  tagsJson: text("tagsJson"),
+  category: varchar("category", { length: 255 }),
+  subcategory: varchar("subcategory", { length: 255 }),
+  level: varchar("level", { length: 64 }),
+  durationLabel: varchar("durationLabel", { length: 128 }),
+  author: varchar("author", { length: 255 }),
+  collectionsJson: text("collectionsJson"),
+  keywordsJson: text("keywordsJson"),
+  objectivesJson: text("objectivesJson"),
+  audienceJson: text("audienceJson"),
+  skillsJson: text("skillsJson"),
+  isFeatured: boolean("isFeatured").default(false).notNull(),
+  isLaunch: boolean("isLaunch").default(false).notNull(),
+  isBeginnerFriendly: boolean("isBeginnerFriendly").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull()
+});
+var productDiscoveryRelationships = mysqlTable(
+  "product_discovery_relationships",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    fromSlug: varchar("fromSlug", { length: 255 }).notNull(),
+    toSlug: varchar("toSlug", { length: 255 }).notNull(),
+    relationType: mysqlEnum("relationType", [
+      "next",
+      "prerequisite",
+      "companion",
+      "upsell",
+      "bundle"
+    ]).default("next").notNull(),
+    weight: int("weight").default(1).notNull(),
+    label: varchar("label", { length: 255 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull()
+  }
+);
+var userFavorites = mysqlTable("user_favorites", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  productId: int("productId"),
+  productSlug: varchar("productSlug", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull()
+});
+var discoveryEvents = mysqlTable("discovery_events", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  sessionId: varchar("sessionId", { length: 64 }),
+  eventType: varchar("eventType", { length: 32 }).notNull(),
+  productId: int("productId"),
+  productSlug: varchar("productSlug", { length: 255 }),
+  category: varchar("category", { length: 255 }),
+  query: varchar("query", { length: 512 }),
+  dwellMs: int("dwellMs"),
+  createdAt: timestamp("createdAt").defaultNow().notNull()
+});
+var discoverySearchStats = mysqlTable("discovery_search_stats", {
+  id: int("id").autoincrement().primaryKey(),
+  queryNormalized: varchar("queryNormalized", { length: 255 }).notNull().unique(),
+  hitCount: int("hitCount").default(1).notNull(),
+  lastSearchedAt: timestamp("lastSearchedAt").defaultNow().notNull()
+});
+var learnUserGoals = mysqlTable("learn_user_goals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  goalId: varchar("goalId", { length: 64 }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull()
 });
@@ -570,6 +813,165 @@ async function hasProductAccess(userId, productId) {
     eq(userProducts.isActive, true)
   )).limit(1);
   return result.length > 0;
+}
+async function revokeProductAccessByOrder(orderId) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(userProducts).set({ isActive: false }).where(eq(userProducts.orderId, orderId));
+}
+async function finalizeRefundAndRevokeAccess(input) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+  let accessRevocationStatus = "revoked";
+  let reconciliationNeeded = false;
+  try {
+    await database.transaction(async (tx) => {
+      await tx.update(orders).set({ status: "refunded" }).where(eq(orders.id, input.orderId));
+      await tx.update(userProducts).set({ isActive: false }).where(eq(userProducts.orderId, input.orderId));
+      await tx.update(refundRequests).set({
+        status: "refunded",
+        providerRefundId: input.providerRefundId,
+        refundAmount: input.refundAmount,
+        reviewedBy: input.reviewedBy,
+        reviewedAt: /* @__PURE__ */ new Date(),
+        accessRevocationStatus: "revoked",
+        reconciliationNeeded: false
+      }).where(eq(refundRequests.id, input.requestId));
+    });
+  } catch (error) {
+    console.error(
+      "[ContentFy Protect] finalizeRefundAndRevokeAccess transaction failed:",
+      error instanceof Error ? error.message : error
+    );
+    accessRevocationStatus = "failed";
+    reconciliationNeeded = true;
+    await database.update(refundRequests).set({
+      status: "refunded",
+      providerRefundId: input.providerRefundId,
+      refundAmount: input.refundAmount,
+      reviewedBy: input.reviewedBy,
+      reviewedAt: /* @__PURE__ */ new Date(),
+      accessRevocationStatus: "failed",
+      reconciliationNeeded: true
+    }).where(eq(refundRequests.id, input.requestId));
+    try {
+      await database.update(orders).set({ status: "refunded" }).where(eq(orders.id, input.orderId));
+    } catch {
+    }
+    try {
+      await database.update(userProducts).set({ isActive: false }).where(eq(userProducts.orderId, input.orderId));
+      accessRevocationStatus = "revoked";
+      reconciliationNeeded = false;
+      await database.update(refundRequests).set({
+        accessRevocationStatus: "revoked",
+        reconciliationNeeded: false
+      }).where(eq(refundRequests.id, input.requestId));
+    } catch {
+    }
+  }
+  return { accessRevocationStatus, reconciliationNeeded };
+}
+async function insertRefundAuditEvent(event) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+  const result = await database.insert(refundAuditEvents).values(event);
+  const insertId = result[0]?.insertId || result.insertId;
+  return Number(insertId || 0);
+}
+async function listRefundAuditEvents(refundRequestId) {
+  const database = await getDb();
+  if (!database) return [];
+  return database.select().from(refundAuditEvents).where(eq(refundAuditEvents.refundRequestId, refundRequestId)).orderBy(desc(refundAuditEvents.createdAt));
+}
+async function getUserProductByOrder(orderId) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(userProducts).where(eq(userProducts.orderId, orderId)).limit(1);
+  return result[0] ?? null;
+}
+var ACTIVE_REFUND_DB_STATUSES = [
+  "requested",
+  "under_review",
+  "approved",
+  "processing"
+];
+async function createRefundRequest(data) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(refundRequests).values(data);
+  const insertId = result[0]?.insertId || result.insertId;
+  if (!insertId) throw new Error("Failed to create refund request");
+  return Number(insertId);
+}
+async function getRefundRequestById(id) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(refundRequests).where(eq(refundRequests.id, id)).limit(1);
+  return result[0] ?? null;
+}
+async function getRefundRequestsByOrderId(orderId) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(refundRequests).where(eq(refundRequests.orderId, orderId)).orderBy(desc(refundRequests.createdAt));
+}
+async function getActiveRefundRequestForOrder(orderId) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(refundRequests).where(
+    and(
+      eq(refundRequests.orderId, orderId),
+      inArray(refundRequests.status, [...ACTIVE_REFUND_DB_STATUSES])
+    )
+  ).orderBy(desc(refundRequests.createdAt)).limit(1);
+  return result[0] ?? null;
+}
+async function listRefundRequests(filters) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = [];
+  if (filters?.status) {
+    conditions.push(eq(refundRequests.status, filters.status));
+  }
+  if (filters?.productId) {
+    conditions.push(eq(refundRequests.productId, filters.productId));
+  }
+  if (filters?.userId) {
+    conditions.push(eq(refundRequests.userId, filters.userId));
+  }
+  if (filters?.from) {
+    conditions.push(gte(refundRequests.requestedAt, filters.from));
+  }
+  if (filters?.to) {
+    conditions.push(lte(refundRequests.requestedAt, filters.to));
+  }
+  const base = db.select({
+    request: refundRequests,
+    order: {
+      id: orders.id,
+      amount: orders.amount,
+      status: orders.status,
+      createdAt: orders.createdAt,
+      stripePaymentIntentId: orders.stripePaymentIntentId
+    },
+    product: {
+      id: products.id,
+      name: products.name,
+      guaranteeDays: products.guaranteeDays
+    },
+    user: {
+      id: users.id,
+      name: users.name,
+      email: users.email
+    }
+  }).from(refundRequests).leftJoin(orders, eq(refundRequests.orderId, orders.id)).leftJoin(products, eq(refundRequests.productId, products.id)).leftJoin(users, eq(refundRequests.userId, users.id));
+  const rows = conditions.length ? await base.where(and(...conditions)).orderBy(desc(refundRequests.requestedAt)) : await base.orderBy(desc(refundRequests.requestedAt));
+  return rows;
+}
+async function updateRefundRequest(id, data) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(refundRequests).set(data).where(eq(refundRequests.id, id));
+  return getRefundRequestById(id);
 }
 async function getCourseByProductId(productId) {
   const db = await getDb();
@@ -2450,26 +2852,53 @@ var certificatesRouter = router({
 });
 
 // server/routers/orders.ts
+import { TRPCError as TRPCError8 } from "@trpc/server";
+
+// server/_core/authz.ts
+function isAdminRole(role) {
+  return role === "admin";
+}
+function canAccessOwnedResource(input) {
+  return isAdminRole(input.actorRole) || input.actorUserId === input.ownerUserId;
+}
+
+// server/routers/orders.ts
 import { z as z7 } from "zod";
 var ordersRouter = router({
-  list: protectedProcedure.query(async ({ ctx }) => {
+  /** Admin-only — never expose all orders to regular users. */
+  list: adminProcedure.query(async () => {
     return await getAllOrders();
   }),
-  getById: protectedProcedure.input(z7.object({ id: z7.number() })).query(async ({ input }) => {
-    return await getOrderById(input.id);
+  getById: protectedProcedure.input(z7.object({ id: z7.number() })).query(async ({ ctx, input }) => {
+    const order = await getOrderById(input.id);
+    if (!order) {
+      throw new TRPCError8({ code: "NOT_FOUND", message: "Pedido n\xE3o encontrado" });
+    }
+    if (!canAccessOwnedResource({
+      actorUserId: ctx.user.id,
+      actorRole: ctx.user.role,
+      ownerUserId: order.userId
+    })) {
+      throw new TRPCError8({
+        code: "FORBIDDEN",
+        message: "Voc\xEA n\xE3o tem permiss\xE3o para acessar este pedido"
+      });
+    }
+    return order;
   })
 });
 
 // server/routers/users.tsx
 var usersRouter = router({
-  list: protectedProcedure.query(async () => {
+  /** Admin-only customer list. */
+  list: adminProcedure.query(async () => {
     return await getAllUsers();
   })
 });
 
 // server/routers/creator.ts
 import { z as z8 } from "zod";
-import { TRPCError as TRPCError8 } from "@trpc/server";
+import { TRPCError as TRPCError9 } from "@trpc/server";
 var creatorRouter = router({
   dashboard: creatorProcedure.query(async () => {
     const products2 = await getAllProducts();
@@ -2522,10 +2951,10 @@ var creatorRouter = router({
   getCourseBuilder: creatorProcedure.input(z8.object({ productId: z8.number() })).query(async ({ input }) => {
     const product = await getProductById(input.productId);
     if (!product) {
-      throw new TRPCError8({ code: "NOT_FOUND", message: "Produto n\xE3o encontrado" });
+      throw new TRPCError9({ code: "NOT_FOUND", message: "Produto n\xE3o encontrado" });
     }
     if (product.type !== "course") {
-      throw new TRPCError8({
+      throw new TRPCError9({
         code: "BAD_REQUEST",
         message: "Construtor dispon\xEDvel apenas para produtos do tipo curso"
       });
@@ -2575,7 +3004,7 @@ var creatorRouter = router({
     const { modules } = await getCourseStructureForBuilder(input.productId);
     const idx = modules.findIndex((m) => m.id === input.moduleId);
     if (idx < 0) {
-      throw new TRPCError8({ code: "NOT_FOUND", message: "M\xF3dulo n\xE3o encontrado" });
+      throw new TRPCError9({ code: "NOT_FOUND", message: "M\xF3dulo n\xE3o encontrado" });
     }
     const swapIdx = input.direction === "up" ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= modules.length) {
@@ -2638,7 +3067,7 @@ var creatorRouter = router({
     const lessons = await getModuleLessons(input.moduleId);
     const idx = lessons.findIndex((l) => l.id === input.lessonId);
     if (idx < 0) {
-      throw new TRPCError8({ code: "NOT_FOUND", message: "Aula n\xE3o encontrada" });
+      throw new TRPCError9({ code: "NOT_FOUND", message: "Aula n\xE3o encontrada" });
     }
     const swapIdx = input.direction === "up" ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= lessons.length) {
@@ -2662,6 +3091,278 @@ var CONTENTFY_IDENTITY = {
   guaranteeDays: 30,
   guaranteeLabel: "Garantia ContentFy"
 };
+
+// shared/contentfy/contracts/protect.ts
+var PROTECT_DEFAULT_DAYS = 30;
+var PROTECT_BRAND = {
+  name: "ContentFy Protect",
+  guaranteeLabel: "Garantia de 30 dias",
+  purchaseProtected: "Compra protegida pela ContentFy",
+  paymentCopy: "Pagamento processado com seguran\xE7a pela infraestrutura integrada da ContentFy.",
+  microcopy: "Voc\xEA poder\xE1 solicitar o reembolso dentro do prazo informado, conforme a Pol\xEDtica de Garantia ContentFy."
+};
+var REFUND_REASON_LABELS = {
+  content_mismatch: "Conte\xFAdo diferente do esperado",
+  access_issue: "Dificuldade t\xE9cnica de acesso",
+  accidental_purchase: "Compra realizada por engano",
+  not_needed: "Produto n\xE3o atendeu \xE0 necessidade",
+  other: "Outro"
+};
+function startOfUtcDay(d) {
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+function addUtcDays(d, days) {
+  const next = new Date(d.getTime());
+  next.setUTCDate(next.getUTCDate() + days);
+  return next;
+}
+function getRefundEligibility(input) {
+  const guaranteeDays = input.guaranteeDays == null || Number.isNaN(Number(input.guaranteeDays)) ? PROTECT_DEFAULT_DAYS : Math.max(0, Math.floor(Number(input.guaranteeDays)));
+  const purchasedAt = new Date(input.purchasedAt);
+  if (Number.isNaN(purchasedAt.getTime())) {
+    return {
+      eligible: false,
+      deadline: null,
+      remainingDays: 0,
+      reasonCode: "INVALID_PURCHASE",
+      humanMessage: "N\xE3o foi poss\xEDvel validar a data desta compra.",
+      guaranteeDays
+    };
+  }
+  const purchaseDay = startOfUtcDay(purchasedAt);
+  const deadlineDate = addUtcDays(purchaseDay, guaranteeDays);
+  const deadline = deadlineDate.toISOString();
+  const now = input.now ?? /* @__PURE__ */ new Date();
+  const today = startOfUtcDay(now);
+  const remainingMs = deadlineDate.getTime() - today.getTime();
+  const remainingDays = Math.max(0, Math.ceil(remainingMs / 864e5));
+  if (input.alreadyRefunded || input.orderStatus === "refunded") {
+    return {
+      eligible: false,
+      deadline,
+      remainingDays: 0,
+      reasonCode: "ALREADY_REFUNDED",
+      humanMessage: "Este pedido j\xE1 foi reembolsado.",
+      guaranteeDays
+    };
+  }
+  if (input.orderStatus !== "completed") {
+    return {
+      eligible: false,
+      deadline,
+      remainingDays: 0,
+      reasonCode: "ORDER_NOT_COMPLETED",
+      humanMessage: "A garantia ContentFy Protect vale apenas para compras confirmadas.",
+      guaranteeDays
+    };
+  }
+  if (input.productEligible === false || guaranteeDays <= 0) {
+    return {
+      eligible: false,
+      deadline,
+      remainingDays: 0,
+      reasonCode: "PRODUCT_NOT_ELIGIBLE",
+      humanMessage: "Este produto n\xE3o participa do ContentFy Protect.",
+      guaranteeDays
+    };
+  }
+  if (input.hasActiveRequest) {
+    return {
+      eligible: false,
+      deadline,
+      remainingDays,
+      reasonCode: "ACTIVE_REQUEST_EXISTS",
+      humanMessage: "J\xE1 existe uma solicita\xE7\xE3o de reembolso em andamento para este pedido.",
+      guaranteeDays
+    };
+  }
+  if (today.getTime() > deadlineDate.getTime()) {
+    return {
+      eligible: false,
+      deadline,
+      remainingDays: 0,
+      reasonCode: "GUARANTEE_EXPIRED",
+      humanMessage: `O prazo de ${guaranteeDays} dias do ContentFy Protect encerrou em ${deadlineDate.toLocaleDateString("pt-BR", { timeZone: "UTC" })}.`,
+      guaranteeDays
+    };
+  }
+  return {
+    eligible: true,
+    deadline,
+    remainingDays,
+    reasonCode: "ELIGIBLE",
+    humanMessage: remainingDays === 0 ? "\xDAltimo dia da garantia ContentFy Protect. Voc\xEA ainda pode solicitar o reembolso hoje." : `Voc\xEA tem ${remainingDays} dia${remainingDays === 1 ? "" : "s"} restantes de garantia ContentFy Protect.`,
+    guaranteeDays
+  };
+}
+var REFUND_STATUS_TRANSITIONS = {
+  requested: ["under_review", "cancelled"],
+  under_review: ["approved", "rejected"],
+  approved: ["processing"],
+  rejected: [],
+  processing: ["refunded", "failed"],
+  refunded: [],
+  failed: ["processing"],
+  cancelled: []
+};
+function canTransitionRefundStatus(from, to) {
+  return REFUND_STATUS_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+// shared/contentfy/contracts/learn.ts
+var COMPETENCY_LEVEL_THRESHOLDS = {
+  emerging: 15,
+  developing: 40,
+  proficient: 70,
+  mastery: 90
+};
+function levelFromProgress(progress) {
+  if (progress >= COMPETENCY_LEVEL_THRESHOLDS.mastery) return "mastery";
+  if (progress >= COMPETENCY_LEVEL_THRESHOLDS.proficient) return "proficient";
+  if (progress >= COMPETENCY_LEVEL_THRESHOLDS.developing) return "developing";
+  if (progress >= COMPETENCY_LEVEL_THRESHOLDS.emerging) return "emerging";
+  return "none";
+}
+function competencyStatusFromProgress(progress) {
+  if (progress >= COMPETENCY_LEVEL_THRESHOLDS.proficient) return "acquired";
+  if (progress > 0) return "in_progress";
+  return "missing";
+}
+function computeSuccessIndex(input) {
+  const clamp = (n) => Math.max(0, Math.min(100, Math.round(n)));
+  const knowledge = clamp(input.knowledge);
+  const application = clamp(input.application);
+  const consistency = clamp(input.consistency);
+  const result = clamp(input.result);
+  const overall = clamp(
+    knowledge * 0.3 + application * 0.25 + consistency * 0.25 + result * 0.2
+  );
+  return { knowledge, application, consistency, result, overall };
+}
+
+// shared/contentfy/contracts/discovery.ts
+var DISCOVERY_RAIL_DEFS = [
+  {
+    id: "continue_learning",
+    title: "Continue aprendendo",
+    subtitle: "Retome de onde parou",
+    strategy: "continue"
+  },
+  {
+    id: "recommended",
+    title: "Recomendados para voc\xEA",
+    subtitle: "Com base no seu comportamento",
+    strategy: "behavior"
+  },
+  {
+    id: "favorites",
+    title: "Minha Lista",
+    subtitle: "Salvos por voc\xEA",
+    strategy: "favorites"
+  },
+  {
+    id: "launches",
+    title: "Lan\xE7amentos",
+    subtitle: "Novidades da ContentFy",
+    strategy: "category"
+  },
+  {
+    id: "bestsellers",
+    title: "Mais vendidos",
+    subtitle: "O que a comunidade mais escolhe",
+    strategy: "trending"
+  },
+  {
+    id: "trending",
+    title: "Em alta",
+    subtitle: "Crescimento recente na plataforma",
+    strategy: "trending"
+  },
+  {
+    id: "featured",
+    title: "Em destaque",
+    subtitle: "Sele\xE7\xE3o editorial ContentFy",
+    strategy: "category"
+  },
+  {
+    id: "start_here",
+    title: "Comece por aqui",
+    subtitle: "Entrada suave para novos alunos",
+    strategy: "category"
+  },
+  {
+    id: "ai",
+    title: "IA",
+    subtitle: "Prompts, automa\xE7\xF5es e intelig\xEAncia aplicada",
+    strategy: "category"
+  },
+  {
+    id: "business",
+    title: "Neg\xF3cios",
+    subtitle: "Crescimento comercial e opera\xE7\xE3o",
+    strategy: "category"
+  },
+  {
+    id: "sales_rep",
+    title: "Representa\xE7\xE3o Comercial",
+    subtitle: "Carreira e ecossistema do representante",
+    strategy: "category"
+  },
+  {
+    id: "personal_dev",
+    title: "Desenvolvimento Pessoal",
+    subtitle: "Equil\xEDbrio, h\xE1bitos e presen\xE7a",
+    strategy: "category"
+  },
+  {
+    id: "productivity",
+    title: "Produtividade",
+    subtitle: "Foco, rotina e execu\xE7\xE3o",
+    strategy: "category"
+  },
+  {
+    id: "buildertudo",
+    title: "BuilderTudo",
+    subtitle: "Ferramentas e stacks pr\xE1ticos",
+    strategy: "category"
+  }
+];
+function scoreDiscoverySearch(query, doc) {
+  const q = query.trim().toLowerCase();
+  if (!q) return { score: 0, matchedOn: [] };
+  const parts = q.split(/\s+/).filter(Boolean);
+  const matchedOn = [];
+  let score = 0;
+  const hit = (field, weight, label) => {
+    const hay = field.toLowerCase();
+    let fieldHits = 0;
+    for (const p of parts) {
+      if (hay.includes(p)) fieldHits += 1;
+    }
+    if (fieldHits > 0) {
+      score += weight * fieldHits;
+      if (!matchedOn.includes(label)) matchedOn.push(label);
+    }
+  };
+  hit(doc.name, 10, "title");
+  if (doc.author) hit(doc.author, 6, "author");
+  if (doc.category) hit(doc.category, 5, "category");
+  if (doc.subcategory) hit(doc.subcategory, 4, "subcategory");
+  for (const t2 of doc.tags || []) hit(t2, 3, "tags");
+  for (const k of doc.keywords || []) hit(k, 2.5, "keywords");
+  for (const o of doc.objectives || []) hit(o, 2, "objectives");
+  return { score, matchedOn };
+}
+var TRENDING_WEIGHTS = {
+  views: 1,
+  purchases: 8,
+  favorites: 4,
+  ratings: 3,
+  recentGrowth: 6
+};
+function computeTrendingScore(input) {
+  return input.views * TRENDING_WEIGHTS.views + input.purchases * TRENDING_WEIGHTS.purchases + input.favorites * TRENDING_WEIGHTS.favorites + input.ratings * TRENDING_WEIGHTS.ratings + input.recentGrowth * TRENDING_WEIGHTS.recentGrowth;
+}
 
 // shared/contentfy/contracts/success-score.ts
 function computeSuccessScore(input) {
@@ -2695,6 +3396,54 @@ function scoreToGrade(score) {
   return "seed";
 }
 
+// shared/contentfy/contracts/success.ts
+var DEFAULT_SUCCESS_SCORE_CONFIG = {
+  weights: {
+    knowledge: 0.3,
+    application: 0.25,
+    consistency: 0.25,
+    result: 0.2
+  },
+  targets: {
+    modulesCompleted: 20,
+    applicationTasks: 12,
+    activeDays: 20,
+    streakDays: 30,
+    goalsCompleted: 2,
+    competenciesAcquired: 6
+  },
+  gradeThresholds: {
+    master: 85,
+    rise: 65,
+    grow: 40
+  },
+  habitMilestones: [7, 21, 30, 60, 90],
+  consistencyBands: {
+    excellent: 80,
+    good: 60,
+    declining: 35
+  }
+};
+function normalizeWeights(weights) {
+  const sum = weights.knowledge + weights.application + weights.consistency + weights.result;
+  if (sum <= 0) return { ...DEFAULT_SUCCESS_SCORE_CONFIG.weights };
+  return {
+    knowledge: weights.knowledge / sum,
+    application: weights.application / sum,
+    consistency: weights.consistency / sum,
+    result: weights.result / sum
+  };
+}
+function gradeFromScore(score, thresholds = DEFAULT_SUCCESS_SCORE_CONFIG.gradeThresholds) {
+  if (score >= thresholds.master) return "master";
+  if (score >= thresholds.rise) return "rise";
+  if (score >= thresholds.grow) return "grow";
+  return "seed";
+}
+function clampScore(n) {
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+
 // shared/contentfy/contracts/products.ts
 var DEFAULT_PRODUCT_SURFACES = [
   "landing",
@@ -2715,15 +3464,15 @@ var CONTENTFY_CORE_STATUS = [
   { domain: "progress", maturity: "implemented", notes: "LMS progress" },
   { domain: "media", maturity: "planned", notes: "Media engine scaffolded" },
   { domain: "analytics", maturity: "planned", notes: "Insight engine scaffolded" },
-  { domain: "recommendations", maturity: "planned", notes: "Discovery engine scaffolded" },
+  { domain: "recommendations", maturity: "in_development", notes: "Discovery RecommendationService (rules/behavior/graph)" },
   { domain: "ai", maturity: "in_development", notes: "AI engine + existing ai-studio/llm" },
   { domain: "notifications", maturity: "planned" },
   { domain: "achievements", maturity: "planned" },
-  { domain: "protect", maturity: "in_development", notes: "30-day guarantee policy" },
-  { domain: "learn", maturity: "in_development", notes: "Adaptive seams over LMS" },
+  { domain: "protect", maturity: "in_development", notes: "ContentFy Protect v1 \u2014 requests + admin review; Stripe refund on explicit admin action" },
+  { domain: "learn", maturity: "in_development", notes: "ContentFy Learn v1 \u2014 goals, competencies, journey, achievements, Success Index" },
   { domain: "insight", maturity: "planned" },
-  { domain: "discovery", maturity: "planned" },
-  { domain: "successScore", maturity: "in_development", notes: "Formula ready" },
+  { domain: "discovery", maturity: "in_development", notes: "ContentFy Discovery v1 \u2014 rails, trending, favorites, search, continue learning" },
+  { domain: "successScore", maturity: "in_development", notes: "Success Engine v1 \u2014 Score/Habit/Consistency/Evolution + Learn integration" },
   { domain: "community", maturity: "planned" }
 ];
 
@@ -2784,13 +3533,17 @@ var paymentEngine = new PaymentEngine();
 
 // server/core/protect/guarantee-engine.ts
 var GuaranteeEngine = class {
-  getPolicy() {
+  getPolicy(days = PROTECT_DEFAULT_DAYS) {
     return {
-      days: CONTENTFY_IDENTITY.guaranteeDays,
-      label: CONTENTFY_IDENTITY.guaranteeLabel,
-      description: `Voc\xEA tem ${CONTENTFY_IDENTITY.guaranteeDays} dias para solicitar reembolso pela Garantia ContentFy.`
+      days,
+      label: days === 30 ? PROTECT_BRAND.guaranteeLabel : `Garantia de ${days} dias`,
+      description: `Voc\xEA tem ${days} dias para solicitar reembolso pelo ${PROTECT_BRAND.name}.`,
+      brandName: PROTECT_BRAND.name,
+      paymentCopy: PROTECT_BRAND.paymentCopy,
+      microcopy: PROTECT_BRAND.microcopy
     };
   }
+  /** @deprecated in-memory scaffold — use protect router + DB */
   createRequest(input) {
     return {
       id: `cf_g_${Date.now()}`,
@@ -2801,6 +3554,7 @@ var GuaranteeEngine = class {
       reason: input.reason
     };
   }
+  /** @deprecated */
   transition(record, status) {
     return {
       ...record,
@@ -2810,6 +3564,101 @@ var GuaranteeEngine = class {
   }
 };
 var guaranteeEngine = new GuaranteeEngine();
+
+// server/core/protect/stripe-refund.ts
+import Stripe2 from "stripe";
+function assertStripeSecretForProtect(options) {
+  const secret = process.env.STRIPE_SECRET_KEY || "";
+  if (!secret) {
+    return { ok: false, errorMessage: "STRIPE_SECRET_KEY n\xE3o configurada" };
+  }
+  const requireTest = options?.requireTestKey ?? (process.env.CONTENTFY_PROTECT_REQUIRE_TEST_KEY === "true" || process.env.CONTENTFY_PROTECT_HOMOLOGATION === "true" || process.env.NODE_ENV !== "production");
+  if (requireTest && !secret.startsWith("sk_test_")) {
+    return {
+      ok: false,
+      errorMessage: "Homologa\xE7\xE3o ContentFy Protect exige STRIPE_SECRET_KEY de teste (sk_test_). Processamento com chave live bloqueado."
+    };
+  }
+  if (!requireTest && secret.startsWith("sk_live_")) {
+    console.warn(
+      "[ContentFy Protect] Processando reembolso com chave live. Confirme que isto \xE9 intencional."
+    );
+  }
+  return { ok: true, secret };
+}
+async function processStripeRefund(input) {
+  const keyCheck = assertStripeSecretForProtect({
+    requireTestKey: input.requireTestKey
+  });
+  if (!keyCheck.ok) {
+    return { ok: false, errorMessage: keyCheck.errorMessage };
+  }
+  if (!input.paymentIntentId?.startsWith("pi_")) {
+    return {
+      ok: false,
+      errorMessage: "PaymentIntent inv\xE1lido para reembolso"
+    };
+  }
+  if (!Number.isFinite(input.amountCents) || input.amountCents <= 0 || input.amountCents > input.maxAmountCents) {
+    return {
+      ok: false,
+      errorMessage: "Valor de reembolso inv\xE1lido ou acima do valor pago"
+    };
+  }
+  const stripe3 = new Stripe2(keyCheck.secret, {
+    apiVersion: "2025-10-29.clover"
+  });
+  try {
+    const pi = await stripe3.paymentIntents.retrieve(input.paymentIntentId, {
+      expand: ["latest_charge"]
+    });
+    if (pi.status !== "succeeded") {
+      return {
+        ok: false,
+        errorMessage: `PaymentIntent n\xE3o eleg\xEDvel (status=${pi.status})`
+      };
+    }
+    const paid = pi.amount_received || pi.amount || 0;
+    if (input.amountCents > paid || input.amountCents > input.maxAmountCents) {
+      return {
+        ok: false,
+        errorMessage: "Reembolso acima do valor pago bloqueado"
+      };
+    }
+    const latestCharge = pi.latest_charge;
+    const charge = typeof latestCharge === "object" && latestCharge !== null ? latestCharge : null;
+    const alreadyRefunded = charge && "amount_refunded" in charge ? Number(charge.amount_refunded ?? 0) : 0;
+    if (alreadyRefunded + input.amountCents > paid) {
+      return {
+        ok: false,
+        errorMessage: "PaymentIntent j\xE1 possui reembolso que impediria um novo estorno total/parcial seguro"
+      };
+    }
+    const refund = await stripe3.refunds.create(
+      {
+        payment_intent: input.paymentIntentId,
+        amount: input.amountCents,
+        reason: input.reason ?? "requested_by_customer",
+        metadata: {
+          source: "contentfy_protect",
+          idempotencyKey: input.idempotencyKey
+        }
+      },
+      { idempotencyKey: input.idempotencyKey }
+    );
+    return {
+      ok: true,
+      providerRefundId: refund.id,
+      status: refund.status ?? "succeeded",
+      currency: refund.currency,
+      amountRefunded: refund.amount
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Falha ao processar reembolso";
+    console.error("[ContentFy Protect] Stripe refund failed:", message);
+    return { ok: false, errorMessage: message };
+  }
+}
 
 // server/core/ai/ai-engine.ts
 var AIEngine = class {
@@ -2854,7 +3703,786 @@ var AIEngine = class {
 };
 var aiEngine = new AIEngine();
 
+// server/core/learn/catalog.ts
+var LEARN_COMPETENCIES = [
+  {
+    id: "crm",
+    name: "CRM",
+    description: "Organizar carteira e pipeline com disciplina comercial.",
+    category: "Vendas"
+  },
+  {
+    id: "spin-selling",
+    name: "SPIN Selling",
+    description: "Conduzir descoberta e qualifica\xE7\xE3o com m\xE9todo.",
+    category: "Vendas"
+  },
+  {
+    id: "negotiation",
+    name: "Negocia\xE7\xE3o",
+    description: "Fechar acordos com clareza e valor m\xFAtuo.",
+    category: "Vendas"
+  },
+  {
+    id: "prospecting",
+    name: "Prospec\xE7\xE3o",
+    description: "Abrir oportunidades com consist\xEAncia.",
+    category: "Vendas"
+  },
+  {
+    id: "follow-up",
+    name: "Follow-up",
+    description: "Nutrir relacionamentos at\xE9 a convers\xE3o.",
+    category: "Vendas"
+  },
+  {
+    id: "commercial-ai",
+    name: "IA Comercial",
+    description: "Aplicar IA no dia a dia de vendas e opera\xE7\xE3o.",
+    category: "IA"
+  },
+  {
+    id: "portfolio-mgmt",
+    name: "Gest\xE3o da Carteira",
+    description: "Priorizar clientes e potencial de receita.",
+    category: "Vendas"
+  },
+  {
+    id: "emotional-balance",
+    name: "Equil\xEDbrio emocional",
+    description: "Regular energia e presen\xE7a sob press\xE3o.",
+    category: "Bem-estar"
+  },
+  {
+    id: "anxiety",
+    name: "Ansiedade",
+    description: "Reduzir ru\xEDdo mental e reatividade.",
+    category: "Bem-estar"
+  },
+  {
+    id: "focus",
+    name: "Foco",
+    description: "Concentrar aten\xE7\xE3o no que importa.",
+    category: "Produtividade"
+  },
+  {
+    id: "habits",
+    name: "H\xE1bitos",
+    description: "Construir rotinas sustent\xE1veis.",
+    category: "Produtividade"
+  },
+  {
+    id: "wellbeing",
+    name: "Bem-estar",
+    description: "Cuidar de corpo, mente e ritmo de vida.",
+    category: "Bem-estar"
+  },
+  {
+    id: "routine",
+    name: "Rotina",
+    description: "Estruturar o dia com inten\xE7\xE3o.",
+    category: "Produtividade"
+  },
+  {
+    id: "self-knowledge",
+    name: "Autoconhecimento",
+    description: "Compreender padr\xF5es e motiva\xE7\xF5es pessoais.",
+    category: "Desenvolvimento"
+  }
+];
+var LEARN_GOALS = [
+  {
+    id: "earn-more",
+    name: "Ganhar mais dinheiro",
+    description: "Aumentar renda com m\xE9todo comercial e execu\xE7\xE3o.",
+    competencyIds: [
+      "crm",
+      "prospecting",
+      "negotiation",
+      "follow-up",
+      "portfolio-mgmt",
+      "commercial-ai"
+    ],
+    iconKey: "earn"
+  },
+  {
+    id: "productivity",
+    name: "Melhorar produtividade",
+    description: "Fazer mais com foco, h\xE1bitos e rotina.",
+    competencyIds: ["focus", "habits", "routine", "emotional-balance"],
+    iconKey: "productivity"
+  },
+  {
+    id: "reduce-anxiety",
+    name: "Reduzir ansiedade",
+    description: "Recuperar equil\xEDbrio e presen\xE7a.",
+    competencyIds: [
+      "anxiety",
+      "emotional-balance",
+      "wellbeing",
+      "self-knowledge",
+      "routine"
+    ],
+    iconKey: "calm"
+  },
+  {
+    id: "learn-ai",
+    name: "Aprender IA",
+    description: "Usar intelig\xEAncia artificial com prop\xF3sito comercial.",
+    competencyIds: ["commercial-ai", "crm", "prospecting"],
+    iconKey: "ai"
+  },
+  {
+    id: "build-business",
+    name: "Criar neg\xF3cio",
+    description: "Estruturar oferta, opera\xE7\xE3o e crescimento.",
+    competencyIds: ["crm", "portfolio-mgmt", "negotiation", "commercial-ai"],
+    iconKey: "business"
+  },
+  {
+    id: "organize-routine",
+    name: "Organizar rotina",
+    description: "Dar ritmo sustent\xE1vel ao dia a dia.",
+    competencyIds: ["routine", "habits", "focus", "wellbeing"],
+    iconKey: "routine"
+  },
+  {
+    id: "sell-more",
+    name: "Vender mais",
+    description: "Acelerar pipeline e convers\xE3o.",
+    competencyIds: [
+      "spin-selling",
+      "prospecting",
+      "follow-up",
+      "negotiation",
+      "crm"
+    ],
+    iconKey: "sales"
+  },
+  {
+    id: "lead",
+    name: "Ser l\xEDder",
+    description: "Influenciar com clareza, m\xE9todo e presen\xE7a.",
+    competencyIds: [
+      "self-knowledge",
+      "emotional-balance",
+      "negotiation",
+      "portfolio-mgmt"
+    ],
+    iconKey: "lead"
+  },
+  {
+    id: "entrepreneur",
+    name: "Empreender",
+    description: "Construir autonomia e tra\xE7\xE3o.",
+    competencyIds: [
+      "commercial-ai",
+      "crm",
+      "habits",
+      "focus",
+      "portfolio-mgmt"
+    ],
+    iconKey: "entrepreneur"
+  },
+  {
+    id: "career-change",
+    name: "Mudar de carreira",
+    description: "Transicionar com compet\xEAncias transfer\xEDveis.",
+    competencyIds: [
+      "self-knowledge",
+      "habits",
+      "commercial-ai",
+      "prospecting",
+      "focus"
+    ],
+    iconKey: "career"
+  }
+];
+var LEARN_PRODUCT_LINKS = [
+  {
+    productSlug: "manual-do-representante-comercial",
+    competencyIds: [
+      "crm",
+      "spin-selling",
+      "negotiation",
+      "prospecting",
+      "follow-up",
+      "commercial-ai",
+      "portfolio-mgmt"
+    ],
+    weights: {
+      crm: 0.9,
+      "spin-selling": 0.85,
+      negotiation: 0.8,
+      prospecting: 0.85,
+      "follow-up": 0.75,
+      "commercial-ai": 0.9,
+      "portfolio-mgmt": 0.85
+    },
+    goalIds: ["earn-more", "sell-more", "learn-ai", "build-business", "entrepreneur"]
+  },
+  {
+    productSlug: "desacelere",
+    competencyIds: [
+      "emotional-balance",
+      "anxiety",
+      "focus",
+      "habits",
+      "wellbeing",
+      "routine",
+      "self-knowledge"
+    ],
+    weights: {
+      "emotional-balance": 0.9,
+      anxiety: 0.85,
+      focus: 0.7,
+      habits: 0.8,
+      wellbeing: 0.9,
+      routine: 0.85,
+      "self-knowledge": 0.8
+    },
+    goalIds: [
+      "reduce-anxiety",
+      "productivity",
+      "organize-routine",
+      "career-change"
+    ]
+  }
+];
+var LEARN_ACHIEVEMENTS = [
+  {
+    id: "first_purchase",
+    name: "Primeira compra",
+    description: "Voc\xEA deu o primeiro passo na ContentFy.",
+    tier: "bronze"
+  },
+  {
+    id: "first_lesson",
+    name: "Primeira aula",
+    description: "In\xEDcio da jornada de evolu\xE7\xE3o.",
+    tier: "bronze"
+  },
+  {
+    id: "lessons_10",
+    name: "10 aulas",
+    description: "Const\xE2ncia come\xE7a a aparecer.",
+    tier: "silver"
+  },
+  {
+    id: "course_completed",
+    name: "Curso conclu\xEDdo",
+    description: "Voc\xEA fechou um ciclo completo de aprendizado.",
+    tier: "gold"
+  },
+  {
+    id: "streak_7",
+    name: "7 dias consecutivos",
+    description: "Ritmo sustent\xE1vel por uma semana.",
+    tier: "silver"
+  },
+  {
+    id: "goal_reached",
+    name: "Meta atingida",
+    description: "Objetivo alcan\xE7ado com compet\xEAncias alinhadas.",
+    tier: "gold"
+  },
+  {
+    id: "specialist",
+    name: "Especialista",
+    description: "Dom\xEDnio avan\xE7ado em um bloco de compet\xEAncias.",
+    tier: "platinum"
+  },
+  {
+    id: "top_performer",
+    name: "Alta performance",
+    description: "\xCDndice de evolu\xE7\xE3o consistentemente elevado.",
+    tier: "platinum"
+  },
+  {
+    id: "high_performance",
+    name: "Top performance",
+    description: "Execu\xE7\xE3o acima da m\xE9dia no seu ritmo.",
+    tier: "gold"
+  },
+  {
+    id: "habit_builder",
+    name: "Criador de h\xE1bitos",
+    description: "H\xE1bitos e rotina em progresso s\xF3lido.",
+    tier: "silver"
+  }
+];
+
+// server/core/learn/achievement-engine.ts
+var AchievementEngine = class {
+  evaluate(input) {
+    const { signals, competencies, goals, successIndex } = input;
+    const unlocked = /* @__PURE__ */ new Set();
+    if (signals.purchasedAtLeastOnce) unlocked.add("first_purchase");
+    if (signals.completedLessonCount >= 1) unlocked.add("first_lesson");
+    if (signals.completedLessonCount >= 10) unlocked.add("lessons_10");
+    if (signals.coursesCompleted >= 1) unlocked.add("course_completed");
+    if (signals.streakDays >= 7) unlocked.add("streak_7");
+    if (goals.some((g) => g.progress >= 70)) unlocked.add("goal_reached");
+    const masteryCount = competencies.filter(
+      (c) => c.level === "mastery" || c.level === "proficient"
+    ).length;
+    if (masteryCount >= 4) unlocked.add("specialist");
+    if (successIndex.overall >= 75) unlocked.add("top_performer");
+    if (successIndex.overall >= 60) unlocked.add("high_performance");
+    const habit = competencies.find((c) => c.competencyId === "habits");
+    const routine = competencies.find((c) => c.competencyId === "routine");
+    if (habit && habit.progress >= 40 || routine && routine.progress >= 40) {
+      unlocked.add("habit_builder");
+    }
+    return LEARN_ACHIEVEMENTS.map((def) => ({
+      id: def.id,
+      name: def.name,
+      description: def.description,
+      tier: def.tier,
+      unlocked: unlocked.has(def.id),
+      unlockedAt: unlocked.has(def.id) ? (/* @__PURE__ */ new Date()).toISOString() : void 0
+    }));
+  }
+};
+var achievementEngine = new AchievementEngine();
+
+// server/core/learn/cache.ts
+var store = /* @__PURE__ */ new Map();
+function learnCacheGet(key) {
+  const entry = store.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    store.delete(key);
+    return null;
+  }
+  return entry.value;
+}
+function learnCacheSet(key, value, ttlMs = 45e3) {
+  store.set(key, { value, expiresAt: Date.now() + ttlMs });
+}
+function learnCacheInvalidate(prefix) {
+  if (!prefix) {
+    store.clear();
+    return;
+  }
+  for (const key of Array.from(store.keys())) {
+    if (key.startsWith(prefix)) store.delete(key);
+  }
+}
+
+// server/core/learn/competency-engine.ts
+var CompetencyEngine = class {
+  constructor(competencies = LEARN_COMPETENCIES, links = LEARN_PRODUCT_LINKS) {
+    this.competencies = competencies;
+    this.links = links;
+  }
+  list() {
+    return [...this.competencies];
+  }
+  forProduct(slug) {
+    const link = this.links.find((l) => l.productSlug === slug);
+    if (!link) return [];
+    return link.competencyIds.map((id) => this.competencies.find((c) => c.id === id)).filter((c) => Boolean(c));
+  }
+  /**
+   * Progress on a competency = max over owned products of
+   * (productProgress * weight).
+   */
+  evaluate(signals) {
+    const progressByCompetency = /* @__PURE__ */ new Map();
+    for (const slug of signals.ownedProductSlugs) {
+      const link = this.links.find((l) => l.productSlug === slug);
+      if (!link) continue;
+      const productProgress = signals.progressBySlug[slug] ?? 0;
+      for (const competencyId of link.competencyIds) {
+        const weight = link.weights?.[competencyId] ?? 0.7;
+        const score = Math.min(100, productProgress * weight);
+        const prev = progressByCompetency.get(competencyId) || {
+          progress: 0,
+          sources: /* @__PURE__ */ new Set()
+        };
+        prev.progress = Math.max(prev.progress, score);
+        prev.sources.add(slug);
+        progressByCompetency.set(competencyId, prev);
+      }
+    }
+    return this.competencies.map((c) => {
+      const row = progressByCompetency.get(c.id);
+      const progress = Math.round(row?.progress ?? 0);
+      return {
+        competencyId: c.id,
+        name: c.name,
+        category: c.category,
+        level: levelFromProgress(progress),
+        progress,
+        status: competencyStatusFromProgress(progress),
+        sourceProductSlugs: Array.from(row?.sources || [])
+      };
+    });
+  }
+  /** Competencies with little movement despite ownership — stagnation heuristic. */
+  stagnant(states, signals) {
+    return states.filter((s) => {
+      if (s.status !== "in_progress") return false;
+      if (s.progress >= 55) return false;
+      return s.sourceProductSlugs.some(
+        (slug) => signals.ownedProductSlugs.includes(slug)
+      );
+    });
+  }
+};
+var competencyEngine = new CompetencyEngine();
+
+// server/core/learn/goal-engine.ts
+var GoalEngine = class {
+  constructor(goals = LEARN_GOALS) {
+    this.goals = goals;
+  }
+  list() {
+    return [...this.goals];
+  }
+  get(id) {
+    return this.goals.find((g) => g.id === id);
+  }
+  /**
+   * Infer best default goal from owned products' declared goalIds.
+   */
+  inferActiveGoalId(signals) {
+    if (signals.activeGoalId) return signals.activeGoalId;
+    const votes = /* @__PURE__ */ new Map();
+    for (const slug of signals.ownedProductSlugs) {
+      const link = LEARN_PRODUCT_LINKS.find((l) => l.productSlug === slug);
+      for (const goalId of link?.goalIds || []) {
+        votes.set(goalId, (votes.get(goalId) || 0) + 1);
+      }
+    }
+    const ranked = Array.from(votes.entries()).sort((a, b) => b[1] - a[1]);
+    return ranked[0]?.[0] ?? this.goals[0]?.id ?? null;
+  }
+  evaluate(competencies, signals) {
+    const byId = new Map(
+      competencies.map((c) => [c.competencyId, c])
+    );
+    const activeId = this.inferActiveGoalId(signals);
+    return this.goals.map((g) => {
+      const scores = g.competencyIds.map((id) => byId.get(id)?.progress ?? 0);
+      const progress = scores.length === 0 ? 0 : Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      const missingCompetencyIds = g.competencyIds.filter((id) => {
+        const c = byId.get(id);
+        return !c || c.status === "missing";
+      });
+      return {
+        goalId: g.id,
+        name: g.name,
+        description: g.description,
+        progress,
+        isActive: g.id === activeId,
+        competencyIds: g.competencyIds,
+        missingCompetencyIds
+      };
+    });
+  }
+  productsThatAccelerate(goalId) {
+    return LEARN_PRODUCT_LINKS.filter(
+      (l) => (l.goalIds || []).includes(goalId)
+    ).map((l) => l.productSlug);
+  }
+};
+var goalEngine = new GoalEngine();
+
+// server/core/learn/journey-engine.ts
+var JourneyEngine = class {
+  build(input) {
+    const active = input.goals.find((g) => g.isActive) || input.goals[0] || null;
+    const steps = [];
+    if (active) {
+      steps.push({
+        id: `goal:${active.goalId}`,
+        kind: "goal",
+        title: active.name,
+        subtitle: active.description,
+        status: active.progress >= 70 ? "done" : "current",
+        progress: active.progress
+      });
+      const relevant = input.competencies.filter(
+        (c) => active.competencyIds.includes(c.competencyId)
+      );
+      for (const c of relevant.slice(0, 5)) {
+        steps.push({
+          id: `comp:${c.competencyId}`,
+          kind: "competency",
+          title: c.name,
+          subtitle: c.category,
+          status: c.status === "acquired" ? "done" : c.status === "in_progress" ? "current" : "upcoming",
+          progress: c.progress
+        });
+      }
+    }
+    for (const slug of input.signals.ownedProductSlugs.slice(0, 4)) {
+      const progress = input.signals.progressBySlug[slug] ?? 0;
+      steps.push({
+        id: `course:${slug}`,
+        kind: "course",
+        title: input.productNames?.[slug] || slug,
+        href: `/produto/${slug}`,
+        status: progress >= 100 ? "done" : progress > 0 ? "current" : "upcoming",
+        progress
+      });
+    }
+    const unlocked = input.achievements.filter((a) => a.unlocked).slice(-2);
+    for (const a of unlocked) {
+      steps.push({
+        id: `ach:${a.id}`,
+        kind: "achievement",
+        title: a.name,
+        subtitle: a.description,
+        status: "done"
+      });
+    }
+    const next = this.nextStep({
+      active,
+      competencies: input.competencies,
+      signals: input.signals,
+      productNames: input.productNames
+    });
+    if (next) {
+      steps.push({
+        id: "next",
+        kind: "next",
+        title: next.title,
+        subtitle: next.reason,
+        href: next.href,
+        status: "current"
+      });
+    }
+    const evolutionPercent = active ? active.progress : Math.round(
+      input.competencies.reduce((s, c) => s + c.progress, 0) / Math.max(1, input.competencies.length)
+    );
+    return {
+      goalId: active?.goalId ?? null,
+      goalName: active?.name ?? null,
+      steps,
+      evolutionPercent,
+      nextStep: next
+    };
+  }
+  nextStep(input) {
+    const { signals, active } = input;
+    if (signals.lastLesson && (signals.progressBySlug[signals.lastLesson.productSlug] ?? 0) < 100) {
+      return {
+        kind: "lesson",
+        title: signals.lastLesson.lessonTitle ? `Continuar: ${signals.lastLesson.lessonTitle}` : `Continuar ${signals.lastLesson.productName}`,
+        reason: "Retome a \xFAltima aula para manter const\xE2ncia.",
+        href: signals.lastLesson.href,
+        productSlug: signals.lastLesson.productSlug
+      };
+    }
+    if (active) {
+      const missing = input.competencies.filter(
+        (c) => active.missingCompetencyIds.includes(c.competencyId) || active.competencyIds.includes(c.competencyId) && c.status !== "acquired"
+      );
+      const stagnant = missing.sort((a, b) => a.progress - b.progress)[0];
+      if (stagnant) {
+        const accelerator = goalEngine.productsThatAccelerate(active.goalId).find((slug) => !signals.ownedProductSlugs.includes(slug));
+        if (accelerator) {
+          return {
+            kind: "product",
+            title: `Acelere com ${input.productNames?.[accelerator] || accelerator}`,
+            reason: `Desenvolve a compet\xEAncia ${stagnant.name}.`,
+            href: `/produto/${accelerator}`,
+            productSlug: accelerator,
+            competencyId: stagnant.competencyId,
+            goalId: active.goalId
+          };
+        }
+        return {
+          kind: "competency",
+          title: `Desenvolver: ${stagnant.name}`,
+          reason: "Compet\xEAncia cr\xEDtica para o seu objetivo atual.",
+          competencyId: stagnant.competencyId,
+          goalId: active.goalId
+        };
+      }
+    }
+    const catalog = LEARN_PRODUCT_LINKS.map((l) => l.productSlug).find(
+      (slug) => !signals.ownedProductSlugs.includes(slug)
+    );
+    if (catalog) {
+      return {
+        kind: "course",
+        title: `Explorar ${input.productNames?.[catalog] || catalog}`,
+        reason: "Pr\xF3ximo produto alinhado ao cat\xE1logo Learn.",
+        href: `/produto/${catalog}`,
+        productSlug: catalog
+      };
+    }
+    return null;
+  }
+};
+var journeyEngine = new JourneyEngine();
+
+// server/core/learn/skill-graph.ts
+var SkillGraph = class {
+  build(input) {
+    const edges = [];
+    const competencyIds = /* @__PURE__ */ new Set();
+    const goalIds = /* @__PURE__ */ new Set();
+    const productSlugs = /* @__PURE__ */ new Set();
+    for (const link of LEARN_PRODUCT_LINKS) {
+      productSlugs.add(link.productSlug);
+      for (const competencyId of link.competencyIds) {
+        competencyIds.add(competencyId);
+        edges.push({
+          fromType: "product",
+          fromId: link.productSlug,
+          toType: "competency",
+          toId: competencyId,
+          weight: link.weights?.[competencyId] ?? 0.7,
+          relation: "develops"
+        });
+      }
+      for (const goalId of link.goalIds || []) {
+        goalIds.add(goalId);
+        edges.push({
+          fromType: "product",
+          fromId: link.productSlug,
+          toType: "goal",
+          toId: goalId,
+          weight: 0.8,
+          relation: "supports_goal"
+        });
+      }
+    }
+    for (const g of input.goals) {
+      goalIds.add(g.goalId);
+      for (const competencyId of g.competencyIds) {
+        competencyIds.add(competencyId);
+        edges.push({
+          fromType: "competency",
+          fromId: competencyId,
+          toType: "goal",
+          toId: g.goalId,
+          weight: 1,
+          relation: "advances"
+        });
+      }
+    }
+    const learnerId = String(input.signals.userId);
+    for (const c of input.competencies) {
+      if (c.progress <= 0) continue;
+      edges.push({
+        fromType: "learner",
+        fromId: learnerId,
+        toType: "competency",
+        toId: c.competencyId,
+        weight: c.progress / 100,
+        relation: "possesses"
+      });
+    }
+    const active = input.goals.find((g) => g.isActive);
+    if (active) {
+      edges.push({
+        fromType: "learner",
+        fromId: learnerId,
+        toType: "goal",
+        toId: active.goalId,
+        weight: active.progress / 100,
+        relation: "pursues"
+      });
+    }
+    if (active) {
+      const related = LEARN_PRODUCT_LINKS.filter(
+        (l) => (l.goalIds || []).includes(active.goalId)
+      ).map((l) => l.productSlug);
+      for (let i = 0; i < related.length - 1; i++) {
+        edges.push({
+          fromType: "product",
+          fromId: related[i],
+          toType: "related_product",
+          toId: related[i + 1],
+          weight: 0.6,
+          relation: "journey_next"
+        });
+      }
+    }
+    return {
+      edges,
+      competencyIds: Array.from(competencyIds),
+      goalIds: Array.from(goalIds),
+      productSlugs: Array.from(productSlugs)
+    };
+  }
+};
+var skillGraph = new SkillGraph();
+
 // server/core/learn/learn-engine.ts
+function buildSuccessIndex(signals, competencyAvg) {
+  const progresses = Object.values(signals.progressBySlug);
+  const avgProgress = progresses.length > 0 ? progresses.reduce((a, b) => a + b, 0) / progresses.length : 0;
+  const knowledge = Math.max(competencyAvg, avgProgress);
+  const application = Math.min(
+    100,
+    avgProgress * 0.6 + Math.min(signals.completedLessonCount * 4, 40)
+  );
+  const consistency = Math.min(
+    100,
+    signals.streakDays * 12 + Math.min(signals.totalLessonTouches * 2, 30)
+  );
+  const result = Math.min(
+    100,
+    signals.coursesCompleted * 35 + (competencyAvg >= 70 ? 25 : competencyAvg >= 40 ? 12 : 0)
+  );
+  return computeSuccessIndex({
+    knowledge,
+    application,
+    consistency,
+    result
+  });
+}
+function buildTimeline(input) {
+  const events = [];
+  const now = Date.now();
+  if (input.signals.purchasedAtLeastOnce) {
+    events.push({
+      id: "purchase",
+      at: new Date(now - 864e5 * 14).toISOString(),
+      kind: "purchase",
+      title: "Ingresso na jornada",
+      subtitle: "Acesso aos produtos ContentFy"
+    });
+  }
+  if (input.signals.lastLesson) {
+    events.push({
+      id: "last-lesson",
+      at: (/* @__PURE__ */ new Date()).toISOString(),
+      kind: "lesson",
+      title: input.signals.lastLesson.lessonTitle || "Aula recente",
+      subtitle: input.signals.lastLesson.productName
+    });
+  }
+  for (const a of input.achievements.filter((x) => x.unlocked).slice(-4)) {
+    events.push({
+      id: `ach-${a.id}`,
+      at: a.unlockedAt || (/* @__PURE__ */ new Date()).toISOString(),
+      kind: "achievement",
+      title: a.name,
+      subtitle: a.description
+    });
+  }
+  const active = input.goals.find((g) => g.isActive);
+  if (active) {
+    events.push({
+      id: `goal-${active.goalId}`,
+      at: (/* @__PURE__ */ new Date()).toISOString(),
+      kind: "goal",
+      title: `Objetivo: ${active.name}`,
+      subtitle: `${active.progress}% de evolu\xE7\xE3o`
+    });
+  }
+  return events.sort(
+    (a, b) => new Date(b.at).getTime() - new Date(a.at).getTime()
+  );
+}
 var LearnEngine = class {
   buildTrail(root) {
     return root;
@@ -2863,8 +4491,80 @@ var LearnEngine = class {
     return {
       ...hint,
       recommendedNext: [],
-      reason: "Architecture ready \u2014 adaptive ranking not wired yet."
+      reason: "Use learn.dashboard / learn.nextStep para recomenda\xE7\xF5es baseadas em compet\xEAncias."
     };
+  }
+  buildDashboard(input) {
+    const cacheKey = `learn:dashboard:${input.signals.userId}:${input.signals.activeGoalId || "auto"}`;
+    const cached = learnCacheGet(cacheKey);
+    if (cached) return { ...cached, cacheHit: true };
+    const competencies = competencyEngine.evaluate(input.signals);
+    const goals = goalEngine.evaluate(competencies, input.signals);
+    const competencyAvg = competencies.reduce((s, c) => s + c.progress, 0) / Math.max(1, competencies.length);
+    const successIndex = buildSuccessIndex(input.signals, competencyAvg);
+    const achievements = achievementEngine.evaluate({
+      signals: input.signals,
+      competencies,
+      goals,
+      successIndex
+    });
+    const journey = journeyEngine.build({
+      goals,
+      competencies,
+      achievements,
+      signals: input.signals,
+      productNames: input.productNames
+    });
+    const acquired = competencies.filter((c) => c.status === "acquired");
+    const inProgress = competencies.filter((c) => c.status === "in_progress");
+    const missing = competencies.filter((c) => c.status === "missing");
+    const activeGoal = goals.find((g) => g.isActive) || null;
+    const relatedSlugs = activeGoal ? goalEngine.productsThatAccelerate(activeGoal.goalId) : LEARN_PRODUCT_LINKS.map((l) => l.productSlug);
+    const relatedCourses = relatedSlugs.slice(0, 6).map((slug) => ({
+      slug,
+      name: input.productNames?.[slug] || slug,
+      href: `/produto/${slug}`,
+      reason: activeGoal ? `Alinhado ao objetivo ${activeGoal.name}` : "Cat\xE1logo Learn"
+    }));
+    const payload = {
+      activeGoal,
+      goals,
+      competencies: { acquired, inProgress, missing },
+      journey,
+      timeline: buildTimeline({
+        signals: input.signals,
+        achievements,
+        goals
+      }),
+      achievements,
+      nextStep: journey.nextStep,
+      successIndex,
+      evolutionPercent: journey.evolutionPercent,
+      relatedCourses,
+      personalized: true,
+      generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      cacheHit: false
+    };
+    void skillGraph.build({
+      signals: input.signals,
+      competencies,
+      goals
+    });
+    learnCacheSet(cacheKey, payload, 45e3);
+    return payload;
+  }
+  stagnantCompetencies(signals) {
+    const states = competencyEngine.evaluate(signals);
+    return competencyEngine.stagnant(states, signals);
+  }
+  listGoals() {
+    return goalEngine.list();
+  }
+  listCompetencies() {
+    return competencyEngine.list();
+  }
+  catalogGoals() {
+    return LEARN_GOALS;
   }
 };
 var learnEngine = new LearnEngine();
@@ -2888,31 +4588,560 @@ var InsightEngine = class {
 };
 var insightEngine = new InsightEngine();
 
-// server/core/discovery/discovery-engine.ts
-var DiscoveryEngine = class {
-  recommend(profile) {
-    if (profile.completedProductIds.length > 0) {
+// server/core/discovery/cache.ts
+var store2 = /* @__PURE__ */ new Map();
+function discoveryCacheGet(key) {
+  const entry = store2.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    store2.delete(key);
+    return null;
+  }
+  return entry.value;
+}
+function discoveryCacheSet(key, value, ttlMs = 6e4) {
+  store2.set(key, { value, expiresAt: Date.now() + ttlMs });
+}
+function discoveryCacheInvalidate(prefix) {
+  if (!prefix) {
+    store2.clear();
+    return;
+  }
+  for (const key of Array.from(store2.keys())) {
+    if (key.startsWith(prefix)) store2.delete(key);
+  }
+}
+
+// server/core/discovery/category-engine.ts
+var COLLECTION_TO_RAIL = {
+  launches: "launches",
+  featured: "featured",
+  start_here: "start_here",
+  ai: "ai",
+  business: "business",
+  sales_rep: "sales_rep",
+  personal_dev: "personal_dev",
+  productivity: "productivity",
+  buildertudo: "buildertudo",
+  bestsellers: "bestsellers"
+};
+var CATEGORY_ALIASES = {
+  ia: ["ai"],
+  "intelig\xEAncia artificial": ["ai"],
+  neg\u00F3cios: ["business"],
+  negocios: ["business"],
+  "representa\xE7\xE3o comercial": ["sales_rep"],
+  "representacao comercial": ["sales_rep"],
+  "desenvolvimento pessoal": ["personal_dev"],
+  "bem-estar": ["personal_dev"],
+  produtividade: ["productivity"],
+  buildertudo: ["buildertudo"]
+};
+var CategoryEngine = class {
+  byCollection(catalog, collection, limit = 12) {
+    const key = collection.toLowerCase();
+    return catalog.filter((p) => p.collections.some((c) => c.toLowerCase() === key)).slice(0, limit);
+  }
+  byCategoryName(catalog, category, limit = 12) {
+    const q = category.trim().toLowerCase();
+    if (!q) return [];
+    return catalog.filter(
+      (p) => p.category.toLowerCase().includes(q) || (p.subcategory || "").toLowerCase().includes(q) || p.tags.some((t2) => t2.toLowerCase().includes(q))
+    ).slice(0, limit);
+  }
+  railItems(catalog, railId, limit = 12) {
+    const byCollection = this.byCollection(catalog, railId, limit);
+    if (byCollection.length) return byCollection;
+    for (const [alias, rails] of Object.entries(CATEGORY_ALIASES)) {
+      if (rails.includes(railId)) {
+        const found = this.byCategoryName(catalog, alias, limit);
+        if (found.length) return found;
+      }
+    }
+    if (railId === "start_here") {
+      return catalog.filter((p) => p.isBeginnerFriendly).slice(0, limit);
+    }
+    if (railId === "featured") {
+      return catalog.filter((p) => p.isFeatured).slice(0, limit);
+    }
+    if (railId === "launches") {
+      return catalog.filter((p) => p.isLaunch).slice(0, limit);
+    }
+    return [];
+  }
+  collectionRailId(collection) {
+    return COLLECTION_TO_RAIL[collection] ?? null;
+  }
+};
+var categoryEngine = new CategoryEngine();
+
+// server/core/discovery/continue-learning-engine.ts
+var ContinueLearningEngine = class {
+  build(items, limit = 8) {
+    const mapped = items.map((item) => {
+      const total = Math.max(item.totalLessons, 1);
+      const progressPercent = Math.min(
+        100,
+        Math.round(item.completedLessons / total * 100)
+      );
+      const remaining = Math.max(0, total - item.completedLessons);
+      return {
+        productSlug: item.productSlug,
+        productId: item.productId,
+        productName: item.productName,
+        lastLessonTitle: item.lastLessonTitle,
+        lastModuleTitle: item.lastModuleTitle,
+        progressPercent,
+        remainingLabel: remaining === 0 ? "Conclu\xEDdo" : `${remaining} aula${remaining === 1 ? "" : "s"} restante${remaining === 1 ? "" : "s"}`,
+        href: `/my-account/course/${item.productId}`,
+        coverImage: item.coverImage,
+        _sort: item.lastWatchedAt ? new Date(item.lastWatchedAt).getTime() : 0
+      };
+    }).filter((i) => i.progressPercent < 100).sort((a, b) => b._sort - a._sort).slice(0, limit);
+    return mapped.map(({ _sort: _, ...rest }) => rest);
+  }
+};
+var continueLearningEngine = new ContinueLearningEngine();
+
+// server/core/discovery/seed-relationships.ts
+var DISCOVERY_RELATIONSHIP_SEED = [
+  // Representação comercial trail
+  {
+    fromSlug: "manual-do-representante-comercial",
+    toSlug: "rep4crm",
+    type: "next",
+    weight: 10,
+    label: "Rep4CRM"
+  },
+  {
+    fromSlug: "rep4crm",
+    toSlug: "prompt-pack-comercial",
+    type: "next",
+    weight: 9,
+    label: "Prompt Pack Comercial"
+  },
+  {
+    fromSlug: "prompt-pack-comercial",
+    toSlug: "planilhas-comerciais",
+    type: "next",
+    weight: 8,
+    label: "Planilhas"
+  },
+  {
+    fromSlug: "planilhas-comerciais",
+    toSlug: "consultoria-comercial",
+    type: "upsell",
+    weight: 7,
+    label: "Consultoria"
+  },
+  {
+    fromSlug: "consultoria-comercial",
+    toSlug: "crm-premium",
+    type: "upsell",
+    weight: 6,
+    label: "CRM Premium"
+  },
+  // Bem-estar trail
+  {
+    fromSlug: "desacelere",
+    toSlug: "ansiedade",
+    type: "next",
+    weight: 10,
+    label: "Ansiedade"
+  },
+  {
+    fromSlug: "ansiedade",
+    toSlug: "sono",
+    type: "next",
+    weight: 9,
+    label: "Sono"
+  },
+  {
+    fromSlug: "sono",
+    toSlug: "produtividade",
+    type: "next",
+    weight: 8,
+    label: "Produtividade"
+  },
+  {
+    fromSlug: "produtividade",
+    toSlug: "habitos",
+    type: "next",
+    weight: 7,
+    label: "H\xE1bitos"
+  },
+  {
+    fromSlug: "habitos",
+    toSlug: "mindfulness",
+    type: "companion",
+    weight: 6,
+    label: "Mindfulness"
+  }
+];
+function getSeedRelationshipsFrom(fromSlug) {
+  return DISCOVERY_RELATIONSHIP_SEED.filter((r) => r.fromSlug === fromSlug).sort(
+    (a, b) => b.weight - a.weight
+  );
+}
+function walkRelationshipChain(startSlug, maxDepth = 8) {
+  const chain = [startSlug];
+  let current = startSlug;
+  const seen = /* @__PURE__ */ new Set([startSlug]);
+  for (let i = 0; i < maxDepth; i++) {
+    const next = getSeedRelationshipsFrom(current).find(
+      (r) => r.type === "next" || r.type === "upsell"
+    );
+    if (!next || seen.has(next.toSlug)) break;
+    chain.push(next.toSlug);
+    seen.add(next.toSlug);
+    current = next.toSlug;
+  }
+  return chain;
+}
+
+// server/core/discovery/relationship-engine.ts
+var RelationshipEngine = class {
+  constructor(extra = []) {
+    this.extra = extra;
+  }
+  allFrom(fromSlug) {
+    return [...getSeedRelationshipsFrom(fromSlug), ...this.extra.filter((r) => r.fromSlug === fromSlug)].sort((a, b) => b.weight - a.weight);
+  }
+  relatedSlugs(fromSlug, limit = 8) {
+    return this.allFrom(fromSlug).map((r) => r.toSlug).filter((slug, i, arr) => arr.indexOf(slug) === i).slice(0, limit);
+  }
+  chain(fromSlug, maxDepth = 8) {
+    const seeded = walkRelationshipChain(fromSlug, maxDepth);
+    if (seeded.length > 1) return seeded;
+    return [fromSlug, ...this.relatedSlugs(fromSlug, maxDepth - 1)];
+  }
+  /** Score candidate by graph proximity to owned/viewed slugs. */
+  scoreByGraph(candidateSlug, anchors) {
+    let score = 0;
+    for (const anchor of anchors) {
+      if (anchor === candidateSlug) continue;
+      const related = this.relatedSlugs(anchor, 12);
+      const idx = related.indexOf(candidateSlug);
+      if (idx >= 0) score += Math.max(1, 10 - idx);
+      const chain = this.chain(anchor, 6);
+      const cIdx = chain.indexOf(candidateSlug);
+      if (cIdx > 0) score += Math.max(1, 12 - cIdx);
+    }
+    return score;
+  }
+  enrichMeta(meta, slug) {
+    return meta.find((m) => m.slug === slug);
+  }
+};
+var relationshipEngine = new RelationshipEngine();
+
+// server/core/discovery/recommendation-service.ts
+function mergeCatalogMeta(products2, seedMeta, dbMeta = []) {
+  const bySlug = /* @__PURE__ */ new Map();
+  for (const m of seedMeta) bySlug.set(m.slug, { ...m });
+  for (const m of dbMeta) {
+    const prev = bySlug.get(m.slug);
+    bySlug.set(m.slug, prev ? { ...prev, ...m } : { ...m });
+  }
+  for (const p of products2) {
+    if (!p.slug) continue;
+    const prev = bySlug.get(p.slug);
+    const type = p.type || prev?.type || "ebook";
+    bySlug.set(p.slug, {
+      slug: p.slug,
+      productId: p.id ?? prev?.productId ?? null,
+      tags: prev?.tags ?? [],
+      category: prev?.category || p.categoryName || "Geral",
+      subcategory: prev?.subcategory,
+      level: prev?.level,
+      duration: prev?.duration,
+      type,
+      author: prev?.author,
+      collections: prev?.collections ?? [],
+      keywords: prev?.keywords ?? [],
+      objectives: prev?.objectives ?? [],
+      audience: prev?.audience ?? [],
+      skills: prev?.skills ?? [],
+      isFeatured: prev?.isFeatured,
+      isLaunch: prev?.isLaunch,
+      isBeginnerFriendly: prev?.isBeginnerFriendly
+    });
+  }
+  return Array.from(bySlug.values());
+}
+function toCardModel(meta, product, extras) {
+  const slug = meta.slug;
+  const name = product?.name || slug;
+  const typeLabel = meta.type === "ebook" ? "E-book" : meta.type === "course" ? "Curso" : meta.type === "audiobook" ? "Audiobook" : meta.type === "app" ? "App" : String(meta.type);
+  return {
+    id: product?.id != null ? String(product.id) : `slug:${slug}`,
+    slug,
+    name,
+    type: String(meta.type),
+    typeLabel,
+    category: meta.category,
+    tags: meta.tags,
+    author: meta.author,
+    coverImage: product?.coverImage || product?.thumbnailImage || null,
+    priceCents: product?.price ?? null,
+    level: meta.level ? String(meta.level) : void 0,
+    duration: meta.duration,
+    href: product?.id ? `/produto/${slug}` : `/produto/${slug}`,
+    ...extras
+  };
+}
+var RecommendationService = class {
+  recommend(profile, catalog, excludeSlugs = /* @__PURE__ */ new Set()) {
+    const anchors = [
+      ...profile.recentViewSlugs,
+      ...profile.favoriteSlugs
+    ].filter((s, i, a) => a.indexOf(s) === i);
+    const scores = /* @__PURE__ */ new Map();
+    for (const item of catalog) {
+      if (excludeSlugs.has(item.slug)) continue;
+      let score = 0;
+      score += relationshipEngine.scoreByGraph(item.slug, anchors) * 3;
+      for (const pref of profile.preferences) {
+        const p = pref.toLowerCase();
+        if (item.category.toLowerCase().includes(p)) score += 5;
+        if (item.tags.some((t2) => t2.toLowerCase().includes(p))) score += 3;
+        if (item.skills.some((s) => s.toLowerCase().includes(p))) score += 2;
+      }
+      for (const goal of profile.goals) {
+        const g = goal.toLowerCase();
+        if (item.objectives.some((o) => o.toLowerCase().includes(g))) score += 4;
+        if (item.keywords.some((k) => k.toLowerCase().includes(g))) score += 2;
+      }
+      for (const q of profile.recentSearchQueries) {
+        const qq = q.toLowerCase();
+        if (item.tags.some((t2) => t2.toLowerCase().includes(qq))) score += 2;
+        if (item.keywords.some((k) => k.toLowerCase().includes(qq))) score += 2;
+        if (item.category.toLowerCase().includes(qq)) score += 2;
+      }
+      if (anchors.length === 0 && item.isFeatured) score += 2;
+      if (anchors.length === 0 && item.isBeginnerFriendly) score += 1;
+      if (score > 0) scores.set(item.slug, score);
+    }
+    const ranked = Array.from(scores.entries()).sort((a, b) => b[1] - a[1]).map(([slug]) => slug);
+    if (ranked.length === 0) {
+      const fallback = categoryEngine.railItems(catalog, "featured", 12).map((m) => m.slug);
       return {
         productIds: [],
-        strategy: "related",
-        reason: "Related products seam ready \u2014 ranking not wired."
+        productSlugs: fallback,
+        strategy: "fallback",
+        reason: "Cat\xE1logo editorial \u2014 perfil ainda sem sinais suficientes."
       };
     }
-    if (profile.goals.length > 0) {
-      return {
-        productIds: [],
-        strategy: "goals",
-        reason: "Goal-based discovery seam ready."
-      };
-    }
+    const strategy = anchors.length > 0 ? "behavior" : profile.goals.length > 0 ? "goals" : "related";
     return {
       productIds: [],
-      strategy: "fallback",
-      reason: "Fallback catalog discovery."
+      productSlugs: ranked.slice(0, 12),
+      strategy,
+      reason: strategy === "behavior" ? "Relacionamentos e comportamento recente." : strategy === "goals" ? "Alinhado aos objetivos informados." : "Produtos relacionados ao seu hist\xF3rico.",
+      scoreBySlug: Object.fromEntries(scores)
     };
   }
 };
+var recommendationService = new RecommendationService();
+
+// server/core/discovery/discovery-engine.ts
+init_seed_metadata();
+
+// server/core/discovery/trending-engine.ts
+var TrendingEngine = class {
+  scoreOne(signals) {
+    const score = computeTrendingScore(signals);
+    return {
+      slug: signals.slug,
+      score,
+      views: signals.views,
+      purchases: signals.purchases,
+      favorites: signals.favorites,
+      ratings: signals.ratings,
+      recentGrowth: signals.recentGrowth
+    };
+  }
+  rank(signals, limit = 12) {
+    return signals.map((s) => this.scoreOne(s)).sort((a, b) => b.score - a.score).slice(0, limit);
+  }
+  /**
+   * When behavioral data is sparse, boost launches/featured as soft trending.
+   */
+  withEditorialFallback(ranked, editorialSlugs, limit = 12) {
+    if (ranked.some((r) => r.score > 0)) {
+      return ranked.slice(0, limit);
+    }
+    return editorialSlugs.slice(0, limit).map((slug, i) => ({
+      slug,
+      score: 100 - i,
+      views: 0,
+      purchases: 0,
+      favorites: 0,
+      ratings: 0,
+      recentGrowth: 0
+    }));
+  }
+};
+var trendingEngine = new TrendingEngine();
+
+// server/core/discovery/discovery-engine.ts
+function cardsForSlugs(slugs, meta, products2, reason) {
+  const productBySlug = new Map(products2.map((p) => [p.slug, p]));
+  const metaBySlug = new Map(meta.map((m) => [m.slug, m]));
+  const out = [];
+  for (const slug of slugs) {
+    const m = metaBySlug.get(slug);
+    if (!m) continue;
+    out.push(
+      toCardModel(m, productBySlug.get(slug), reason ? { reason } : void 0)
+    );
+  }
+  return out;
+}
+function uniqueSlugs(lists, limit) {
+  const seen = /* @__PURE__ */ new Set();
+  const out = [];
+  for (const list of lists) {
+    for (const slug of list) {
+      if (seen.has(slug)) continue;
+      seen.add(slug);
+      out.push(slug);
+      if (out.length >= limit) return out;
+    }
+  }
+  return out;
+}
+var DiscoveryEngine = class {
+  buildCatalog(input) {
+    return mergeCatalogMeta(
+      input.products,
+      listSeedMeta(),
+      input.dbMeta || []
+    );
+  }
+  recommend(profile) {
+    const catalog = listSeedMeta();
+    return recommendationService.recommend(profile, catalog);
+  }
+  search(query, input, limit = 24) {
+    const catalog = this.buildCatalog(input);
+    const productBySlug = new Map(input.products.map((p) => [p.slug, p]));
+    const hits = catalog.map((m) => {
+      const product = productBySlug.get(m.slug);
+      const { score, matchedOn } = scoreDiscoverySearch(query, {
+        name: product?.name || m.slug,
+        author: m.author,
+        category: m.category,
+        subcategory: m.subcategory,
+        tags: m.tags,
+        keywords: m.keywords,
+        objectives: m.objectives
+      });
+      return {
+        slug: m.slug,
+        name: product?.name || m.slug,
+        score,
+        matchedOn,
+        href: `/produto/${m.slug}`,
+        category: m.category,
+        tags: m.tags,
+        author: m.author
+      };
+    }).filter((h) => h.score > 0).sort((a, b) => b.score - a.score).slice(0, limit);
+    return { query, hits, total: hits.length };
+  }
+  related(slug, input, limit = 8) {
+    const catalog = this.buildCatalog(input);
+    const chain = relationshipEngine.chain(slug, limit + 1).slice(1);
+    const related = relationshipEngine.relatedSlugs(slug, limit);
+    const slugs = uniqueSlugs([chain, related], limit);
+    return cardsForSlugs(slugs, catalog, input.products, "Relacionado");
+  }
+  buildHome(input) {
+    const userKey = input.profile?.userId ?? "anon";
+    const cacheKey = `discovery:home:${userKey}`;
+    const cached = discoveryCacheGet(cacheKey);
+    if (cached) return { ...cached, cacheHit: true };
+    const catalog = this.buildCatalog(input);
+    const productBySlug = new Map(input.products.map((p) => [p.slug, p]));
+    const profile = input.profile;
+    const personalized = Boolean(profile && profile.userId > 0);
+    const exclude = /* @__PURE__ */ new Set();
+    if (profile) {
+      for (const s of profile.favoriteSlugs) exclude.add(s);
+    }
+    const continueLearning = continueLearningEngine.build(
+      input.progress || [],
+      8
+    );
+    const recommended = profile ? recommendationService.recommend(profile, catalog) : {
+      productSlugs: categoryEngine.railItems(catalog, "featured", 12).map((m) => m.slug),
+      strategy: "fallback",
+      reason: "Visitante \u2014 destaque editorial.",
+      productIds: []
+    };
+    const trendingRaw = trendingEngine.rank(input.trendingSignals || [], 12);
+    const editorial = catalog.filter((m) => m.isFeatured || m.isLaunch).map((m) => m.slug);
+    const trending = trendingEngine.withEditorialFallback(
+      trendingRaw,
+      editorial,
+      12
+    );
+    const favoriteSlugs = input.favoriteSlugs || profile?.favoriteSlugs || [];
+    const railBuilders = [];
+    for (const def of DISCOVERY_RAIL_DEFS) {
+      let slugs = [];
+      switch (def.id) {
+        case "continue_learning":
+          continue;
+        case "recommended":
+          slugs = recommended.productSlugs;
+          break;
+        case "favorites":
+          slugs = favoriteSlugs;
+          break;
+        case "bestsellers":
+        case "trending":
+          slugs = trending.map((t2) => t2.slug);
+          break;
+        default:
+          slugs = categoryEngine.railItems(catalog, def.id, 12).map((m) => m.slug);
+          break;
+      }
+      slugs = slugs.filter(
+        (s) => catalog.some((m) => m.slug === s) || productBySlug.has(s)
+      );
+      if (!slugs.length) continue;
+      railBuilders.push({
+        id: def.id,
+        title: def.title,
+        subtitle: def.subtitle,
+        slugs
+      });
+    }
+    const heroMeta = catalog.find((m) => m.isLaunch && m.isFeatured) || catalog.find((m) => m.isFeatured) || catalog[0] || null;
+    const hero = heroMeta ? toCardModel(heroMeta, productBySlug.get(heroMeta.slug)) : null;
+    const payload = {
+      hero,
+      rails: railBuilders.map((r) => ({
+        id: r.id,
+        title: r.title,
+        subtitle: r.subtitle,
+        items: cardsForSlugs(r.slugs, catalog, input.products)
+      })),
+      continueLearning,
+      personalized,
+      generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      cacheHit: false
+    };
+    discoveryCacheSet(cacheKey, payload, personalized ? 3e4 : 9e4);
+    return payload;
+  }
+};
 var discoveryEngine = new DiscoveryEngine();
+
+// server/core/discovery/index.ts
+init_seed_metadata();
 
 // server/core/success-score/success-score-engine.ts
 var SuccessScoreEngine = class {
@@ -2921,6 +5150,1013 @@ var SuccessScoreEngine = class {
   }
 };
 var successScoreEngine = new SuccessScoreEngine();
+
+// server/core/success/cache.ts
+var store3 = /* @__PURE__ */ new Map();
+function successCacheGet(key) {
+  const entry = store3.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    store3.delete(key);
+    return null;
+  }
+  return entry.value;
+}
+function successCacheSet(key, value, ttlMs = 45e3) {
+  store3.set(key, { value, expiresAt: Date.now() + ttlMs });
+}
+
+// server/core/success/config.ts
+function deepMergeConfig(base, patch) {
+  return {
+    weights: { ...base.weights, ...patch.weights },
+    targets: { ...base.targets, ...patch.targets },
+    gradeThresholds: { ...base.gradeThresholds, ...patch.gradeThresholds },
+    habitMilestones: patch.habitMilestones ?? base.habitMilestones,
+    consistencyBands: {
+      ...base.consistencyBands,
+      ...patch.consistencyBands
+    }
+  };
+}
+function resolveSuccessScoreConfig(override) {
+  let fromEnv = {};
+  const raw = process.env.SUCCESS_SCORE_CONFIG_JSON;
+  if (raw) {
+    try {
+      fromEnv = JSON.parse(raw);
+    } catch {
+      console.warn(
+        "[ContentFy Success] SUCCESS_SCORE_CONFIG_JSON inv\xE1lido \u2014 usando defaults."
+      );
+    }
+  }
+  return deepMergeConfig(
+    deepMergeConfig(DEFAULT_SUCCESS_SCORE_CONFIG, fromEnv),
+    override || {}
+  );
+}
+
+// server/core/success/consistency-engine.ts
+var ConsistencyEngine = class {
+  constructor(config = resolveSuccessScoreConfig()) {
+    this.config = config;
+  }
+  evaluate(signals) {
+    const t2 = this.config.targets;
+    const frequency = clampScore(
+      signals.activeDays / Math.max(1, t2.activeDays) * 100
+    );
+    const regularity = clampScore(
+      signals.streakDays / Math.max(1, t2.streakDays) * 100
+    );
+    const score = clampScore(frequency * 0.6 + regularity * 0.4);
+    let trend = "flat";
+    if (signals.weeklyDeltaPercent > 3) trend = "up";
+    else if (signals.weeklyDeltaPercent < -3) trend = "down";
+    const bands = this.config.consistencyBands;
+    let band = "fair";
+    if (score >= bands.excellent) band = "excellent";
+    else if (score >= bands.good) band = "good";
+    else if (score < bands.declining) band = "declining";
+    if (trend === "down" && band !== "excellent") {
+      band = "declining";
+    }
+    return {
+      band,
+      score,
+      frequency,
+      regularity,
+      trend,
+      label: bandLabel(band)
+    };
+  }
+};
+function bandLabel(band) {
+  switch (band) {
+    case "excellent":
+      return "Excelente";
+    case "good":
+      return "Boa";
+    case "declining":
+      return "Em queda";
+    default:
+      return "Regular";
+  }
+}
+var consistencyEngine = new ConsistencyEngine();
+
+// server/core/success/evolution-engine.ts
+var EvolutionEngine = class {
+  monthly(signals) {
+    if (signals.monthlyEvolution.length) {
+      return signals.monthlyEvolution.map((m) => ({
+        key: m.month,
+        label: m.label,
+        value: m.value
+      }));
+    }
+    const base = Math.max(8, Math.round(signals.avgProgress * 0.4));
+    return [
+      { key: "m1", label: "In\xEDcio", value: Math.min(100, base) },
+      {
+        key: "m2",
+        label: "Recente",
+        value: Math.min(100, Math.round(signals.avgProgress * 0.7))
+      },
+      {
+        key: "m3",
+        label: "Atual",
+        value: Math.min(100, Math.round(signals.avgProgress))
+      }
+    ];
+  }
+  weekly(signals) {
+    const current = Math.min(100, Math.round(signals.avgProgress));
+    const prev = Math.max(
+      0,
+      current - Math.round(signals.weeklyDeltaPercent)
+    );
+    return [
+      { key: "w-prev", label: "Semana anterior", value: prev },
+      { key: "w-now", label: "Esta semana", value: current }
+    ];
+  }
+  series(signals) {
+    return this.monthly(signals);
+  }
+};
+var evolutionEngine = new EvolutionEngine();
+
+// server/core/success/goal-progress-engine.ts
+var GoalProgressEngine = class {
+  build(input) {
+    const unlockedAchievements = input.achievements.filter((a) => a.unlocked).map((a) => a.id);
+    return input.goals.map((g) => {
+      const courseSlugs = LEARN_PRODUCT_LINKS.filter(
+        (l) => (l.goalIds || []).includes(g.goalId)
+      ).map((l) => l.productSlug);
+      const nextStep = g.isActive && input.nextStep ? input.nextStep.title : g.missingCompetencyIds[0] ? `Desenvolver compet\xEAncia pendente` : g.progress >= 70 ? "Objetivo quase conclu\xEDdo" : null;
+      return {
+        goalId: g.goalId,
+        goalName: g.name,
+        progress: g.progress,
+        competencyIds: g.competencyIds,
+        courseSlugs,
+        achievementIds: unlockedAchievements.slice(0, 3),
+        nextStep,
+        nextStepHref: g.isActive && input.nextStep?.href ? input.nextStep.href : null
+      };
+    });
+  }
+};
+var goalProgressEngine = new GoalProgressEngine();
+
+// server/core/success/habit-engine.ts
+var HabitEngine = class {
+  constructor(config = resolveSuccessScoreConfig()) {
+    this.config = config;
+  }
+  evaluate(streakDays) {
+    const milestones = this.config.habitMilestones.map(
+      (days) => {
+        const progress = Math.min(100, Math.round(streakDays / days * 100));
+        return {
+          days,
+          name: `${days} dias`,
+          reached: streakDays >= days,
+          progress
+        };
+      }
+    );
+    const next = milestones.find((m) => !m.reached);
+    const label = next ? `Pr\xF3ximo marco: ${next.days} dias` : "Todos os marcos de h\xE1bito alcan\xE7ados";
+    return {
+      currentStreakDays: Math.max(0, streakDays),
+      milestones,
+      label
+    };
+  }
+};
+var habitEngine = new HabitEngine();
+
+// server/core/success/recommendation-score.ts
+var RecommendationScore = class {
+  rank(input) {
+    const owned = new Set(input.signals.ownedProductSlugs);
+    const recs = [];
+    if (input.signals.nextStepTitle) {
+      recs.push({
+        id: "next-action",
+        title: input.signals.nextStepTitle,
+        reason: input.signals.nextStepReason || "Pr\xF3ximo passo da jornada Learn",
+        href: input.signals.nextStepHref || void 0,
+        score: 100
+      });
+    }
+    for (const link of LEARN_PRODUCT_LINKS) {
+      if (owned.has(link.productSlug)) continue;
+      let score = 40;
+      if (input.signals.activeGoalId && link.goalIds?.includes(input.signals.activeGoalId)) {
+        score += 35;
+      }
+      const overlapsStagnant = link.competencyIds.some(
+        (id) => input.stagnantIds.includes(id)
+      );
+      if (overlapsStagnant) score += 25;
+      if (input.score.pillars.knowledge < 50) score += 10;
+      recs.push({
+        id: `product:${link.productSlug}`,
+        title: input.productNames?.[link.productSlug] || link.productSlug,
+        reason: overlapsStagnant ? "Acelera compet\xEAncias estagnadas" : "Alinhado ao seu objetivo de evolu\xE7\xE3o",
+        href: `/produto/${link.productSlug}`,
+        productSlug: link.productSlug,
+        score
+      });
+    }
+    return recs.sort((a, b) => b.score - a.score).slice(0, 8);
+  }
+};
+var recommendationScore = new RecommendationScore();
+
+// server/core/success/score-engine.ts
+function ratioToScore(value, target) {
+  if (target <= 0) return 0;
+  return clampScore(value / target * 100);
+}
+var ScoreEngine = class _ScoreEngine {
+  constructor(config = resolveSuccessScoreConfig()) {
+    this.config = config;
+  }
+  withConfig(config) {
+    return new _ScoreEngine(resolveSuccessScoreConfig(config));
+  }
+  getConfig() {
+    return this.config;
+  }
+  pillars(signals) {
+    const t2 = this.config.targets;
+    const knowledge = clampScore(
+      ratioToScore(signals.modulesCompleted, t2.modulesCompleted) * 0.7 + (signals.modulesTotal > 0 ? signals.modulesCompleted / signals.modulesTotal * 100 * 0.3 : signals.avgProgress * 0.3)
+    );
+    const application = ratioToScore(
+      signals.applicationTasks,
+      t2.applicationTasks
+    );
+    const consistency = clampScore(
+      ratioToScore(signals.activeDays, t2.activeDays) * 0.55 + ratioToScore(signals.streakDays, t2.streakDays) * 0.45
+    );
+    const result = clampScore(
+      ratioToScore(signals.goalsCompleted, t2.goalsCompleted) * 0.45 + ratioToScore(
+        signals.competenciesAcquired,
+        t2.competenciesAcquired
+      ) * 0.55
+    );
+    return { knowledge, application, consistency, result };
+  }
+  compute(signals) {
+    const pillars = this.pillars(signals);
+    const weights = normalizeWeights(this.config.weights);
+    const weighted = clampScore(
+      pillars.knowledge * weights.knowledge + pillars.application * weights.application + pillars.consistency * weights.consistency + pillars.result * weights.result
+    );
+    const grade = gradeFromScore(weighted, this.config.gradeThresholds);
+    return {
+      score: weighted,
+      grade,
+      pillars,
+      weightsUsed: weights,
+      label: gradeLabel(grade)
+    };
+  }
+};
+function gradeLabel(grade) {
+  switch (grade) {
+    case "master":
+      return "Transforma\xE7\xE3o avan\xE7ada";
+    case "rise":
+      return "Evolu\xE7\xE3o s\xF3lida";
+    case "grow":
+      return "Em crescimento";
+    default:
+      return "In\xEDcio da jornada";
+  }
+}
+var scoreEngine = new ScoreEngine();
+
+// server/core/success/success-engine.ts
+function buildInsights(signals, score, goals, stagnant) {
+  const insights = [];
+  const weekly = Math.round(signals.weeklyDeltaPercent);
+  if (weekly !== 0) {
+    insights.push({
+      id: "weekly",
+      kind: "weekly_evolution",
+      title: weekly > 0 ? "Voc\xEA evoluiu" : "Ritmo em ajuste",
+      body: weekly > 0 ? `Voc\xEA evoluiu ${weekly}% esta semana.` : `Varia\xE7\xE3o de ${weekly}% esta semana \u2014 retome o pr\xF3ximo passo.`,
+      metric: Math.abs(weekly),
+      unit: "%"
+    });
+  }
+  const active = goals.find((g) => g.isActive);
+  if (active) {
+    insights.push({
+      id: "goal",
+      kind: "goal_progress",
+      title: "Progresso do objetivo",
+      body: `Voc\xEA concluiu ${active.progress}% do objetivo \u201C${active.name}\u201D.`,
+      metric: active.progress,
+      unit: "%"
+    });
+    const left = active.missingCompetencyIds.length;
+    if (left > 0) {
+      insights.push({
+        id: "comps-left",
+        kind: "competencies_left",
+        title: "Quase l\xE1",
+        body: `Mais ${left} compet\xEAncia${left === 1 ? "" : "s"} e voc\xEA conclui sua jornada.`,
+        metric: left
+      });
+    }
+  }
+  if (stagnant.length > 0) {
+    insights.push({
+      id: "stagnant",
+      kind: "stagnant",
+      title: "Compet\xEAncia estagnada",
+      body: `${stagnant[0].name} precisa de aten\xE7\xE3o para acelerar seu sucesso.`,
+      metric: stagnant[0].progress,
+      unit: "%"
+    });
+  }
+  if (signals.streakDays >= 7) {
+    insights.push({
+      id: "habit",
+      kind: "habit",
+      title: "Const\xE2ncia",
+      body: `${signals.streakDays} dias de ritmo \u2014 h\xE1bito em forma\xE7\xE3o.`,
+      metric: signals.streakDays,
+      unit: "dias"
+    });
+  }
+  if (score.pillars.consistency >= 50 && score.pillars.knowledge >= 40) {
+    insights.push({
+      id: "morning",
+      kind: "morning_hint",
+      title: "Padr\xE3o de desempenho",
+      body: "Seu melhor desempenho tende a ocorrer em blocos focados \u2014 priorize sess\xF5es curtas e regulares."
+    });
+  }
+  return insights.slice(0, 6);
+}
+var SuccessEngine = class {
+  constructor(config = resolveSuccessScoreConfig()) {
+    this.config = config;
+  }
+  buildDashboard(input) {
+    const cfg = resolveSuccessScoreConfig({
+      ...this.config,
+      ...input.config
+    });
+    const cacheKey = `success:dashboard:${input.signals.userId}`;
+    const cached = successCacheGet(cacheKey);
+    if (cached) return { ...cached, cacheHit: true };
+    const score = new ScoreEngine(cfg).compute(input.signals);
+    const habits = new HabitEngine(cfg).evaluate(input.signals.streakDays);
+    const consistency = new ConsistencyEngine(cfg).evaluate(input.signals);
+    const goals = goalProgressEngine.build({
+      goals: input.goals,
+      competencies: input.competencies,
+      achievements: input.achievements,
+      nextStep: input.nextStep
+    });
+    const stagnant = input.competencies.filter(
+      (c) => c.status === "in_progress" && c.progress > 0 && c.progress < 55
+    );
+    const recommendations = recommendationScore.rank({
+      signals: input.signals,
+      score,
+      productNames: input.productNames,
+      stagnantIds: stagnant.map((s) => s.competencyId)
+    });
+    const nextAction = recommendations[0] || null;
+    const relatedProducts = recommendations.filter((r) => r.productSlug).slice(0, 6).map((r) => ({
+      slug: r.productSlug,
+      name: r.title,
+      href: r.href || `/produto/${r.productSlug}`,
+      reason: r.reason
+    }));
+    const payload = {
+      score,
+      habits,
+      consistency,
+      goals,
+      evolution: evolutionEngine.series(input.signals),
+      monthlyEvolution: evolutionEngine.monthly(input.signals),
+      weeklyProgress: evolutionEngine.weekly(input.signals),
+      timeline: input.signals.timeline,
+      insights: buildInsights(input.signals, score, input.goals, stagnant),
+      recommendations,
+      nextAction,
+      stagnantCompetencies: stagnant.map((s) => ({
+        id: s.competencyId,
+        name: s.name,
+        progress: s.progress
+      })),
+      relatedProducts,
+      generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      cacheHit: false
+    };
+    successCacheSet(cacheKey, payload, 45e3);
+    return payload;
+  }
+};
+var successEngine = new SuccessEngine();
+
+// server/learn-store.ts
+import { eq as eq2 } from "drizzle-orm";
+var memoryGoals = /* @__PURE__ */ new Map();
+var warned = false;
+function warnOnce() {
+  if (warned) return;
+  warned = true;
+  console.warn(
+    "[ContentFy Learn] Prefer\xEAncia de objetivo em mem\xF3ria (migration 0013 ausente). N\xE3o \xE9 dur\xE1vel."
+  );
+}
+async function getActiveGoalId(userId) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    const rows = await db.select().from(learnUserGoals).where(eq2(learnUserGoals.userId, userId)).limit(1);
+    return rows[0]?.goalId ?? null;
+  } catch {
+    warnOnce();
+    return memoryGoals.get(userId) ?? null;
+  }
+}
+async function setActiveGoalId(userId, goalId) {
+  learnCacheInvalidate(`learn:dashboard:${userId}`);
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    await db.insert(learnUserGoals).values({ userId, goalId }).onDuplicateKeyUpdate({ set: { goalId } });
+    return { ok: true, persisted: "db" };
+  } catch {
+    warnOnce();
+    memoryGoals.set(userId, goalId);
+    return { ok: true, persisted: "memory" };
+  }
+}
+
+// server/discovery-store.ts
+import { and as and2, desc as desc2, eq as eq3, gte as gte2, sql as sql2 } from "drizzle-orm";
+var memoryFavorites = /* @__PURE__ */ new Map();
+var memoryEvents = [];
+var warnedMemory = false;
+function warnMemoryOnce() {
+  if (warnedMemory) return;
+  warnedMemory = true;
+  console.warn(
+    "[ContentFy Discovery] Persist\xEAncia em mem\xF3ria ativa (migration 0012 ausente ou DB indispon\xEDvel). N\xE3o \xE9 dur\xE1vel."
+  );
+}
+function parseJsonArray(raw) {
+  if (!raw) return [];
+  try {
+    const v = JSON.parse(raw);
+    return Array.isArray(v) ? v.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+async function listDiscoveryDbMeta() {
+  try {
+    const db = await getDb();
+    if (!db) return [];
+    const rows = await db.select().from(productDiscoveryMeta);
+    return rows.map((r) => ({
+      slug: r.slug,
+      productId: r.productId,
+      tags: parseJsonArray(r.tagsJson),
+      category: r.category || "Geral",
+      subcategory: r.subcategory || void 0,
+      level: r.level || void 0,
+      duration: r.durationLabel || void 0,
+      type: "ebook",
+      author: r.author || void 0,
+      collections: parseJsonArray(r.collectionsJson),
+      keywords: parseJsonArray(r.keywordsJson),
+      objectives: parseJsonArray(r.objectivesJson),
+      audience: parseJsonArray(r.audienceJson),
+      skills: parseJsonArray(r.skillsJson),
+      isFeatured: r.isFeatured,
+      isLaunch: r.isLaunch,
+      isBeginnerFriendly: r.isBeginnerFriendly
+    }));
+  } catch {
+    return [];
+  }
+}
+async function listDiscoveryDbRelationships() {
+  try {
+    const db = await getDb();
+    if (!db) return [];
+    return await db.select().from(productDiscoveryRelationships);
+  } catch {
+    return [];
+  }
+}
+async function listFavoriteSlugs(userId) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    const rows = await db.select({ slug: userFavorites.productSlug }).from(userFavorites).where(eq3(userFavorites.userId, userId)).orderBy(desc2(userFavorites.createdAt));
+    return rows.map((r) => r.slug);
+  } catch {
+    warnMemoryOnce();
+    return Array.from(memoryFavorites.get(userId) || []);
+  }
+}
+async function addFavorite(userId, productSlug, productId) {
+  discoveryCacheInvalidate(`discovery:home:${userId}`);
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    await db.insert(userFavorites).values({ userId, productSlug, productId: productId ?? null }).onDuplicateKeyUpdate({ set: { productId: productId ?? null } });
+    return { ok: true, persisted: "db" };
+  } catch {
+    warnMemoryOnce();
+    const set = memoryFavorites.get(userId) || /* @__PURE__ */ new Set();
+    set.add(productSlug);
+    memoryFavorites.set(userId, set);
+    return { ok: true, persisted: "memory" };
+  }
+}
+async function removeFavorite(userId, productSlug) {
+  discoveryCacheInvalidate(`discovery:home:${userId}`);
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    await db.delete(userFavorites).where(
+      and2(
+        eq3(userFavorites.userId, userId),
+        eq3(userFavorites.productSlug, productSlug)
+      )
+    );
+    return { ok: true, persisted: "db" };
+  } catch {
+    warnMemoryOnce();
+    memoryFavorites.get(userId)?.delete(productSlug);
+    return { ok: true, persisted: "memory" };
+  }
+}
+async function trackDiscoveryEvent(input) {
+  if (input.userId) {
+    discoveryCacheInvalidate(`discovery:home:${input.userId}`);
+  }
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    await db.insert(discoveryEvents).values({
+      userId: input.userId ?? null,
+      sessionId: input.sessionId,
+      eventType: input.eventType,
+      productId: input.productId ?? null,
+      productSlug: input.productSlug,
+      category: input.category,
+      query: input.query,
+      dwellMs: input.dwellMs
+    });
+    if (input.eventType === "search" && input.query?.trim()) {
+      const q = input.query.trim().toLowerCase().slice(0, 255);
+      await db.insert(discoverySearchStats).values({ queryNormalized: q, hitCount: 1 }).onDuplicateKeyUpdate({
+        set: {
+          hitCount: sql2`${discoverySearchStats.hitCount} + 1`,
+          lastSearchedAt: sql2`CURRENT_TIMESTAMP`
+        }
+      });
+    }
+    return { ok: true, persisted: "db" };
+  } catch {
+    warnMemoryOnce();
+    memoryEvents.push({
+      userId: input.userId,
+      eventType: input.eventType,
+      productSlug: input.productSlug,
+      category: input.category,
+      query: input.query,
+      dwellMs: input.dwellMs,
+      at: Date.now()
+    });
+    if (memoryEvents.length > 5e3) memoryEvents.splice(0, 1e3);
+    return { ok: true, persisted: "memory" };
+  }
+}
+async function getRecentViewSlugs(userId, limit = 20) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    const rows = await db.select({ slug: discoveryEvents.productSlug }).from(discoveryEvents).where(
+      and2(
+        eq3(discoveryEvents.userId, userId),
+        eq3(discoveryEvents.eventType, "view")
+      )
+    ).orderBy(desc2(discoveryEvents.createdAt)).limit(limit * 3);
+    const out = [];
+    const seen = /* @__PURE__ */ new Set();
+    for (const r of rows) {
+      if (!r.slug || seen.has(r.slug)) continue;
+      seen.add(r.slug);
+      out.push(r.slug);
+      if (out.length >= limit) break;
+    }
+    return out;
+  } catch {
+    const rows = memoryEvents.filter((e) => e.userId === userId && e.eventType === "view" && e.productSlug).sort((a, b) => b.at - a.at);
+    const out = [];
+    const seen = /* @__PURE__ */ new Set();
+    for (const r of rows) {
+      if (!r.productSlug || seen.has(r.productSlug)) continue;
+      seen.add(r.productSlug);
+      out.push(r.productSlug);
+      if (out.length >= limit) break;
+    }
+    return out;
+  }
+}
+async function getRecentSearchQueries(userId, limit = 10) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    const rows = await db.select({ query: discoveryEvents.query }).from(discoveryEvents).where(
+      and2(
+        eq3(discoveryEvents.userId, userId),
+        eq3(discoveryEvents.eventType, "search")
+      )
+    ).orderBy(desc2(discoveryEvents.createdAt)).limit(limit * 2);
+    const out = [];
+    const seen = /* @__PURE__ */ new Set();
+    for (const r of rows) {
+      if (!r.query || seen.has(r.query)) continue;
+      seen.add(r.query);
+      out.push(r.query);
+      if (out.length >= limit) break;
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+async function buildTrendingSignals() {
+  const bySlug = /* @__PURE__ */ new Map();
+  const ensure = (slug) => {
+    if (!bySlug.has(slug)) {
+      bySlug.set(slug, {
+        views: 0,
+        purchases: 0,
+        favorites: 0,
+        ratings: 0,
+        recent: 0,
+        older: 0
+      });
+    }
+    return bySlug.get(slug);
+  };
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1e3);
+    const events = await db.select({
+      slug: discoveryEvents.productSlug,
+      type: discoveryEvents.eventType,
+      createdAt: discoveryEvents.createdAt
+    }).from(discoveryEvents).where(gte2(discoveryEvents.createdAt, thirtyDaysAgo)).limit(5e3);
+    for (const e of events) {
+      if (!e.slug) continue;
+      const row = ensure(e.slug);
+      if (e.type === "view" || e.type === "click") row.views += 1;
+      if (e.type === "favorite" || e.type === "wishlist") row.favorites += 1;
+      const t2 = e.createdAt ? new Date(e.createdAt).getTime() : 0;
+      if (t2 >= sevenDaysAgo.getTime()) row.recent += 1;
+      else row.older += 1;
+    }
+    const favCounts = await db.select({
+      slug: userFavorites.productSlug,
+      c: sql2`count(*)`
+    }).from(userFavorites).groupBy(userFavorites.productSlug);
+    for (const f of favCounts) {
+      ensure(f.slug).favorites += Number(f.c) || 0;
+    }
+    const purchaseRows = await db.select({
+      slug: products.slug,
+      c: sql2`count(*)`
+    }).from(orders).innerJoin(products, eq3(orders.productId, products.id)).where(eq3(orders.status, "completed")).groupBy(products.slug);
+    for (const p of purchaseRows) {
+      ensure(p.slug).purchases += Number(p.c) || 0;
+    }
+    const ratingRows = await db.select({
+      slug: products.slug,
+      c: sql2`count(*)`,
+      avg: sql2`avg(${productReviews.rating})`
+    }).from(productReviews).innerJoin(products, eq3(productReviews.productId, products.id)).where(eq3(productReviews.isApproved, true)).groupBy(products.slug);
+    for (const r of ratingRows) {
+      const avg = Number(r.avg) || 0;
+      ensure(r.slug).ratings += (Number(r.c) || 0) * (avg / 5);
+    }
+  } catch {
+    for (const e of memoryEvents) {
+      if (!e.productSlug) continue;
+      const row = ensure(e.productSlug);
+      if (e.eventType === "view" || e.eventType === "click") row.views += 1;
+      if (e.eventType === "favorite") row.favorites += 1;
+      if (Date.now() - e.at < 7 * 24 * 60 * 60 * 1e3) row.recent += 1;
+      else row.older += 1;
+    }
+  }
+  return Array.from(bySlug.entries()).map(([slug, v]) => ({
+    slug,
+    views: v.views,
+    purchases: v.purchases,
+    favorites: v.favorites,
+    ratings: v.ratings,
+    recentGrowth: v.older > 0 ? v.recent / v.older : v.recent > 0 ? 1 : 0
+  }));
+}
+async function buildContinueLearningSnapshots(userId) {
+  try {
+    const db = await getDb();
+    if (!db) return [];
+    const rows = await db.select({
+      productId: products.id,
+      productSlug: products.slug,
+      productName: products.name,
+      coverImage: products.coverImage,
+      lessonId: courseLessons.id,
+      lessonTitle: courseLessons.title,
+      moduleTitle: courseModules.title,
+      isCompleted: lessonProgress.isCompleted,
+      lastWatchedAt: lessonProgress.lastWatchedAt
+    }).from(lessonProgress).innerJoin(courseLessons, eq3(lessonProgress.lessonId, courseLessons.id)).innerJoin(courseModules, eq3(courseLessons.moduleId, courseModules.id)).innerJoin(courses, eq3(courseModules.courseId, courses.id)).innerJoin(products, eq3(courses.productId, products.id)).where(eq3(lessonProgress.userId, userId)).orderBy(desc2(lessonProgress.lastWatchedAt));
+    const byProduct = /* @__PURE__ */ new Map();
+    for (const r of rows) {
+      let snap = byProduct.get(r.productId);
+      if (!snap) {
+        snap = {
+          productId: r.productId,
+          productSlug: r.productSlug,
+          productName: r.productName,
+          coverImage: r.coverImage,
+          lastLessonTitle: r.lessonTitle,
+          lastModuleTitle: r.moduleTitle,
+          completedLessons: 0,
+          totalLessons: 0,
+          lastWatchedAt: r.lastWatchedAt,
+          _last: r.lastWatchedAt ? new Date(r.lastWatchedAt).getTime() : 0
+        };
+        byProduct.set(r.productId, snap);
+      }
+      snap.totalLessons += 1;
+      if (r.isCompleted) snap.completedLessons += 1;
+      const t2 = r.lastWatchedAt ? new Date(r.lastWatchedAt).getTime() : 0;
+      if (t2 >= (snap._last || 0)) {
+        snap._last = t2;
+        snap.lastLessonTitle = r.lessonTitle;
+        snap.lastModuleTitle = r.moduleTitle;
+        snap.lastWatchedAt = r.lastWatchedAt;
+      }
+    }
+    for (const snap of Array.from(byProduct.values())) {
+      const totals = await db.select({ c: sql2`count(*)` }).from(courseLessons).innerJoin(courseModules, eq3(courseLessons.moduleId, courseModules.id)).innerJoin(courses, eq3(courseModules.courseId, courses.id)).where(eq3(courses.productId, snap.productId));
+      const total = Number(totals[0]?.c) || snap.totalLessons;
+      snap.totalLessons = total;
+    }
+    return Array.from(byProduct.values()).map(({ _last: _, ...rest }) => rest);
+  } catch (error) {
+    console.error("[Discovery] continue learning snapshot failed:", error);
+    return [];
+  }
+}
+async function getAdminDiscoveryInsights() {
+  const empty = {
+    mostViewed: [],
+    mostSold: [],
+    mostFavorited: [],
+    mostSearched: [],
+    persistence: "unknown"
+  };
+  try {
+    const db = await getDb();
+    if (!db) {
+      warnMemoryOnce();
+      const views = /* @__PURE__ */ new Map();
+      for (const e of memoryEvents) {
+        if ((e.eventType === "view" || e.eventType === "click") && e.productSlug) {
+          views.set(e.productSlug, (views.get(e.productSlug) || 0) + 1);
+        }
+      }
+      return {
+        ...empty,
+        mostViewed: Array.from(views.entries()).map(([slug, count]) => ({ slug, count })).sort((a, b) => b.count - a.count).slice(0, 20),
+        persistence: "memory"
+      };
+    }
+    const viewed = await db.select({
+      slug: discoveryEvents.productSlug,
+      count: sql2`count(*)`
+    }).from(discoveryEvents).where(eq3(discoveryEvents.eventType, "view")).groupBy(discoveryEvents.productSlug).orderBy(desc2(sql2`count(*)`)).limit(20);
+    const sold = await db.select({
+      slug: products.slug,
+      count: sql2`count(*)`
+    }).from(orders).innerJoin(products, eq3(orders.productId, products.id)).where(eq3(orders.status, "completed")).groupBy(products.slug).orderBy(desc2(sql2`count(*)`)).limit(20);
+    const favorited = await db.select({
+      slug: userFavorites.productSlug,
+      count: sql2`count(*)`
+    }).from(userFavorites).groupBy(userFavorites.productSlug).orderBy(desc2(sql2`count(*)`)).limit(20);
+    const searched = await db.select({
+      query: discoverySearchStats.queryNormalized,
+      count: discoverySearchStats.hitCount
+    }).from(discoverySearchStats).orderBy(desc2(discoverySearchStats.hitCount)).limit(20);
+    return {
+      mostViewed: viewed.filter((v) => v.slug).map((v) => ({ slug: v.slug, count: Number(v.count) || 0 })),
+      mostSold: sold.map((v) => ({ slug: v.slug, count: Number(v.count) || 0 })),
+      mostFavorited: favorited.map((v) => ({
+        slug: v.slug,
+        count: Number(v.count) || 0
+      })),
+      mostSearched: searched.map((v) => ({
+        query: v.query,
+        count: Number(v.count) || 0
+      })),
+      persistence: "db"
+    };
+  } catch {
+    warnMemoryOnce();
+    return { ...empty, persistence: "memory" };
+  }
+}
+
+// server/core/success/build-context.ts
+async function buildLearnSignals(userId) {
+  const [owned, progressSnaps, activeGoalId, allProducts] = await Promise.all([
+    getUserProducts(userId),
+    buildContinueLearningSnapshots(userId),
+    getActiveGoalId(userId),
+    getAllProducts()
+  ]);
+  const productNames = {};
+  for (const p of allProducts) productNames[p.slug] = p.name;
+  const ownedProductSlugs = [];
+  for (const row of owned || []) {
+    const slug = row.product?.slug;
+    if (slug) {
+      ownedProductSlugs.push(slug);
+      if (row.product?.name) productNames[slug] = row.product.name;
+    }
+  }
+  const progressBySlug = {};
+  let completedLessonCount = 0;
+  let totalLessonTouches = 0;
+  let coursesCompleted = 0;
+  let modulesCompleted = 0;
+  let modulesTotal = 0;
+  for (const snap of progressSnaps) {
+    const pct = Math.min(
+      100,
+      Math.round(
+        snap.completedLessons / Math.max(snap.totalLessons, 1) * 100
+      )
+    );
+    progressBySlug[snap.productSlug] = pct;
+    completedLessonCount += snap.completedLessons;
+    totalLessonTouches += snap.totalLessons;
+    modulesCompleted += snap.completedLessons;
+    modulesTotal += snap.totalLessons;
+    if (pct >= 100) coursesCompleted += 1;
+    if (!ownedProductSlugs.includes(snap.productSlug)) {
+      ownedProductSlugs.push(snap.productSlug);
+    }
+    productNames[snap.productSlug] = snap.productName;
+  }
+  for (const slug of ownedProductSlugs) {
+    if (progressBySlug[slug] == null) progressBySlug[slug] = 20;
+  }
+  const last = progressSnaps[0];
+  const learnSignals = {
+    userId,
+    ownedProductSlugs,
+    completedLessonCount,
+    totalLessonTouches,
+    coursesCompleted,
+    streakDays: 0,
+    progressBySlug,
+    lastLesson: last ? {
+      productId: last.productId,
+      productSlug: last.productSlug,
+      productName: last.productName,
+      lessonTitle: last.lastLessonTitle,
+      moduleTitle: last.lastModuleTitle,
+      href: last.productId ? `/my-account/course/${last.productId}` : `/produto/${last.productSlug}`
+    } : void 0,
+    activeGoalId,
+    purchasedAtLeastOnce: ownedProductSlugs.length > 0
+  };
+  return { learnSignals, productNames, modulesCompleted, modulesTotal };
+}
+async function buildSuccessContext(userId) {
+  const { learnSignals, productNames, modulesCompleted, modulesTotal } = await buildLearnSignals(userId);
+  const dashboard = learnEngine.buildDashboard({
+    signals: learnSignals,
+    productNames
+  });
+  const competencies = competencyEngine.evaluate(learnSignals);
+  const goals = goalEngine.evaluate(competencies, learnSignals);
+  const competencyAvg = competencies.reduce((s, c) => s + c.progress, 0) / Math.max(1, competencies.length);
+  const successIndex = computeSuccessIndex({
+    knowledge: competencyAvg,
+    application: Math.min(100, learnSignals.completedLessonCount * 4),
+    consistency: 0,
+    result: Math.min(100, learnSignals.coursesCompleted * 35)
+  });
+  const achievements = achievementEngine.evaluate({
+    signals: learnSignals,
+    competencies,
+    goals,
+    successIndex
+  });
+  const progresses = Object.values(learnSignals.progressBySlug);
+  const avgProgress = progresses.length > 0 ? progresses.reduce((a, b) => a + b, 0) / progresses.length : 0;
+  const active = goals.find((g) => g.isActive);
+  const goalsCompleted = goals.filter((g) => g.progress >= 70).length;
+  const competenciesAcquired = competencies.filter(
+    (c) => c.status === "acquired"
+  ).length;
+  const competenciesInProgress = competencies.filter(
+    (c) => c.status === "in_progress"
+  ).length;
+  const competenciesStagnant = competencies.filter(
+    (c) => c.status === "in_progress" && c.progress < 55
+  ).length;
+  const applicationTasks = learnSignals.completedLessonCount + Math.min(learnSignals.ownedProductSlugs.length, 5);
+  const activeDays = Math.min(
+    30,
+    Math.max(0, Math.ceil(learnSignals.completedLessonCount / 2))
+  );
+  const streakDays = learnSignals.streakDays;
+  const weeklyDeltaPercent = Math.min(
+    25,
+    Math.max(-10, Math.round(avgProgress * 0.12) - (activeDays > 0 ? 0 : 5))
+  );
+  const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
+  const monthlyEvolution = monthNames.slice(0, 4).map((label, i) => {
+    const factor = (i + 1) / 4;
+    return {
+      month: `m${i + 1}`,
+      label,
+      value: Math.min(100, Math.round(avgProgress * factor))
+    };
+  });
+  const timeline = dashboard.timeline.map((e) => ({
+    id: e.id,
+    at: e.at,
+    kind: e.kind === "achievement" ? "habit" : e.kind === "goal" ? "goal" : e.kind === "competency" ? "competency" : e.kind === "lesson" ? "lesson" : "score",
+    title: e.title,
+    subtitle: e.subtitle
+  }));
+  const signals = {
+    userId,
+    modulesCompleted,
+    modulesTotal: Math.max(modulesTotal, modulesCompleted),
+    applicationTasks,
+    activeDays,
+    streakDays,
+    goalsCompleted,
+    goalsTotal: goals.length,
+    competenciesAcquired,
+    competenciesInProgress,
+    competenciesStagnant,
+    avgProgress,
+    weeklyDeltaPercent,
+    ownedProductSlugs: learnSignals.ownedProductSlugs,
+    activeGoalId: active?.goalId,
+    activeGoalName: active?.name,
+    activeGoalProgress: active?.progress,
+    nextStepTitle: dashboard.nextStep?.title,
+    nextStepHref: dashboard.nextStep?.href,
+    nextStepReason: dashboard.nextStep?.reason,
+    monthlyEvolution,
+    timeline
+  };
+  return {
+    signals,
+    goals,
+    competencies,
+    achievements,
+    nextStep: dashboard.nextStep,
+    productNames
+  };
+}
 
 // server/core/media/media-engine.ts
 var MediaEngine = class {
@@ -3015,6 +6251,1084 @@ var contentfyRouter = router({
   ).query(({ input }) => successScoreEngine.compute(input))
 });
 
+// server/routers/protect.ts
+import { z as z10 } from "zod";
+import { TRPCError as TRPCError10 } from "@trpc/server";
+
+// server/core/rate-limit/memory-provider.ts
+var MemoryRateLimitProvider = class {
+  name = "memory";
+  durable = false;
+  hits = /* @__PURE__ */ new Map();
+  async hit(key, limit, windowMs) {
+    const now = Date.now();
+    const stamps = (this.hits.get(key) ?? []).filter((t2) => now - t2 < windowMs);
+    if (stamps.length >= limit) {
+      const oldest = stamps[0] ?? now;
+      this.hits.set(key, stamps);
+      return {
+        allowed: false,
+        remaining: 0,
+        retryAfterMs: Math.max(0, windowMs - (now - oldest))
+      };
+    }
+    stamps.push(now);
+    this.hits.set(key, stamps);
+    return { allowed: true, remaining: Math.max(0, limit - stamps.length) };
+  }
+};
+
+// server/core/rate-limit/redis-provider.stub.ts
+var RedisRateLimitProvider = class {
+  constructor(redisUrl) {
+    this.redisUrl = redisUrl;
+    if (!redisUrl) {
+      throw new Error("REDIS_URL required for RedisRateLimitProvider");
+    }
+  }
+  name = "redis";
+  durable = true;
+  async hit(_key, _limit, _windowMs) {
+    throw new Error(
+      "RedisRateLimitProvider not implemented. Install a Redis client and complete server/core/rate-limit/redis-provider.stub.ts before enabling RATE_LIMIT_PROVIDER=redis."
+    );
+  }
+};
+
+// server/core/rate-limit/index.ts
+var singleton = null;
+function getRateLimitProvider() {
+  if (singleton) return singleton;
+  const mode = (process.env.RATE_LIMIT_PROVIDER || "memory").toLowerCase();
+  if (mode === "redis") {
+    const url = process.env.REDIS_URL || "";
+    singleton = new RedisRateLimitProvider(url);
+  } else {
+    if (process.env.NODE_ENV === "production" && process.env.VERCEL) {
+      console.warn(
+        "[ContentFy Protect] RATE_LIMIT_PROVIDER=memory em ambiente multi-inst\xE2ncia \u2014 n\xE3o \xE9 dur\xE1vel. Configure Redis para produ\xE7\xE3o."
+      );
+    }
+    singleton = new MemoryRateLimitProvider();
+  }
+  return singleton;
+}
+async function assertRateLimitOrThrow(key, limit, windowMs, message) {
+  const provider = getRateLimitProvider();
+  const result = await provider.hit(key, limit, windowMs);
+  if (!result.allowed) {
+    const err = new Error(message);
+    err.code = "RATE_LIMITED";
+    err.retryAfterMs = result.retryAfterMs;
+    throw err;
+  }
+  return result;
+}
+
+// server/routers/protect.ts
+var refundReasonSchema = z10.enum([
+  "content_mismatch",
+  "access_issue",
+  "accidental_purchase",
+  "not_needed",
+  "other"
+]);
+var statusSchema = z10.enum([
+  "requested",
+  "under_review",
+  "approved",
+  "rejected",
+  "processing",
+  "refunded",
+  "failed",
+  "cancelled"
+]);
+function emitRefundEvent(userId, kind, title, body) {
+  notificationCenter.enqueue({
+    userId,
+    kind: "guarantee",
+    title,
+    body,
+    channels: ["in_app"],
+    metadata: { event: kind }
+  });
+}
+async function audit(input) {
+  try {
+    await insertRefundAuditEvent({
+      refundRequestId: input.refundRequestId ?? null,
+      orderId: input.orderId ?? null,
+      actorUserId: input.actorUserId ?? null,
+      eventType: input.eventType,
+      fromStatus: input.fromStatus ?? null,
+      toStatus: input.toStatus ?? null,
+      message: input.message ?? null,
+      metadataJson: input.metadata ? JSON.stringify(sanitizeAuditMetadata(input.metadata)) : null
+    });
+  } catch (error) {
+    console.error(
+      "[ContentFy Protect] audit insert failed:",
+      error instanceof Error ? error.message : error
+    );
+  }
+}
+function sanitizeAuditMetadata(meta) {
+  const blocked = /secret|token|password|authorization|api[_-]?key|sk_live|sk_test/i;
+  const out = {};
+  for (const [k, v] of Object.entries(meta)) {
+    if (blocked.test(k)) continue;
+    if (typeof v === "string" && blocked.test(v)) continue;
+    out[k] = v;
+  }
+  return out;
+}
+async function buildOrderProtectionContext(orderId, userId, isAdmin) {
+  const order = await getOrderById(orderId);
+  if (!order) {
+    throw new TRPCError10({ code: "NOT_FOUND", message: "Pedido n\xE3o encontrado" });
+  }
+  if (!canAccessOwnedResource({
+    actorUserId: userId,
+    actorRole: isAdmin ? "admin" : "user",
+    ownerUserId: order.userId
+  })) {
+    throw new TRPCError10({
+      code: "FORBIDDEN",
+      message: "Voc\xEA n\xE3o tem permiss\xE3o para acessar este pedido"
+    });
+  }
+  const product = await getProductById(order.productId);
+  if (!product) {
+    throw new TRPCError10({ code: "NOT_FOUND", message: "Produto n\xE3o encontrado" });
+  }
+  const requests = await getRefundRequestsByOrderId(orderId);
+  const active = await getActiveRefundRequestForOrder(orderId);
+  const access = await getUserProductByOrder(orderId);
+  const eligibility = getRefundEligibility({
+    orderStatus: order.status,
+    purchasedAt: order.createdAt,
+    guaranteeDays: product.guaranteeDays,
+    productEligible: product.guaranteeDays > 0,
+    hasActiveRequest: Boolean(active),
+    alreadyRefunded: order.status === "refunded"
+  });
+  return {
+    order,
+    product,
+    requests,
+    activeRequest: active,
+    access,
+    eligibility,
+    policy: guaranteeEngine.getPolicy(eligibility.guaranteeDays),
+    brand: PROTECT_BRAND,
+    reasonLabels: REFUND_REASON_LABELS
+  };
+}
+var protectRouter = router({
+  policy: publicProcedure.query(() => guaranteeEngine.getPolicy()),
+  brand: publicProcedure.query(() => PROTECT_BRAND),
+  getOrderProtection: protectedProcedure.input(z10.object({ orderId: z10.number().int().positive() })).query(async ({ ctx, input }) => {
+    const context = await buildOrderProtectionContext(
+      input.orderId,
+      ctx.user.id,
+      ctx.user.role === "admin"
+    );
+    const activeId = context.activeRequest?.id;
+    const auditTrail = activeId ? await listRefundAuditEvents(activeId) : [];
+    return { ...context, auditTrail };
+  }),
+  myPurchases: protectedProcedure.query(async ({ ctx }) => {
+    const orders2 = await getUserOrders(ctx.user.id);
+    return Promise.all(
+      orders2.map(async (order) => {
+        const product = await getProductById(order.productId);
+        const active = await getActiveRefundRequestForOrder(order.id);
+        const eligibility = getRefundEligibility({
+          orderStatus: order.status,
+          purchasedAt: order.createdAt,
+          guaranteeDays: product?.guaranteeDays ?? 30,
+          productEligible: Boolean(product && product.guaranteeDays > 0),
+          hasActiveRequest: Boolean(active),
+          alreadyRefunded: order.status === "refunded"
+        });
+        return {
+          order,
+          product: product ? {
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            guaranteeDays: product.guaranteeDays
+          } : null,
+          eligibility,
+          activeRequest: active
+        };
+      })
+    );
+  }),
+  createRequest: protectedProcedure.input(
+    z10.object({
+      orderId: z10.number().int().positive(),
+      reason: refundReasonSchema,
+      details: z10.string().max(2e3).optional(),
+      acknowledge: z10.literal(true)
+    })
+  ).mutation(async ({ ctx, input }) => {
+    try {
+      await assertRateLimitOrThrow(
+        `protect:create:${ctx.user.id}`,
+        5,
+        60 * 60 * 1e3,
+        "Muitas solicita\xE7\xF5es. Aguarde um pouco e tente novamente."
+      );
+    } catch (error) {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: error instanceof Error ? error.message : "Muitas solicita\xE7\xF5es. Aguarde um pouco e tente novamente."
+      });
+    }
+    const ctxData = await buildOrderProtectionContext(
+      input.orderId,
+      ctx.user.id,
+      false
+    );
+    if (!ctxData.eligibility.eligible) {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: ctxData.eligibility.humanMessage
+      });
+    }
+    const existing = await getActiveRefundRequestForOrder(input.orderId);
+    if (existing) {
+      throw new TRPCError10({
+        code: "CONFLICT",
+        message: "J\xE1 existe uma solicita\xE7\xE3o ativa para este pedido."
+      });
+    }
+    const id = await createRefundRequest({
+      orderId: ctxData.order.id,
+      userId: ctx.user.id,
+      productId: ctxData.product.id,
+      reason: input.reason,
+      details: input.details?.trim() || null,
+      status: "requested",
+      refundAmount: ctxData.order.amount,
+      accessRevocationStatus: "not_applicable",
+      reconciliationNeeded: false
+    });
+    await audit({
+      refundRequestId: id,
+      orderId: ctxData.order.id,
+      actorUserId: ctx.user.id,
+      eventType: "refund.requested",
+      fromStatus: null,
+      toStatus: "requested",
+      message: "Solicita\xE7\xE3o criada pelo aluno",
+      metadata: { reason: input.reason }
+    });
+    emitRefundEvent(
+      ctx.user.id,
+      "refund.requested",
+      "Solicita\xE7\xE3o recebida",
+      `Sua solicita\xE7\xE3o de reembolso #${id} foi registrada no ContentFy Protect.`
+    );
+    return {
+      request: await getRefundRequestById(id),
+      eligibility: ctxData.eligibility
+    };
+  }),
+  cancelRequest: protectedProcedure.input(z10.object({ requestId: z10.number().int().positive() })).mutation(async ({ ctx, input }) => {
+    const request = await getRefundRequestById(input.requestId);
+    if (!request || request.userId !== ctx.user.id) {
+      throw new TRPCError10({
+        code: "NOT_FOUND",
+        message: "Solicita\xE7\xE3o n\xE3o encontrada"
+      });
+    }
+    if (!canTransitionRefundStatus(request.status, "cancelled")) {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: "Esta solicita\xE7\xE3o n\xE3o pode ser cancelada neste status."
+      });
+    }
+    const updated = await updateRefundRequest(request.id, {
+      status: "cancelled"
+    });
+    await audit({
+      refundRequestId: request.id,
+      orderId: request.orderId,
+      actorUserId: ctx.user.id,
+      eventType: "refund.cancelled",
+      fromStatus: request.status,
+      toStatus: "cancelled",
+      message: "Cancelada pelo aluno"
+    });
+    return updated;
+  }),
+  adminList: adminProcedure.input(
+    z10.object({
+      status: statusSchema.optional(),
+      productId: z10.number().int().positive().optional(),
+      userId: z10.number().int().positive().optional(),
+      from: z10.string().datetime().optional(),
+      to: z10.string().datetime().optional()
+    }).optional()
+  ).query(async ({ input }) => {
+    return listRefundRequests({
+      status: input?.status,
+      productId: input?.productId,
+      userId: input?.userId,
+      from: input?.from ? new Date(input.from) : void 0,
+      to: input?.to ? new Date(input.to) : void 0
+    });
+  }),
+  adminGet: adminProcedure.input(z10.object({ requestId: z10.number().int().positive() })).query(async ({ input }) => {
+    const request = await getRefundRequestById(input.requestId);
+    if (!request) {
+      throw new TRPCError10({
+        code: "NOT_FOUND",
+        message: "Solicita\xE7\xE3o n\xE3o encontrada"
+      });
+    }
+    const context = await buildOrderProtectionContext(
+      request.orderId,
+      request.userId,
+      true
+    );
+    const auditTrail = await listRefundAuditEvents(request.id);
+    return { request, ...context, auditTrail };
+  }),
+  adminTransition: adminProcedure.input(
+    z10.object({
+      requestId: z10.number().int().positive(),
+      status: statusSchema,
+      adminNotes: z10.string().max(4e3).optional()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const request = await getRefundRequestById(input.requestId);
+    if (!request) {
+      throw new TRPCError10({
+        code: "NOT_FOUND",
+        message: "Solicita\xE7\xE3o n\xE3o encontrada"
+      });
+    }
+    if (!canTransitionRefundStatus(
+      request.status,
+      input.status
+    )) {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: `Transi\xE7\xE3o inv\xE1lida: ${request.status} \u2192 ${input.status}`
+      });
+    }
+    if (input.status === "refunded" || input.status === "processing") {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: input.status === "refunded" ? "Use a a\xE7\xE3o \u201CProcessar reembolso\u201D para concluir o estorno com seguran\xE7a." : "O status processing \xE9 definido automaticamente ao processar o reembolso."
+      });
+    }
+    const updated = await updateRefundRequest(request.id, {
+      status: input.status,
+      adminNotes: input.adminNotes ?? request.adminNotes,
+      reviewedAt: /* @__PURE__ */ new Date(),
+      reviewedBy: ctx.user.id
+    });
+    await audit({
+      refundRequestId: request.id,
+      orderId: request.orderId,
+      actorUserId: ctx.user.id,
+      eventType: `refund.${input.status}`,
+      fromStatus: request.status,
+      toStatus: input.status,
+      message: "Transi\xE7\xE3o administrativa"
+    });
+    const eventMap = {
+      under_review: "refund.under_review",
+      approved: "refund.approved",
+      rejected: "refund.rejected",
+      failed: "refund.failed"
+    };
+    const event = eventMap[input.status];
+    if (event) {
+      emitRefundEvent(
+        request.userId,
+        event,
+        "Atualiza\xE7\xE3o ContentFy Protect",
+        `Sua solicita\xE7\xE3o #${request.id} agora est\xE1: ${input.status}.`
+      );
+    }
+    return updated;
+  }),
+  adminAddNotes: adminProcedure.input(
+    z10.object({
+      requestId: z10.number().int().positive(),
+      adminNotes: z10.string().min(1).max(4e3)
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const request = await getRefundRequestById(input.requestId);
+    if (!request) {
+      throw new TRPCError10({
+        code: "NOT_FOUND",
+        message: "Solicita\xE7\xE3o n\xE3o encontrada"
+      });
+    }
+    const updated = await updateRefundRequest(request.id, {
+      adminNotes: input.adminNotes,
+      reviewedBy: ctx.user.id,
+      reviewedAt: /* @__PURE__ */ new Date()
+    });
+    await audit({
+      refundRequestId: request.id,
+      orderId: request.orderId,
+      actorUserId: ctx.user.id,
+      eventType: "refund.notes_updated",
+      message: "Observa\xE7\xE3o administrativa atualizada"
+    });
+    return updated;
+  }),
+  /**
+   * Explicit admin action — Stripe refund once (idempotent).
+   * Homologation: requires sk_test_ unless CONTENTFY_PROTECT_HOMOLOGATION=false and NODE_ENV=production.
+   */
+  adminProcessRefund: adminProcedure.input(
+    z10.object({
+      requestId: z10.number().int().positive(),
+      confirm: z10.literal(true)
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const request = await getRefundRequestById(input.requestId);
+    if (!request) {
+      throw new TRPCError10({
+        code: "NOT_FOUND",
+        message: "Solicita\xE7\xE3o n\xE3o encontrada"
+      });
+    }
+    if (request.status === "refunded" && request.providerRefundId) {
+      await audit({
+        refundRequestId: request.id,
+        orderId: request.orderId,
+        actorUserId: ctx.user.id,
+        eventType: "refund.process_idempotent_hit",
+        message: "Processamento ignorado \u2014 j\xE1 reembolsado",
+        metadata: { providerRefundId: request.providerRefundId }
+      });
+      return { alreadyProcessed: true, request };
+    }
+    if (request.status !== "approved" && request.status !== "processing" && request.status !== "failed") {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: "Aprove a solicita\xE7\xE3o antes de processar o reembolso."
+      });
+    }
+    if (request.status === "approved" && !canTransitionRefundStatus("approved", "processing")) {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: "Transi\xE7\xE3o inv\xE1lida para processing"
+      });
+    }
+    if (request.status === "failed" && !canTransitionRefundStatus("failed", "processing")) {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: "Nova tentativa inv\xE1lida a partir de failed"
+      });
+    }
+    const order = await getOrderById(request.orderId);
+    if (!order?.stripePaymentIntentId) {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: "Pedido sem PaymentIntent Stripe para reembolso."
+      });
+    }
+    if (order.status === "refunded") {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: "Pedido j\xE1 est\xE1 marcado como reembolsado."
+      });
+    }
+    const keyCheck = assertStripeSecretForProtect();
+    if (!keyCheck.ok) {
+      throw new TRPCError10({
+        code: "PRECONDITION_FAILED",
+        message: keyCheck.errorMessage
+      });
+    }
+    const amount = request.refundAmount ?? order.amount;
+    const idempotencyKey = request.idempotencyKey || `cf_protect_refund_${request.id}_${request.orderId}`;
+    const fromStatus = request.status;
+    await updateRefundRequest(request.id, {
+      status: "processing",
+      idempotencyKey,
+      reviewedBy: ctx.user.id,
+      reviewedAt: /* @__PURE__ */ new Date(),
+      accessRevocationStatus: "pending"
+    });
+    await audit({
+      refundRequestId: request.id,
+      orderId: request.orderId,
+      actorUserId: ctx.user.id,
+      eventType: "refund.processing",
+      fromStatus,
+      toStatus: "processing",
+      message: "Tentativa de processamento Stripe iniciada",
+      metadata: {
+        amountCents: amount,
+        paymentIntentId: order.stripePaymentIntentId,
+        idempotencyKey
+      }
+    });
+    emitRefundEvent(
+      request.userId,
+      "refund.processing",
+      "Reembolso em processamento",
+      `Estamos processando o reembolso da solicita\xE7\xE3o #${request.id}.`
+    );
+    const result = await processStripeRefund({
+      paymentIntentId: order.stripePaymentIntentId,
+      amountCents: amount,
+      maxAmountCents: order.amount,
+      idempotencyKey
+    });
+    if (!result.ok) {
+      const failed = await updateRefundRequest(request.id, {
+        status: "failed",
+        adminNotes: `${request.adminNotes ?? ""}
+[Stripe] ${result.errorMessage}`.trim(),
+        accessRevocationStatus: "not_applicable"
+      });
+      await audit({
+        refundRequestId: request.id,
+        orderId: request.orderId,
+        actorUserId: ctx.user.id,
+        eventType: "refund.failed",
+        fromStatus: "processing",
+        toStatus: "failed",
+        message: result.errorMessage || "Falha no provedor"
+      });
+      emitRefundEvent(
+        request.userId,
+        "refund.failed",
+        "Falha no reembolso",
+        `Houve uma falha ao processar o reembolso #${request.id}. Nossa equipe ir\xE1 analisar.`
+      );
+      throw new TRPCError10({
+        code: "INTERNAL_SERVER_ERROR",
+        message: result.errorMessage || "Falha ao processar reembolso",
+        cause: failed
+      });
+    }
+    const finalize = await finalizeRefundAndRevokeAccess({
+      orderId: order.id,
+      requestId: request.id,
+      providerRefundId: result.providerRefundId,
+      refundAmount: amount,
+      reviewedBy: ctx.user.id
+    });
+    await audit({
+      refundRequestId: request.id,
+      orderId: request.orderId,
+      actorUserId: ctx.user.id,
+      eventType: "refund.completed",
+      fromStatus: "processing",
+      toStatus: "refunded",
+      message: "Reembolso confirmado no Stripe",
+      metadata: {
+        providerRefundId: result.providerRefundId,
+        amountRefunded: result.amountRefunded,
+        currency: result.currency,
+        accessRevocationStatus: finalize.accessRevocationStatus,
+        reconciliationNeeded: finalize.reconciliationNeeded
+      }
+    });
+    if (finalize.accessRevocationStatus === "revoked") {
+      await audit({
+        refundRequestId: request.id,
+        orderId: request.orderId,
+        actorUserId: ctx.user.id,
+        eventType: "access.revoked",
+        message: "Acesso ao produto desativado (hist\xF3rico preservado)"
+      });
+    } else {
+      await audit({
+        refundRequestId: request.id,
+        orderId: request.orderId,
+        actorUserId: ctx.user.id,
+        eventType: "access.revoke_failed",
+        message: "Refund Stripe OK, mas revoga\xE7\xE3o falhou \u2014 reconcilia\xE7\xE3o necess\xE1ria"
+      });
+    }
+    emitRefundEvent(
+      request.userId,
+      "refund.completed",
+      "Reembolso conclu\xEDdo",
+      `O reembolso da solicita\xE7\xE3o #${request.id} foi conclu\xEDdo. O acesso ao produto foi encerrado.`
+    );
+    console.info(
+      `[ContentFy Protect] Refund completed request=${request.id} stripe=${result.providerRefundId} by admin=${ctx.user.id} revoke=${finalize.accessRevocationStatus}`
+    );
+    const completed = await getRefundRequestById(request.id);
+    return {
+      alreadyProcessed: false,
+      request: completed,
+      providerRefundId: result.providerRefundId,
+      accessRevocationStatus: finalize.accessRevocationStatus,
+      reconciliationNeeded: finalize.reconciliationNeeded
+    };
+  }),
+  /** Admin repair when Stripe refunded but access revoke failed. */
+  adminRepairAccessRevocation: adminProcedure.input(z10.object({ requestId: z10.number().int().positive() })).mutation(async ({ ctx, input }) => {
+    const request = await getRefundRequestById(input.requestId);
+    if (!request || request.status !== "refunded") {
+      throw new TRPCError10({
+        code: "BAD_REQUEST",
+        message: "S\xF3 \xE9 poss\xEDvel reparar revoga\xE7\xE3o em solicita\xE7\xF5es refunded."
+      });
+    }
+    await revokeProductAccessByOrder(request.orderId);
+    const updated = await updateRefundRequest(request.id, {
+      accessRevocationStatus: "revoked",
+      reconciliationNeeded: false,
+      reviewedBy: ctx.user.id,
+      reviewedAt: /* @__PURE__ */ new Date()
+    });
+    await audit({
+      refundRequestId: request.id,
+      orderId: request.orderId,
+      actorUserId: ctx.user.id,
+      eventType: "access.revoked_repair",
+      message: "Revoga\xE7\xE3o reparada administrativamente"
+    });
+    return updated;
+  })
+});
+
+// server/routers/discovery.ts
+import { z as z11 } from "zod";
+async function loadCatalogProducts() {
+  const rows = await getAllProducts();
+  return rows.filter((p) => p.isActive).map((p) => ({
+    id: p.id,
+    slug: p.slug,
+    name: p.name,
+    type: p.type,
+    description: p.description,
+    coverImage: p.coverImage,
+    thumbnailImage: p.thumbnailImage,
+    price: p.price,
+    categoryName: p.category?.name ?? null,
+    isActive: p.isActive,
+    createdAt: p.createdAt
+  }));
+}
+async function buildProfile(userId) {
+  if (!userId) return null;
+  const [favorites, views, searches, owned] = await Promise.all([
+    listFavoriteSlugs(userId),
+    getRecentViewSlugs(userId),
+    getRecentSearchQueries(userId),
+    getUserProducts(userId)
+  ]);
+  const { getSeedMetaBySlug: getSeedMetaBySlug2 } = await Promise.resolve().then(() => (init_seed_metadata(), seed_metadata_exports));
+  const preferences = Array.from(
+    new Set(
+      [...views, ...favorites].map((slug) => getSeedMetaBySlug2(slug)?.category).filter((c) => Boolean(c))
+    )
+  );
+  return {
+    userId,
+    preferences,
+    goals: [],
+    completedProductIds: [],
+    ownedProductIds: (owned || []).map((o) => o.userProduct?.productId ?? o.product?.id).filter((id) => typeof id === "number"),
+    favoriteSlugs: favorites,
+    recentViewSlugs: views,
+    recentSearchQueries: searches,
+    signals: []
+  };
+}
+var discoveryRouter = router({
+  home: publicProcedure.query(async ({ ctx }) => {
+    const products2 = await loadCatalogProducts();
+    const [dbMeta, trendingSignals, profile, progress, favorites] = await Promise.all([
+      listDiscoveryDbMeta(),
+      buildTrendingSignals(),
+      buildProfile(ctx.user?.id),
+      ctx.user?.id ? buildContinueLearningSnapshots(ctx.user.id) : Promise.resolve([]),
+      ctx.user?.id ? listFavoriteSlugs(ctx.user.id) : Promise.resolve([])
+    ]);
+    const relRows = await listDiscoveryDbRelationships();
+    if (relRows.length) {
+      const eng = new RelationshipEngine(
+        relRows.map((r) => ({
+          fromSlug: r.fromSlug,
+          toSlug: r.toSlug,
+          type: r.relationType,
+          weight: r.weight,
+          label: r.label || void 0
+        }))
+      );
+      void eng;
+    }
+    return discoveryEngine.buildHome({
+      products: products2,
+      dbMeta,
+      profile,
+      progress,
+      trendingSignals,
+      favoriteSlugs: favorites
+    });
+  }),
+  search: publicProcedure.input(
+    z11.object({
+      query: z11.string().min(1).max(200),
+      limit: z11.number().int().min(1).max(50).optional()
+    })
+  ).query(async ({ ctx, input }) => {
+    const products2 = await loadCatalogProducts();
+    const dbMeta = await listDiscoveryDbMeta();
+    if (ctx.user?.id) {
+      await trackDiscoveryEvent({
+        userId: ctx.user.id,
+        eventType: "search",
+        query: input.query
+      });
+    } else {
+      await trackDiscoveryEvent({
+        eventType: "search",
+        query: input.query
+      });
+    }
+    return discoveryEngine.search(
+      input.query,
+      { products: products2, dbMeta },
+      input.limit ?? 24
+    );
+  }),
+  related: publicProcedure.input(z11.object({ slug: z11.string().min(1).max(255) })).query(async ({ input }) => {
+    const products2 = await loadCatalogProducts();
+    const dbMeta = await listDiscoveryDbMeta();
+    return discoveryEngine.related(input.slug, { products: products2, dbMeta });
+  }),
+  track: publicProcedure.input(
+    z11.object({
+      eventType: z11.enum([
+        "view",
+        "click",
+        "dwell",
+        "search",
+        "favorite",
+        "wishlist"
+      ]),
+      productSlug: z11.string().max(255).optional(),
+      productId: z11.number().int().optional(),
+      category: z11.string().max(255).optional(),
+      query: z11.string().max(512).optional(),
+      dwellMs: z11.number().int().min(0).max(36e5).optional(),
+      sessionId: z11.string().max(64).optional()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    return trackDiscoveryEvent({
+      userId: ctx.user?.id ?? null,
+      sessionId: input.sessionId,
+      eventType: input.eventType,
+      productSlug: input.productSlug,
+      productId: input.productId,
+      category: input.category,
+      query: input.query,
+      dwellMs: input.dwellMs
+    });
+  }),
+  myList: protectedProcedure.query(async ({ ctx }) => {
+    const slugs = await listFavoriteSlugs(ctx.user.id);
+    const products2 = await loadCatalogProducts();
+    const dbMeta = await listDiscoveryDbMeta();
+    const home = discoveryEngine.buildHome({
+      products: products2,
+      dbMeta,
+      favoriteSlugs: slugs,
+      profile: await buildProfile(ctx.user.id)
+    });
+    const items = home.rails.find((r) => r.id === "favorites")?.items || slugs.map((slug) => home.rails.flatMap((r) => r.items).find((i) => i.slug === slug)).filter(Boolean);
+    return { slugs, items };
+  }),
+  addFavorite: protectedProcedure.input(
+    z11.object({
+      productSlug: z11.string().min(1).max(255),
+      productId: z11.number().int().optional()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const result = await addFavorite(
+      ctx.user.id,
+      input.productSlug,
+      input.productId
+    );
+    await trackDiscoveryEvent({
+      userId: ctx.user.id,
+      eventType: "favorite",
+      productSlug: input.productSlug,
+      productId: input.productId
+    });
+    return result;
+  }),
+  removeFavorite: protectedProcedure.input(z11.object({ productSlug: z11.string().min(1).max(255) })).mutation(async ({ ctx, input }) => {
+    return removeFavorite(ctx.user.id, input.productSlug);
+  }),
+  isFavorite: protectedProcedure.input(z11.object({ productSlug: z11.string().min(1).max(255) })).query(async ({ ctx, input }) => {
+    const slugs = await listFavoriteSlugs(ctx.user.id);
+    return { favorite: slugs.includes(input.productSlug) };
+  }),
+  continueLearning: protectedProcedure.query(async ({ ctx }) => {
+    const progress = await buildContinueLearningSnapshots(
+      ctx.user.id
+    );
+    return discoveryEngine.buildHome({
+      products: await loadCatalogProducts(),
+      progress,
+      profile: await buildProfile(ctx.user.id)
+    }).continueLearning;
+  }),
+  adminInsights: adminProcedure.query(async () => {
+    return getAdminDiscoveryInsights();
+  })
+});
+
+// server/routers/learn.ts
+import { TRPCError as TRPCError11 } from "@trpc/server";
+import { z as z12 } from "zod";
+async function buildSignals(userId) {
+  const [owned, progressSnaps, activeGoalId, allProducts] = await Promise.all([
+    getUserProducts(userId),
+    buildContinueLearningSnapshots(userId),
+    getActiveGoalId(userId),
+    getAllProducts()
+  ]);
+  const productNames = {};
+  for (const p of allProducts) {
+    productNames[p.slug] = p.name;
+  }
+  const ownedProductSlugs = [];
+  for (const row of owned || []) {
+    const slug = row.product?.slug;
+    if (slug) {
+      ownedProductSlugs.push(slug);
+      if (row.product?.name) productNames[slug] = row.product.name;
+    }
+  }
+  const progressBySlug = {};
+  let completedLessonCount = 0;
+  let totalLessonTouches = 0;
+  let coursesCompleted = 0;
+  for (const snap of progressSnaps) {
+    const pct = Math.min(
+      100,
+      Math.round(
+        snap.completedLessons / Math.max(snap.totalLessons, 1) * 100
+      )
+    );
+    progressBySlug[snap.productSlug] = pct;
+    completedLessonCount += snap.completedLessons;
+    totalLessonTouches += snap.totalLessons;
+    if (pct >= 100) coursesCompleted += 1;
+    if (!ownedProductSlugs.includes(snap.productSlug)) {
+      ownedProductSlugs.push(snap.productSlug);
+    }
+    productNames[snap.productSlug] = snap.productName;
+  }
+  for (const slug of ownedProductSlugs) {
+    if (progressBySlug[slug] == null) {
+      progressBySlug[slug] = 20;
+    }
+  }
+  const last = progressSnaps[0];
+  const signals = {
+    userId,
+    ownedProductSlugs,
+    completedLessonCount,
+    totalLessonTouches,
+    coursesCompleted,
+    streakDays: 0,
+    // Real streak requires daily event log — wire when Learn events table expands
+    progressBySlug,
+    lastLesson: last ? {
+      productId: last.productId,
+      productSlug: last.productSlug,
+      productName: last.productName,
+      lessonTitle: last.lastLessonTitle,
+      moduleTitle: last.lastModuleTitle,
+      href: last.productId ? `/my-account/course/${last.productId}` : `/produto/${last.productSlug}`
+    } : void 0,
+    activeGoalId,
+    purchasedAtLeastOnce: ownedProductSlugs.length > 0
+  };
+  return { signals, productNames };
+}
+var learnRouter = router({
+  home: protectedProcedure.query(async ({ ctx }) => {
+    const { signals, productNames } = await buildSignals(ctx.user.id);
+    return learnEngine.buildDashboard({ signals, productNames });
+  }),
+  dashboard: protectedProcedure.query(async ({ ctx }) => {
+    const { signals, productNames } = await buildSignals(ctx.user.id);
+    return learnEngine.buildDashboard({ signals, productNames });
+  }),
+  goals: protectedProcedure.query(async ({ ctx }) => {
+    const { signals } = await buildSignals(ctx.user.id);
+    const competencies = competencyEngine.evaluate(signals);
+    return goalEngine.evaluate(competencies, signals);
+  }),
+  catalogGoals: protectedProcedure.query(async () => LEARN_GOALS),
+  setActiveGoal: protectedProcedure.input(z12.object({ goalId: z12.string().min(1).max(64) })).mutation(async ({ ctx, input }) => {
+    const exists = LEARN_GOALS.some((g) => g.id === input.goalId);
+    if (!exists) {
+      throw new TRPCError11({
+        code: "BAD_REQUEST",
+        message: "Objetivo inv\xE1lido"
+      });
+    }
+    return setActiveGoalId(ctx.user.id, input.goalId);
+  }),
+  competencies: protectedProcedure.query(async ({ ctx }) => {
+    const { signals } = await buildSignals(ctx.user.id);
+    const all = competencyEngine.evaluate(signals);
+    return {
+      all,
+      acquired: all.filter((c) => c.status === "acquired"),
+      inProgress: all.filter((c) => c.status === "in_progress"),
+      missing: all.filter((c) => c.status === "missing"),
+      stagnant: competencyEngine.stagnant(all, signals)
+    };
+  }),
+  journey: protectedProcedure.query(async ({ ctx }) => {
+    const { signals, productNames } = await buildSignals(ctx.user.id);
+    return learnEngine.buildDashboard({ signals, productNames }).journey;
+  }),
+  timeline: protectedProcedure.query(async ({ ctx }) => {
+    const { signals, productNames } = await buildSignals(ctx.user.id);
+    return learnEngine.buildDashboard({ signals, productNames }).timeline;
+  }),
+  achievements: protectedProcedure.query(async ({ ctx }) => {
+    const { signals, productNames } = await buildSignals(ctx.user.id);
+    return learnEngine.buildDashboard({ signals, productNames }).achievements;
+  }),
+  nextStep: protectedProcedure.query(async ({ ctx }) => {
+    const { signals, productNames } = await buildSignals(ctx.user.id);
+    return learnEngine.buildDashboard({ signals, productNames }).nextStep;
+  }),
+  skillGraph: protectedProcedure.query(async ({ ctx }) => {
+    const { signals } = await buildSignals(ctx.user.id);
+    const competencies = competencyEngine.evaluate(signals);
+    const goals = goalEngine.evaluate(competencies, signals);
+    return skillGraph.build({ signals, competencies, goals });
+  }),
+  successIndex: protectedProcedure.query(async ({ ctx }) => {
+    const { signals, productNames } = await buildSignals(ctx.user.id);
+    return learnEngine.buildDashboard({ signals, productNames }).successIndex;
+  })
+});
+
+// server/routers/success.ts
+async function learnerDashboard(userId) {
+  const ctx = await buildSuccessContext(userId);
+  return successEngine.buildDashboard(ctx);
+}
+var successRouter = router({
+  dashboard: protectedProcedure.query(async ({ ctx }) => {
+    return learnerDashboard(ctx.user.id);
+  }),
+  score: protectedProcedure.query(async ({ ctx }) => {
+    const dash = await learnerDashboard(ctx.user.id);
+    return dash.score;
+  }),
+  habits: protectedProcedure.query(async ({ ctx }) => {
+    const dash = await learnerDashboard(ctx.user.id);
+    return dash.habits;
+  }),
+  timeline: protectedProcedure.query(async ({ ctx }) => {
+    const dash = await learnerDashboard(ctx.user.id);
+    return dash.timeline;
+  }),
+  insights: protectedProcedure.query(async ({ ctx }) => {
+    const dash = await learnerDashboard(ctx.user.id);
+    return dash.insights;
+  }),
+  goals: protectedProcedure.query(async ({ ctx }) => {
+    const dash = await learnerDashboard(ctx.user.id);
+    return dash.goals;
+  }),
+  recommendations: protectedProcedure.query(async ({ ctx }) => {
+    const dash = await learnerDashboard(ctx.user.id);
+    return {
+      nextAction: dash.nextAction,
+      recommendations: dash.recommendations,
+      relatedProducts: dash.relatedProducts
+    };
+  }),
+  /**
+   * Aggregate analytics for creators — uses platform-wide proxies until
+   * per-creator product ownership is wired. Does not alter creatorRouter.
+   */
+  creatorAnalytics: protectedProcedure.query(
+    async ({ ctx }) => {
+      void ctx.user;
+      const products2 = await getAllProducts();
+      const active = products2.filter((p) => p.isActive);
+      const note = "Agregado de cat\xE1logo + cat\xE1logo Learn. M\xE9tricas por criador expandir\xE3o com ownership.";
+      const abandonmentPoints = LEARN_PRODUCT_LINKS.map((l) => ({
+        slug: l.productSlug,
+        dropOffPercent: 0
+      }));
+      const topGoals = LEARN_GOALS.slice(0, 5).map((g) => ({
+        goalId: g.id,
+        goalName: g.name,
+        seekers: 0
+      }));
+      return {
+        learnerCount: 0,
+        averageEvolution: 0,
+        competenciesDeveloped: LEARN_PRODUCT_LINKS.reduce(
+          (n, l) => n + l.competencyIds.length,
+          0
+        ),
+        abandonmentPoints,
+        topGoals,
+        transformationRate: 0,
+        note: `${note} Produtos ativos no cat\xE1logo: ${active.length}.`
+      };
+    }
+  ),
+  adminAnalytics: adminProcedure.query(
+    async () => {
+      const products2 = await getAllProducts();
+      const byCourse = products2.filter((p) => p.isActive).slice(0, 20).map((p) => ({
+        slug: p.slug,
+        avgProgress: 0,
+        learners: 0
+      }));
+      const categories = /* @__PURE__ */ new Map();
+      for (const p of products2) {
+        const cat = p.category?.name || "Geral";
+        const row = categories.get(cat) || { sum: 0, n: 0 };
+        row.n += 1;
+        categories.set(cat, row);
+      }
+      return {
+        averageScore: 0,
+        averageEvolution: 0,
+        habitReachRate: 0,
+        abandonmentRate: 0,
+        byCourse,
+        byCategory: Array.from(categories.entries()).map(
+          ([category, v]) => ({
+            category,
+            avgScore: 0,
+            learners: v.n
+          })
+        ),
+        sampleSize: 0,
+        note: "Painel pronto. Valores populam com volume de sinais Success/Learn em produ\xE7\xE3o."
+      };
+    }
+  )
+});
+
 // server/routers.ts
 var appRouter = router({
   // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -3039,7 +7353,11 @@ var appRouter = router({
   users: usersRouter,
   creator: creatorRouter,
   // ContentFy OS — Evolution X (additive meta layer)
-  contentfy: contentfyRouter
+  contentfy: contentfyRouter,
+  protect: protectRouter,
+  discovery: discoveryRouter,
+  learn: learnRouter,
+  success: successRouter
 });
 
 // server/_core/context.ts
@@ -3076,8 +7394,8 @@ function serveStatic(app) {
 
 // server/routers/stripe-webhook.ts
 import express2 from "express";
-import Stripe2 from "stripe";
-var stripe2 = new Stripe2(process.env.STRIPE_SECRET_KEY, {
+import Stripe3 from "stripe";
+var stripe2 = new Stripe3(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2025-10-29.clover"
 });
 function setupStripeWebhook(app) {

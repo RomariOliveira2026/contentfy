@@ -12,6 +12,9 @@ import {
   X,
   Link as LinkIcon,
   Sparkles,
+  ShieldCheck,
+  Compass,
+  LineChart,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import BrandLogo from "@/components/BrandLogo";
@@ -28,6 +31,9 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: Package, label: "Produtos", path: "/admin/products" },
   { icon: ShoppingCart, label: "Vendas", path: "/admin/sales" },
+  { icon: ShieldCheck, label: "Protect", path: "/admin/refunds" },
+  { icon: Compass, label: "Discovery", path: "/admin/discovery" },
+  { icon: LineChart, label: "Success", path: "/admin/success" },
   { icon: Users, label: "Clientes", path: "/admin/customers" },
   { icon: LinkIcon, label: "Afiliados", path: "/admin/affiliates" },
   { icon: BookOpen, label: "Cursos", path: "/admin/courses" },

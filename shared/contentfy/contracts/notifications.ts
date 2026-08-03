@@ -7,6 +7,7 @@ export type NotificationKind =
   | "new_module"
   | "new_product"
   | "guarantee"
+  | "refund"
   | "learning"
   | "community"
   | "system";

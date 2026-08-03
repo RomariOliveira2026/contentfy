@@ -3,6 +3,7 @@ import PublicHeader from "@/components/PublicHeader";
 import PublicFooter from "@/components/PublicFooter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ProtectionBadge } from "@/components/commerce";
 import { CheckCircle2, Library, ShoppingBag, Sparkles } from "lucide-react";
 
 export default function CheckoutSuccess() {
@@ -29,8 +30,17 @@ export default function CheckoutSuccess() {
 
               <h1 className="cf-page-title mb-3">Compra confirmada!</h1>
 
-              <p className="text-muted-foreground mb-10 leading-relaxed">
-                Seu pagamento foi processado com sucesso.
+              <p className="text-muted-foreground mb-4 leading-relaxed">
+                Seu pagamento foi processado com sucesso pela infraestrutura
+                integrada da ContentFy.
+              </p>
+
+              <div className="mb-8 flex justify-center">
+                <ProtectionBadge />
+              </div>
+              <p className="text-xs text-muted-foreground mb-10">
+                Você poderá solicitar o reembolso dentro do prazo informado,
+                conforme a Política de Garantia ContentFy.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -41,6 +51,14 @@ export default function CheckoutSuccess() {
                 >
                   <Library className="mr-2 w-4 h-4" />
                   Ir para minha biblioteca
+                </Button>
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="w-full sm:w-auto rounded-lg"
+                  onClick={() => setLocation("/my-account/purchases")}
+                >
+                  Minhas compras / Protect
                 </Button>
                 <Button
                   size="lg"
