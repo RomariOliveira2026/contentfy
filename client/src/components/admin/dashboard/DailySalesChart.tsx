@@ -16,26 +16,48 @@ const config: ChartConfig = {
 
 export default function DailySalesChart() {
   return (
-    <ChartContainer config={config} className="aspect-auto h-[280px] w-full">
+    <ChartContainer
+      config={config}
+      className="aspect-auto h-[320px] w-full min-w-0"
+    >
       <BarChart
         data={demoSalesByDay}
-        margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+        margin={{ top: 12, right: 8, left: 0, bottom: 2 }}
+        barCategoryGap="18%"
       >
-        <CartesianGrid vertical={false} strokeDasharray="3 3" />
+        <CartesianGrid
+          vertical={false}
+          strokeDasharray="3 8"
+          stroke="rgba(255,255,255,0.04)"
+        />
         <XAxis
           dataKey="day"
           tickLine={false}
           axisLine={false}
-          tickMargin={8}
+          tickMargin={10}
           interval={4}
+          tick={{ fill: "#94a3b8", fontSize: 11 }}
         />
-        <YAxis tickLine={false} axisLine={false} width={28} />
-        <ChartTooltip content={<ChartTooltipContent />} />
+        <YAxis
+          tickLine={false}
+          axisLine={false}
+          width={28}
+          tick={{ fill: "#64748b", fontSize: 11 }}
+        />
+        <ChartTooltip
+          cursor={{ fill: "rgba(249,115,22,0.06)" }}
+          content={<ChartTooltipContent indicator="dot" />}
+        />
         <Bar
           dataKey="sales"
-          fill="var(--color-sales)"
-          radius={[4, 4, 0, 0]}
-          maxBarSize={18}
+          fill="#f59e0b"
+          radius={[5, 5, 0, 0]}
+          maxBarSize={16}
+          activeBar={{
+            fill: "#f97316",
+            stroke: "rgba(255,247,237,0.35)",
+            strokeWidth: 1,
+          }}
         />
       </BarChart>
     </ChartContainer>

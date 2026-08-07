@@ -30,7 +30,7 @@ interface AdminLayoutProps {
 }
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
+  { icon: LayoutDashboard, label: "Visão Geral", path: "/admin" },
   { icon: Package, label: "Produtos", path: "/admin/products" },
   { icon: ShoppingCart, label: "Vendas", path: "/admin/sales" },
   { icon: ShieldCheck, label: "Protect", path: "/admin/refunds" },
@@ -153,7 +153,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto py-4">
+          <nav className="flex-1 overflow-y-auto py-4 px-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location === item.path || 
@@ -163,24 +163,38 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <Link key={item.path} href={item.path}>
                   <a
                     className={`
-                      flex items-center gap-3 py-3 text-sm font-medium rounded-none
-                      transition-all duration-200
+                      group relative flex items-center gap-3 py-2.5 text-sm font-medium
+                      transition-[color,background-color,transform,box-shadow] duration-[220ms] ease-out
                       ${
                         sidebarCollapsed
-                          ? "px-4 justify-center"
-                          : "px-6"
+                          ? "justify-center px-0 mx-1 rounded-lg"
+                          : "px-3 mx-2 rounded-xl"
                       }
                       ${
                         isActive
-                          ? "cf-admin-nav-active"
-                          : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
+                          ? "cf-admin-nav-active text-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-white/[0.035] motion-safe:hover:translate-x-px"
                       }
                     `}
                     onClick={() => setSidebarOpen(false)}
                     title={sidebarCollapsed ? item.label : undefined}
                   >
-                    <Icon className="w-5 h-5 flex-shrink-0" />
-                    {!sidebarCollapsed && <span>{item.label}</span>}
+                    {isActive ? (
+                      <span
+                        className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-gradient-owl shadow-[0_0_8px_rgba(249,115,22,0.24)]"
+                        aria-hidden
+                      />
+                    ) : null}
+                    <Icon
+                      className={`w-5 h-5 shrink-0 transition-colors duration-200 ${
+                        isActive
+                          ? "text-orange-400"
+                          : "group-hover:text-orange-300/85"
+                      }`}
+                    />
+                    {!sidebarCollapsed && (
+                      <span className="flex-1 truncate leading-none">{item.label}</span>
+                    )}
                   </a>
                 </Link>
               );

@@ -732,9 +732,26 @@
   }
 
   .cf-admin-nav-active {
-    background: linear-gradient(90deg, rgba(249, 115, 22, 0.16), transparent);
+    background: linear-gradient(
+      90deg,
+      rgba(249, 115, 22, 0.12),
+      rgba(249, 115, 22, 0.025) 52%,
+      transparent
+    );
     color: #f8fafc !important;
-    border-right: 2px solid #f97316;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 0 16px rgba(249, 115, 22, 0.04);
+    transition:
+      background 220ms ease,
+      box-shadow 220ms ease,
+      color 220ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cf-admin-nav-active {
+      transition: none;
+    }
   }
 
   .cf-creator-nav-active {
@@ -765,24 +782,27 @@
   }
 
   .cf-admin-demo-badge {
-    border-color: rgba(249, 115, 22, 0.35) !important;
-    color: #fdba74 !important;
-    background: rgba(249, 115, 22, 0.08);
-    font-size: 0.68rem;
-    letter-spacing: 0.04em;
+    border-color: rgba(249, 115, 22, 0.22) !important;
+    color: rgba(253, 186, 116, 0.82) !important;
+    background: rgba(249, 115, 22, 0.05);
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    font-weight: 650;
+    font-weight: 600;
+    padding-inline: 0.55rem;
+    padding-block: 0.2rem;
   }
 
   .cf-admin-commandbar {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.65rem 0.75rem;
+    padding: 0.5rem 0.75rem;
+    min-height: 3.5rem;
     border-radius: 1rem;
     border: 1px solid var(--cf-border);
     background: color-mix(in srgb, var(--cf-card) 88%, transparent);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(12px);
   }
 
@@ -791,24 +811,70 @@
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: 0.65rem;
-    height: 2.5rem;
-    padding: 0 0.85rem;
-    border-radius: 0.75rem;
+    gap: 0.75rem;
+    height: 2.625rem;
+    padding: 0 1rem;
+    border-radius: 0.8rem;
     border: 1px solid color-mix(in srgb, var(--cf-border) 80%, transparent);
     background: color-mix(in srgb, var(--cf-card-2) 70%, transparent);
     color: var(--cf-text-muted);
     font-size: 0.875rem;
+    font-weight: 400;
     text-align: left;
     transition:
-      border-color 200ms var(--cf-ease),
-      box-shadow 200ms var(--cf-ease),
-      transform 200ms var(--cf-ease);
+      border-color 220ms var(--cf-ease),
+      box-shadow 220ms var(--cf-ease);
+  }
+
+  .cf-admin-commandbar-placeholder {
+    color: #94a3b8;
+    font-weight: 400;
   }
 
   .cf-admin-commandbar-search:hover {
-    border-color: rgba(249, 115, 22, 0.35);
-    transform: translateY(-1px);
+    border-color: rgba(249, 115, 22, 0.28);
+  }
+
+  .cf-admin-commandbar-search:focus-visible {
+    outline: none;
+    border-color: rgba(249, 115, 22, 0.42);
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.16);
+  }
+
+  .cf-admin-notify-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1rem;
+    min-width: 1rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background: #f97316;
+    color: #fff;
+    font-size: 0.625rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .cf-admin-profile-chip {
+    align-items: center;
+    gap: 0.625rem;
+    height: 2.5rem;
+    padding: 0 0.625rem 0 0.375rem;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: color-mix(in srgb, var(--cf-card) 55%, transparent);
+    transition:
+      border-color 220ms var(--cf-ease),
+      background-color 220ms var(--cf-ease);
+  }
+
+  .cf-admin-profile-chip:hover {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: color-mix(in srgb, var(--cf-card) 70%, transparent);
   }
 
   .cf-admin-kbd {
@@ -836,12 +902,12 @@
   .cf-admin-hero {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1.25rem 1.35rem;
-    border-radius: 1.25rem;
+    gap: 1.25rem;
+    padding: 1.5rem 1.5rem;
+    border-radius: 1.35rem;
     border: 1px solid var(--cf-border);
     background:
-      radial-gradient(ellipse 70% 80% at 100% 0%, rgba(249, 115, 22, 0.12), transparent 55%),
+      radial-gradient(ellipse 70% 80% at 100% 0%, rgba(249, 115, 22, 0.09), transparent 55%),
       color-mix(in srgb, var(--cf-card) 92%, transparent);
     box-shadow: var(--cf-shadow);
   }
@@ -851,24 +917,25 @@
       flex-direction: row;
       align-items: flex-end;
       justify-content: space-between;
-      padding: 1.5rem 1.75rem;
+      padding: 1.75rem 2rem;
     }
   }
 
   .cf-admin-hero-title {
-    font-size: clamp(1.65rem, 2.6vw, 2.15rem);
+    font-size: clamp(1.7rem, 2.7vw, 2.25rem);
     font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
+    letter-spacing: -0.028em;
+    line-height: 1.22;
     color: var(--cf-text);
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.625rem;
   }
 
   .cf-admin-hero-sub {
     max-width: 46rem;
-    font-size: 0.925rem;
-    line-height: 1.6;
-    color: var(--cf-text-muted);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: #94a3b8;
   }
 
   .cf-admin-status-panel {
@@ -882,19 +949,109 @@
     }
   }
 
+  .cf-admin-status-panel-inner {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.875rem 1.125rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: color-mix(in srgb, var(--cf-card) 50%, transparent);
+  }
+
+  @media (min-width: 768px) {
+    .cf-admin-status-panel-inner {
+      align-items: flex-end;
+    }
+  }
+
+  .cf-admin-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border-radius: 999px;
+    border: 1px solid rgba(52, 211, 153, 0.2);
+    background: rgba(52, 211, 153, 0.07);
+    padding: 0.4rem 0.9rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #a7f3d0;
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.06);
+  }
+
+  .cf-admin-status-sync {
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #94a3b8;
+  }
+
+  .cf-admin-status-dot {
+    position: relative;
+    display: flex;
+    height: 0.5rem;
+    width: 0.5rem;
+  }
+
+  .cf-admin-status-ping {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: #34d399;
+    opacity: 0.28;
+    animation: ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .cf-admin-status-core {
+    position: relative;
+    height: 0.5rem;
+    width: 0.5rem;
+    border-radius: 999px;
+    background: #34d399;
+    box-shadow: 0 0 6px rgba(52, 211, 153, 0.38);
+  }
+
   .cf-admin-kpi {
+    min-height: 8.75rem;
+    border-radius: 1rem;
     transition:
       transform 220ms var(--cf-ease),
       box-shadow 220ms var(--cf-ease),
-      border-color 220ms var(--cf-ease);
+      border-color 220ms var(--cf-ease),
+      filter 220ms var(--cf-ease);
   }
 
-  .cf-admin-kpi:hover {
-    transform: translateY(-2px) scale(1.01);
-    border-color: rgba(249, 115, 22, 0.28);
+  .cf-admin-kpi-compact {
+    min-height: 6.5rem;
+  }
+
+  .cf-admin-kpi-featured {
+    border-color: rgba(249, 115, 22, 0.3) !important;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(249, 115, 22, 0.09) 0%,
+        rgba(245, 158, 11, 0.025) 42%,
+        color-mix(in srgb, var(--cf-card) 96%, transparent) 100%
+      ) !important;
     box-shadow:
-      var(--cf-shadow-hover),
-      0 0 28px rgba(249, 115, 22, 0.06);
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 20px rgba(249, 115, 22, 0.04);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cf-admin-kpi:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.14),
+        0 0 16px rgba(249, 115, 22, 0.04);
+    }
+
+    .cf-admin-kpi-featured:hover {
+      border-color: rgba(249, 115, 22, 0.36) !important;
+    }
   }
 
   .cf-admin-panel {
@@ -1005,6 +1162,14 @@
     .cf-admin-quick-action:hover,
     .cf-admin-commandbar-search:hover {
       transform: none;
+    }
+
+    .cf-admin-status-ping {
+      animation: none;
+    }
+
+    .cf-admin-nav-active {
+      transition: none;
     }
   }
 

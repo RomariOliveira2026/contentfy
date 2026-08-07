@@ -8,7 +8,7 @@ const DESACELERE_COVER =
 const REPRESENTANTE_COVER = "/products/representante40/cover-premium.webp";
 const REPRESENTANTE_MOCKUP = "/products/representante40/mockup-kit.webp";
 
-export const DEMO_BADGE_LABEL = "Ambiente de demonstração";
+export const DEMO_BADGE_LABEL = "AMBIENTE DE DEMONSTRAÇÃO";
 
 export const demoTodaySummary = {
   sales: 23,
@@ -26,6 +26,8 @@ export const demoPrimaryKpis = [
     decimals: 0,
     change: "+18%",
     trend: "up" as const,
+    changeTone: "positive" as const,
+    featured: true,
     sparkline: [42, 48, 45, 52, 58, 55, 62, 70, 68, 74, 82, 88],
     accent: "orange",
   },
@@ -37,6 +39,7 @@ export const demoPrimaryKpis = [
     decimals: 0,
     change: "+12%",
     trend: "up" as const,
+    changeTone: "positive" as const,
     sparkline: [18, 22, 20, 28, 26, 30, 34, 32, 36, 40, 38, 44],
     accent: "amber",
   },
@@ -48,6 +51,7 @@ export const demoPrimaryKpis = [
     decimals: 0,
     change: "+4",
     trend: "up" as const,
+    changeTone: "neutral" as const,
     sparkline: [12, 14, 15, 16, 18, 19, 20, 22, 23, 25, 26, 28],
     accent: "sky",
   },
@@ -59,6 +63,7 @@ export const demoPrimaryKpis = [
     decimals: 0,
     change: "+15%",
     trend: "up" as const,
+    changeTone: "positive" as const,
     sparkline: [2100, 2400, 2600, 2900, 3200, 3500, 3800, 4100, 4300, 4500, 4700, 4932],
     accent: "emerald",
   },
@@ -71,6 +76,7 @@ export const demoSecondaryKpis = [
     value: 184,
     change: "+9%",
     trend: "up" as const,
+    changeTone: "positive" as const,
   },
   {
     id: "ticket",
@@ -78,6 +84,7 @@ export const demoSecondaryKpis = [
     valueLabel: "R$ 168",
     change: "+3%",
     trend: "up" as const,
+    changeTone: "positive" as const,
   },
   {
     id: "conversion",
@@ -85,6 +92,7 @@ export const demoSecondaryKpis = [
     valueLabel: "4,9%",
     change: "+0,4pp",
     trend: "up" as const,
+    changeTone: "positive" as const,
   },
   {
     id: "refund",
@@ -92,6 +100,7 @@ export const demoSecondaryKpis = [
     valueLabel: "1,3%",
     change: "-0,2pp",
     trend: "down" as const,
+    changeTone: "inverse" as const,
   },
 ];
 
@@ -274,7 +283,13 @@ export function greetingForHour(date = new Date()) {
   return "Boa noite";
 }
 
+export function adminDisplayName(full?: string | null) {
+  const first = full?.trim().split(/\s+/)[0];
+  if (!first) return "Administrador";
+  if (/^aluno/i.test(first)) return "Romário";
+  return first;
+}
+
 export function firstName(full?: string | null) {
-  if (!full?.trim()) return "Romário";
-  return full.trim().split(/\s+/)[0];
+  return adminDisplayName(full);
 }

@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
 import {
   DEMO_BADGE_LABEL,
+  adminDisplayName,
   demoPrimaryKpis,
   demoProducts,
   demoQuickActions,
@@ -14,9 +15,7 @@ import {
   demoSecondaryKpis,
   demoTodaySummary,
   demoTopProducts,
-  firstName,
   formatBRLFromNumber,
-  greetingForHour,
 } from "@/lib/admin/demoDashboardData";
 import DashboardCommandBar from "@/components/admin/dashboard/DashboardCommandBar";
 import KpiCard from "@/components/admin/dashboard/KpiCard";
@@ -50,7 +49,7 @@ const QUICK_ICONS = [
 
 export default function AdminDashboard() {
   const { data: user } = trpc.auth.me.useQuery();
-  const [syncSeconds, setSyncSeconds] = useState(18);
+  const [syncSeconds, setSyncSeconds] = useState(27);
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -59,17 +58,16 @@ export default function AdminDashboard() {
     return () => window.clearInterval(id);
   }, []);
 
-  const name = firstName(user?.name);
-  const greeting = greetingForHour();
+  const name = adminDisplayName(user?.name);
 
   return (
     <AdminLayout>
-      <div className="cf-admin-dashboard p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-7">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="cf-admin-dashboard p-4 sm:p-6 lg:p-8 space-y-8">
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
           <Badge variant="outline" className="cf-admin-demo-badge">
             {DEMO_BADGE_LABEL}
           </Badge>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[10px] text-muted-foreground/80">
             Métricas ilustrativas para demonstração e captura de portfólio
           </p>
         </div>
@@ -79,52 +77,68 @@ export default function AdminDashboard() {
         {/* Executive Hero */}
         <section className="cf-admin-hero">
           <div className="min-w-0">
-            <p className="cf-caption mb-1.5">Admin · Dashboard</p>
+            <p className="cf-caption mb-2">Admin · Visão Geral</p>
             <h1 className="cf-admin-hero-title">
-              {greeting}, {name}.
+              <span className="lg:block">Bem-vindo de volta,</span>{" "}
+              <span className="lg:block">{name}.</span>
             </h1>
             <p className="cf-admin-hero-sub">
-              Bem-vindo de volta. Hoje ocorreram{" "}
-              <strong className="text-foreground">{demoTodaySummary.sales} vendas</strong>
-              , receita de{" "}
-              <strong className="text-foreground">
-                {formatBRLFromNumber(demoTodaySummary.revenueCents / 100)}
-              </strong>
+              Hoje sua operação registrou{" "}
+              <span className="text-foreground/95 font-medium tabular-nums">
+                {demoTodaySummary.sales} vendas
+              </span>
               ,{" "}
-              <strong className="text-foreground">
+              <span className="text-foreground/95 font-medium tabular-nums">
+                {formatBRLFromNumber(demoTodaySummary.revenueCents / 100)}
+              </span>{" "}
+              em receita,{" "}
+              <span className="text-foreground/95 font-medium tabular-nums">
                 {demoTodaySummary.newAffiliates} novos afiliados
-              </strong>{" "}
+              </span>{" "}
               e{" "}
-              <strong className="text-foreground">
+              <span className="text-foreground/95 font-medium tabular-nums">
                 {demoTodaySummary.newProducts} novos produtos publicados
-              </strong>
+              </span>
               .
             </p>
           </div>
 
           <div className="cf-admin-status-panel">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-              </span>
-              Sistema Online
+            <div className="cf-admin-status-panel-inner">
+              <div className="cf-admin-status-badge">
+                <span className="cf-admin-status-dot" aria-hidden>
+                  <span className="cf-admin-status-ping" />
+                  <span className="cf-admin-status-core" />
+                </span>
+                Sistema Online
+              </div>
+              <p className="cf-admin-status-sync tabular-nums">
+                Última sincronização: há {syncSeconds} segundos
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Última sincronização: há {syncSeconds} segundos
-            </p>
           </div>
         </section>
 
         {/* Primary KPIs */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+        <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-[1.06fr_1fr_1fr_1fr] gap-4">
           {demoPrimaryKpis.map((kpi) => (
-            <KpiCard key={kpi.id} {...kpi} />
+            <KpiCard
+              key={kpi.id}
+              title={kpi.title}
+              value={kpi.value}
+              prefix={kpi.prefix}
+              decimals={kpi.decimals}
+              change={kpi.change}
+              trend={kpi.trend}
+              changeTone={kpi.changeTone}
+              sparkline={kpi.sparkline}
+              accent={kpi.accent}
+              featured={"featured" in kpi && kpi.featured}
+            />
           ))}
         </section>
 
-        {/* Secondary KPIs */}
-        <section className="grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+        <section className="grid grid-cols-2 xl:grid-cols-4 gap-4">
           {demoSecondaryKpis.map((kpi) => (
             <KpiCard
               key={kpi.id}
@@ -137,20 +151,21 @@ export default function AdminDashboard() {
               value={"value" in kpi ? kpi.value : undefined}
               change={kpi.change}
               trend={kpi.trend}
+              changeTone={kpi.changeTone}
               compact
             />
           ))}
         </section>
 
         {/* Charts */}
-        <section className="grid grid-cols-1 xl:grid-cols-5 gap-4 lg:gap-5">
+        <section className="grid grid-cols-1 xl:grid-cols-5 gap-4 lg:gap-6">
           <Card className="cf-card-premium cf-admin-panel xl:col-span-3 py-0 gap-0">
             <CardHeader className="pb-2 pt-5 px-5">
-              <CardTitle className="text-base lg:text-lg">
+              <CardTitle className="text-base lg:text-lg font-semibold">
                 Receita — últimos 12 meses
               </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Evolução mensal estilo Stripe
+              <p className="text-sm text-slate-400 font-normal">
+                Evolução mensal da operação
               </p>
             </CardHeader>
             <CardContent className="px-3 pb-5 sm:px-5">
@@ -160,10 +175,10 @@ export default function AdminDashboard() {
 
           <Card className="cf-card-premium cf-admin-panel xl:col-span-2 py-0 gap-0">
             <CardHeader className="pb-2 pt-5 px-5">
-              <CardTitle className="text-base lg:text-lg">
+              <CardTitle className="text-base lg:text-lg font-semibold">
                 Vendas por dia
               </CardTitle>
-              <p className="text-sm text-muted-foreground">Últimos 30 dias</p>
+              <p className="text-sm text-slate-400 font-normal">Últimos 30 dias</p>
             </CardHeader>
             <CardContent className="px-3 pb-5 sm:px-5">
               <DailySalesChart />
@@ -175,7 +190,7 @@ export default function AdminDashboard() {
         <section className="grid grid-cols-1 xl:grid-cols-12 gap-4 lg:gap-5">
           <Card className="cf-card-premium cf-admin-panel xl:col-span-4 py-0 gap-0">
             <CardHeader className="pb-3 pt-5 px-5">
-              <CardTitle className="text-base lg:text-lg">
+              <CardTitle className="text-base lg:text-lg font-semibold">
                 Produtos recentes
               </CardTitle>
             </CardHeader>
@@ -226,7 +241,7 @@ export default function AdminDashboard() {
 
           <Card className="cf-card-premium cf-admin-panel xl:col-span-5 py-0 gap-0">
             <CardHeader className="pb-3 pt-5 px-5">
-              <CardTitle className="text-base lg:text-lg">
+              <CardTitle className="text-base lg:text-lg font-semibold">
                 Vendas recentes
               </CardTitle>
             </CardHeader>
@@ -271,7 +286,7 @@ export default function AdminDashboard() {
 
           <Card className="cf-card-premium cf-admin-panel xl:col-span-3 py-0 gap-0">
             <CardHeader className="pb-3 pt-5 px-5">
-              <CardTitle className="text-base lg:text-lg flex items-center gap-2">
+              <CardTitle className="text-base lg:text-lg font-semibold flex items-center gap-2">
                 <Activity className="h-4 w-4 text-primary" />
                 Atividade em tempo real
               </CardTitle>
@@ -286,7 +301,7 @@ export default function AdminDashboard() {
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
           <Card className="cf-card-premium cf-admin-panel py-0 gap-0">
             <CardHeader className="pb-3 pt-5 px-5">
-              <CardTitle className="text-base lg:text-lg">
+              <CardTitle className="text-base lg:text-lg font-semibold">
                 Produtos mais vendidos
               </CardTitle>
             </CardHeader>
@@ -317,7 +332,7 @@ export default function AdminDashboard() {
 
           <Card className="cf-card-premium cf-admin-panel py-0 gap-0">
             <CardHeader className="pb-3 pt-5 px-5">
-              <CardTitle className="text-base lg:text-lg flex items-center gap-2">
+              <CardTitle className="text-base lg:text-lg font-semibold flex items-center gap-2">
                 <Target className="h-4 w-4 text-primary" />
                 Mapa de receita
               </CardTitle>
@@ -355,7 +370,7 @@ export default function AdminDashboard() {
 
           <Card className="cf-card-premium cf-admin-panel py-0 gap-0">
             <CardHeader className="pb-3 pt-5 px-5">
-              <CardTitle className="text-base lg:text-lg flex items-center gap-2">
+              <CardTitle className="text-base lg:text-lg font-semibold flex items-center gap-2">
                 <Zap className="h-4 w-4 text-primary" />
                 Quick Actions
               </CardTitle>

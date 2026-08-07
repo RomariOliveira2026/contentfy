@@ -29,7 +29,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const shortcuts = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Visão Geral", href: "/admin", icon: LayoutDashboard },
   { label: "Produtos", href: "/admin/products", icon: Package },
   { label: "Vendas", href: "/admin/sales", icon: ShoppingCart },
   { label: "Clientes", href: "/admin/customers", icon: Users },
@@ -66,25 +66,28 @@ export default function DashboardCommandBar({
           className="cf-admin-commandbar-search"
           onClick={() => setOpen(true)}
         >
-          <Search className="h-4 w-4 shrink-0 opacity-70" />
-          <span className="truncate">
+          <Search className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+          <span className="truncate cf-admin-commandbar-placeholder">
             Buscar produtos, clientes ou pedidos...
           </span>
           <kbd className="cf-admin-kbd">⌘K</kbd>
         </button>
 
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="relative rounded-xl h-9 w-9"
+            className={cn(
+              "relative rounded-xl h-10 w-10",
+              "transition-[background-color,transform,box-shadow] duration-[220ms] ease-out",
+              "motion-safe:hover:-translate-y-px",
+              "focus-visible:ring-2 focus-visible:ring-primary/60"
+            )}
             aria-label="Notificações"
           >
             <Bell className="h-4 w-4" />
-            <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
-              3
-            </span>
+            <span className="cf-admin-notify-badge">3</span>
           </Button>
 
           <DropdownMenu>
@@ -92,10 +95,17 @@ export default function DashboardCommandBar({
               <Button
                 type="button"
                 size="sm"
-                className="rounded-xl gap-1.5 shadow-[0_8px_20px_rgba(249,115,22,0.25)]"
+                className={cn(
+                  "rounded-xl gap-2 h-10 px-4 font-bold",
+                  "shadow-[0_8px_20px_rgba(249,115,22,0.22)]",
+                  "transition-[transform,box-shadow] duration-[220ms] ease-out",
+                  "motion-safe:hover:-translate-y-px motion-safe:hover:scale-[1.015]",
+                  "hover:shadow-[0_10px_28px_rgba(249,115,22,0.32)]",
+                  "focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                )}
               >
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Quick Create</span>
+                <Plus className="h-4 w-4" aria-hidden />
+                <span className="hidden sm:inline">Novo Produto</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52">
@@ -121,22 +131,19 @@ export default function DashboardCommandBar({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div
-            className={cn(
-              "hidden sm:flex items-center gap-2 rounded-xl border border-border/80",
-              "bg-card/60 px-2.5 py-1.5"
-            )}
-          >
-            <div className="h-7 w-7 rounded-full bg-gradient-owl flex items-center justify-center text-white text-xs font-bold">
+          <div className="cf-admin-profile-chip hidden sm:flex">
+            <div className="h-7 w-7 rounded-full bg-gradient-owl flex items-center justify-center text-white text-xs font-bold shrink-0">
               {(userName || "A").charAt(0).toUpperCase()}
             </div>
-            <div className="min-w-0">
-              <p className="text-xs font-semibold truncate max-w-[7rem]">
+            <div className="min-w-0 flex flex-col justify-center">
+              <p className="text-xs font-semibold truncate max-w-[7rem] leading-none">
                 {userName || "Admin"}
               </p>
-              <p className="text-[10px] text-muted-foreground">Administrador</p>
+              <p className="text-[10px] font-normal text-slate-400 leading-none mt-1">
+                Administrador
+              </p>
             </div>
-            <User className="h-3.5 w-3.5 text-muted-foreground" />
+            <User className="h-3.5 w-3.5 text-slate-400 shrink-0" aria-hidden />
           </div>
         </div>
       </div>
