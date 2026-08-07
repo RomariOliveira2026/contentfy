@@ -13,6 +13,7 @@ import {
   X,
   Sparkles,
   LineChart,
+  Brain,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import BrandLogo from "@/components/BrandLogo";
@@ -26,12 +27,18 @@ interface CreatorLayoutProps {
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Visão Geral", path: "/creator/dashboard" },
-  { icon: Sparkles, label: "AI Studio", path: "/creator/ai" },
+  {
+    icon: Sparkles,
+    label: "AI Studio",
+    path: "/creator/ai",
+    badge: "Beta" as const,
+  },
   { icon: Package, label: "Produtos", path: "/creator/products" },
   { icon: BookOpen, label: "Cursos", path: "/creator/courses" },
   { icon: ShoppingCart, label: "Vendas", path: "/creator/sales" },
   { icon: Users, label: "Alunos", path: "/creator/students" },
   { icon: LineChart, label: "Success", path: "/creator/success" },
+  { icon: Brain, label: "Intelligence", path: "/creator/intelligence" },
   { icon: LinkIcon, label: "Afiliados", path: "/creator/affiliates" },
   { icon: Settings, label: "Configurações", path: "/creator/settings" },
 ];
@@ -165,36 +172,60 @@ export default function CreatorLayout({ children }: CreatorLayoutProps) {
             </p>
           </div>
 
-          <nav className="flex-1 overflow-y-auto py-4">
+          <nav className="flex-1 overflow-y-auto py-4 px-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive =
                 location === item.path ||
                 (item.path !== "/creator/dashboard" &&
                   location.startsWith(item.path));
+              const badge = "badge" in item ? item.badge : undefined;
 
               return (
                 <Link key={item.path} href={item.path}>
                   <a
                     className={`
-                      flex items-center gap-3 py-3 text-sm font-medium
-                      transition-all duration-200
+                      group relative flex items-center gap-3 py-2.5 text-sm font-medium
+                      transition-[color,background-color,transform,box-shadow] duration-200 ease-out
                       ${
                         sidebarCollapsed
-                          ? "justify-center px-0"
-                          : "px-4 mx-2 rounded-lg"
+                          ? "justify-center px-0 mx-1 rounded-lg"
+                          : "px-3 mx-2 rounded-xl"
                       }
                       ${
                         isActive
-                          ? "cf-admin-nav-active"
-                          : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                          ? "cf-creator-nav-active text-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-white/[0.045] motion-safe:hover:translate-x-0.5"
                       }
                     `}
                     title={sidebarCollapsed ? item.label : undefined}
                     onClick={() => setSidebarOpen(false)}
                   >
-                    <Icon className="w-5 h-5 shrink-0" />
-                    {!sidebarCollapsed && <span>{item.label}</span>}
+                    {isActive ? (
+                      <span
+                        className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[2.5px] rounded-r-full bg-gradient-owl shadow-[0_0_8px_rgba(249,115,22,0.28)]"
+                        aria-hidden
+                      />
+                    ) : null}
+                    <Icon
+                      className={`w-5 h-5 shrink-0 transition-colors duration-200 ${
+                        isActive
+                          ? "text-orange-400"
+                          : "group-hover:text-orange-300/85"
+                      }`}
+                    />
+                    {!sidebarCollapsed && (
+                      <>
+                        <span className="flex-1 truncate leading-none">
+                          {item.label}
+                        </span>
+                        {badge ? (
+                          <span className="rounded-md border border-orange-400/30 bg-orange-500/[0.08] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-orange-300/95 leading-none">
+                            {badge}
+                          </span>
+                        ) : null}
+                      </>
+                    )}
                   </a>
                 </Link>
               );

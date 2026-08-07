@@ -63,6 +63,13 @@ export function mergeShowcaseCatalog(
   for (const db of dbProducts) {
     const base = bySlug.get(db.slug);
     const published = Boolean(db.isActive);
+    /** Catálogo provisório “available” preserva apresentação comercial quando o DB ainda não publica. */
+    const provisionalReady =
+      !published &&
+      base?.source === "provisional" &&
+      base.visibility === "available" &&
+      base.priceCents != null;
+    const commerciallyAvailable = published || provisionalReady;
     const merged: ShowcaseProduct = {
       id: String(db.id),
       slug: db.slug,
@@ -87,16 +94,22 @@ export function mergeShowcaseCatalog(
       imageFit: base?.imageFit,
       imageSrcSet: base?.imageSrcSet,
       imageSizes: base?.imageSizes,
-      // Preço só quando publicado e valor numérico válido do banco
-      priceCents: published ? db.price : null,
-      isPublished: published,
-      visibility: (published
+      // Preço: DB publicado; senão preço provisório ready (ex.: Desacelere portfólio)
+      priceCents: published
+        ? db.price
+        : provisionalReady
+          ? base!.priceCents!
+          : null,
+      isPublished: commerciallyAvailable,
+      visibility: (commerciallyAvailable
         ? "available"
         : base?.visibility ||
           (base?.isLaunch || base?.isPrelaunch || base?.isFeatured
             ? "prelaunch"
             : "draft")) as ShowcaseVisibility,
-      isPrelaunch: base?.isPrelaunch ?? (!published && Boolean(base?.isLaunch)),
+      isPrelaunch: commerciallyAvailable
+        ? false
+        : (base?.isPrelaunch ?? Boolean(base?.isLaunch)),
       isLaunch: base?.isLaunch,
       isFeatured: base?.isFeatured,
       isNew: base?.isNew,
@@ -110,7 +123,7 @@ export function mergeShowcaseCatalog(
         base?.seoDescription ||
         db.description ||
         `Conheça ${db.name} na ContentFy.`,
-      source: "database",
+      source: published ? "database" : base?.source || "database",
       createdAt: toIso(db.createdAt) || base?.createdAt,
     };
     bySlug.set(db.slug, merged);

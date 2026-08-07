@@ -19,6 +19,9 @@ export const CONTENTFY_DOMAINS = [
   "insight",
   "discovery",
   "successScore",
+  "experience",
+  "intelligence",
+  "orchestrator",
   "community",
 ] as const;
 

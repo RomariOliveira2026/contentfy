@@ -23,5 +23,8 @@ export const CONTENTFY_CORE_STATUS: DomainStatus[] = [
   { domain: "insight", maturity: "planned" },
   { domain: "discovery", maturity: "in_development", notes: "ContentFy Discovery v1 — rails, trending, favorites, search, continue learning" },
   { domain: "successScore", maturity: "in_development", notes: "Success Engine v1 — Score/Habit/Consistency/Evolution + Learn integration" },
+  { domain: "experience", maturity: "in_development", notes: "Experience Layer XIII — orchestration over Learn/Success/Discovery/Protect/LMS" },
+  { domain: "intelligence", maturity: "in_development", notes: "Intelligence Engine XIV — statistical marketplace brain; no generative AI" },
+  { domain: "orchestrator", maturity: "in_development", notes: "Orchestrator XV — event bus + workflows between engines; no motor business rules" },
   { domain: "community", maturity: "planned" },
 ];

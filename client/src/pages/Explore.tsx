@@ -141,11 +141,11 @@ export default function Explore() {
 
         <section className="container text-center max-w-3xl mx-auto px-4 scroll-mt-[6.5rem]">
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">
-            Conhecimento para cada momento da sua jornada.
+            Centro de Descoberta
           </h2>
           <p className="text-muted-foreground">
-            Explore conteúdos cuidadosamente desenvolvidos para transformar
-            conhecimento em ação.
+            Jornadas, competências e trilhos com identidade ContentFy — não um
+            catálogo genérico.
           </p>
         </section>
 

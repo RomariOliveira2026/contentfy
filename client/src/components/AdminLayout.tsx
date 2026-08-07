@@ -15,6 +15,8 @@ import {
   ShieldCheck,
   Compass,
   LineChart,
+  Brain,
+  Network,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import BrandLogo from "@/components/BrandLogo";
@@ -34,6 +36,8 @@ const menuItems = [
   { icon: ShieldCheck, label: "Protect", path: "/admin/refunds" },
   { icon: Compass, label: "Discovery", path: "/admin/discovery" },
   { icon: LineChart, label: "Success", path: "/admin/success" },
+  { icon: Brain, label: "Intelligence", path: "/admin/intelligence" },
+  { icon: Network, label: "Orchestrator", path: "/admin/orchestrator" },
   { icon: Users, label: "Clientes", path: "/admin/customers" },
   { icon: LinkIcon, label: "Afiliados", path: "/admin/affiliates" },
   { icon: BookOpen, label: "Cursos", path: "/admin/courses" },

@@ -57,7 +57,7 @@ export default function MembersDashboard() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <p className="cf-caption mb-2">Área do aluno</p>
+          <p className="cf-caption mb-2">Centro de Evolução</p>
           <h1 className="cf-page-title mb-2">Bem-vindo de volta</h1>
           <p className="text-muted-foreground">
             Continue de onde parou e explore seus produtos

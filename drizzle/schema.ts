@@ -1,4 +1,15 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, decimal } from "drizzle-orm/mysql-core";
+import {
+  int,
+  mysqlEnum,
+  mysqlTable,
+  text,
+  timestamp,
+  varchar,
+  boolean,
+  decimal,
+  uniqueIndex,
+  index,
+} from "drizzle-orm/mysql-core";
 
 /**
  * CONTENTFY PLATFORM - DATABASE SCHEMA
@@ -498,3 +509,116 @@ export const learnUserGoals = mysqlTable("learn_user_goals", {
 
 export type LearnUserGoal = typeof learnUserGoals.$inferSelect;
 export type InsertLearnUserGoal = typeof learnUserGoals.$inferInsert;
+
+// ============================================================================
+// CONTENTFY EXPERIENCE — onboarding, activity, telemetry (additive XIII.1)
+// ============================================================================
+
+export const experienceOnboarding = mysqlTable("experience_onboarding", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  primaryGoalId: varchar("primaryGoalId", { length: 64 }),
+  improveFirst: varchar("improveFirst", { length: 200 }),
+  weeklyHours: decimal("weeklyHours", { precision: 4, scale: 1 }),
+  preferencesJson: text("preferencesJson"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ExperienceOnboardingRow = typeof experienceOnboarding.$inferSelect;
+export type InsertExperienceOnboarding = typeof experienceOnboarding.$inferInsert;
+
+export const experienceActivityEvents = mysqlTable(
+  "experience_activity_events",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    eventType: varchar("eventType", { length: 48 }).notNull(),
+    productId: int("productId"),
+    productSlug: varchar("productSlug", { length: 255 }),
+    lessonId: int("lessonId"),
+    metaJson: text("metaJson"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    userCreatedIdx: index("experience_activity_user_created_idx").on(
+      t.userId,
+      t.createdAt
+    ),
+    typeIdx: index("experience_activity_type_idx").on(t.eventType),
+  })
+);
+
+export type ExperienceActivityEventRow =
+  typeof experienceActivityEvents.$inferSelect;
+export type InsertExperienceActivityEvent =
+  typeof experienceActivityEvents.$inferInsert;
+
+export const experienceActivityDaily = mysqlTable(
+  "experience_activity_daily",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    day: varchar("day", { length: 10 }).notNull(),
+    eventCount: int("eventCount").default(1).notNull(),
+    lastEventType: varchar("lastEventType", { length: 48 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (t) => ({
+    userDayUniq: uniqueIndex("experience_activity_daily_user_day").on(
+      t.userId,
+      t.day
+    ),
+  })
+);
+
+export type ExperienceActivityDailyRow =
+  typeof experienceActivityDaily.$inferSelect;
+export type InsertExperienceActivityDaily =
+  typeof experienceActivityDaily.$inferInsert;
+
+export const experienceTelemetryEvents = mysqlTable(
+  "experience_telemetry_events",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    eventName: varchar("eventName", { length: 64 }).notNull(),
+    metaJson: text("metaJson"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    userCreatedIdx: index("experience_telemetry_user_created_idx").on(
+      t.userId,
+      t.createdAt
+    ),
+    nameIdx: index("experience_telemetry_name_idx").on(t.eventName),
+  })
+);
+
+export type ExperienceTelemetryEventRow =
+  typeof experienceTelemetryEvents.$inferSelect;
+export type InsertExperienceTelemetryEvent =
+  typeof experienceTelemetryEvents.$inferInsert;
+
+export const experienceDismissedRecommendations = mysqlTable(
+  "experience_dismissed_recommendations",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    recommendationId: varchar("recommendationId", { length: 128 }).notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniq: uniqueIndex("experience_dismissed_rec_unique").on(
+      t.userId,
+      t.recommendationId
+    ),
+  })
+);
+
+export type ExperienceDismissedRecommendationRow =
+  typeof experienceDismissedRecommendations.$inferSelect;
+export type InsertExperienceDismissedRecommendation =
+  typeof experienceDismissedRecommendations.$inferInsert;

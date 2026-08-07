@@ -12,6 +12,11 @@ import { badgesForProduct, ShowcaseBadgePill } from "./ShowcaseBadge";
 import ProductCoverMedia from "./ProductCoverMedia";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  dnaCompetencyLabels,
+  formatDnaDuration,
+  resolveContentfyDna,
+} from "@shared/contentfy";
 
 interface ProductShowcaseCardProps {
   product: ShowcaseProduct;
@@ -52,6 +57,13 @@ export default function ProductShowcaseCard({
   const status = getProductVisibility(product);
   const showHoverPanel = variant === "standard" || variant === "compact";
   const isExpanded = variant === "featured" || variant === "large";
+  const dna = resolveContentfyDna(product.slug, {
+    category: product.category,
+    name: product.name,
+    typeLabel: product.typeLabel,
+  });
+  const skills = dnaCompetencyLabels(dna, 2);
+  const duration = formatDnaDuration(dna.estimatedHours);
 
   const commerceLabel = comingSoon
     ? "Em breve"
@@ -141,6 +153,33 @@ export default function ProductShowcaseCard({
               >
                 {commerceLabel}
               </p>
+              {(skills.length > 0 || dna.levelLabel || duration) && (
+                <div
+                  className={cn(
+                    "mt-2 flex flex-wrap gap-1.5",
+                    isExpanded ? "" : "hidden sm:flex"
+                  )}
+                >
+                  {skills.map((s) => (
+                    <span
+                      key={s}
+                      className="rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] text-white/80"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                  {dna.levelLabel ? (
+                    <span className="rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] text-white/70">
+                      {dna.levelLabel}
+                    </span>
+                  ) : null}
+                  {duration ? (
+                    <span className="rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] text-white/70">
+                      {duration}
+                    </span>
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
         </a>
@@ -177,11 +216,14 @@ export default function ProductShowcaseCard({
         >
           <div className="pointer-events-auto rounded-2xl border border-white/10 bg-[#111827]/95 backdrop-blur-xl p-3.5 shadow-[0_20px_48px_rgba(0,0,0,0.55)]">
             <p className="text-xs text-muted-foreground line-clamp-3 mb-3">
-              {product.shortDescription || product.slogan || product.description}
+              {dna.transformation ||
+                product.shortDescription ||
+                product.slogan ||
+                product.description}
             </p>
             <div className="flex gap-2">
               <Button asChild size="sm" className="flex-1">
-                <Link href={href}>Conhecer</Link>
+                <Link href={href}>Explorar jornada</Link>
               </Button>
               <Button
                 type="button"

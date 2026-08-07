@@ -1,3 +1,18 @@
 export { EmptyState, type EmptyStateProps } from "./EmptyState";
 export { LoadingState, type LoadingStateProps } from "./LoadingState";
 export { PageShell, type PageShellProps } from "./PageShell";
+export { ExperienceDashboard } from "./ExperienceDashboard";
+export { ExperienceGreeting } from "./ExperienceGreeting";
+export { EvolutionHero } from "./EvolutionHero";
+export { NextBestActionCard } from "./NextBestActionCard";
+export { JourneySummary } from "./JourneySummary";
+export { ContinueLearningPanel } from "./ContinueLearningPanel";
+export { SuccessSnapshot } from "./SuccessSnapshot";
+export { CompetencyJourney } from "./CompetencyJourney";
+export { AchievementShelf } from "./AchievementShelf";
+export { RecommendationShelf } from "./RecommendationShelf";
+export { ProtectionSummary } from "./ProtectionSummary";
+export { ExperienceEmptyState } from "./ExperienceEmptyState";
+export { ExperienceErrorBoundary } from "./ExperienceErrorBoundary";
+export { ExperienceSkeleton } from "./ExperienceSkeleton";
+export { ExperienceOnboarding } from "./ExperienceOnboarding";

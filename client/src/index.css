@@ -572,10 +572,16 @@
       transform 220ms var(--cf-ease);
   }
 
-  @media (min-width: 1024px) and (max-width: 1279px) {
+  /* Compactar nav enquanto cabe logo + links + busca + ações (evita overlap) */
+  @media (min-width: 1024px) and (max-width: 1535px) {
     .cf-nav-link {
-      padding: 0.5rem 0.55rem;
+      padding: 0.45rem 0.5rem;
       font-size: 0.8125rem;
+    }
+
+    .cf-nav-link-active::after {
+      left: 0.55rem;
+      right: 0.55rem;
     }
   }
 
@@ -729,6 +735,28 @@
     background: linear-gradient(90deg, rgba(249, 115, 22, 0.16), transparent);
     color: #f8fafc !important;
     border-right: 2px solid #f97316;
+  }
+
+  .cf-creator-nav-active {
+    background: linear-gradient(
+      90deg,
+      rgba(249, 115, 22, 0.13),
+      rgba(249, 115, 22, 0.03) 52%,
+      transparent
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 0 18px rgba(249, 115, 22, 0.05);
+    transition:
+      background 180ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cf-creator-nav-active {
+      transition: none;
+    }
   }
 
   /* ——— Admin Dashboard Enterprise ——— */
@@ -989,12 +1017,12 @@
 
   /* ——— Home Enterprise Premium ——— */
   .cf-home-hero {
-    padding-block: 4.5rem;
+    padding-block: 5rem 4.5rem;
   }
 
   @media (min-width: 1024px) {
     .cf-home-hero {
-      padding-block: 5.25rem;
+      padding-block: 5.75rem 5.25rem;
     }
   }
 
@@ -1202,18 +1230,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 18rem;
-    perspective: 1200px;
-    overflow: hidden;
-    padding: 1.25rem 0.5rem 2rem;
+    min-height: 20rem;
+    perspective: 1400px;
+    overflow: visible;
+    /* Ar em relação ao header/busca — evita sensação de “colado” */
+    padding: 2rem 0.5rem 2.5rem;
+    isolation: isolate;
   }
 
   @media (min-width: 1024px) {
     .cf-home-mockup-stage {
-      min-height: 26rem;
+      min-height: 28rem;
       justify-content: flex-end;
-      overflow: visible;
-      padding: 1.5rem 0 2.25rem;
+      padding: 2.25rem 0 3rem;
     }
   }
 
@@ -1222,57 +1251,71 @@
     position: absolute;
     border-radius: 999px;
     pointer-events: none;
-    filter: blur(48px);
+    filter: blur(56px);
   }
 
   .cf-home-mockup-glow-blue {
-    width: 70%;
-    height: 55%;
-    top: 18%;
-    right: 8%;
-    background: rgba(59, 130, 246, 0.16);
+    width: 72%;
+    height: 58%;
+    top: 16%;
+    right: 6%;
+    background: rgba(59, 130, 246, 0.14);
   }
 
   .cf-home-mockup-glow-gold {
-    width: 55%;
-    height: 45%;
-    bottom: 12%;
-    left: 18%;
-    background: rgba(245, 158, 11, 0.18);
+    width: 58%;
+    height: 48%;
+    bottom: 10%;
+    left: 16%;
+    background: rgba(245, 158, 11, 0.16);
   }
 
+  /* Frame sem “card” — livro flutuando, sem placa de UI */
   .cf-home-mockup-frame {
     position: relative;
     z-index: 2;
-    width: min(92%, 20rem);
-    transform: scale(1.08) rotateX(3deg) rotateY(-6deg) rotateZ(0.8deg);
+    width: min(94%, 21.5rem);
+    transform: scale(1.1) rotateX(4deg) rotateY(-7deg) rotateZ(0.9deg)
+      translateY(-4px);
     transform-style: preserve-3d;
     animation: cf-home-mockup-float 7.5s var(--cf-ease) infinite;
     transition: transform 400ms var(--cf-ease);
+    /* Suaviza bordas da placa laranja embutida no asset */
+    -webkit-mask-image: radial-gradient(
+      ellipse 78% 82% at 50% 48%,
+      #000 58%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 78% 82% at 50% 48%,
+      #000 58%,
+      transparent 100%
+    );
   }
 
   @media (min-width: 1024px) {
     .cf-home-mockup-frame {
-      width: min(100%, 26rem);
-      transform: scale(1.18) rotateX(4deg) rotateY(-8deg) rotateZ(1deg);
+      width: min(100%, 27.5rem);
+      transform: scale(1.22) rotateX(5deg) rotateY(-9deg) rotateZ(1deg)
+        translateY(-6px);
     }
   }
 
   @media (min-width: 1280px) {
     .cf-home-mockup-frame {
-      width: min(100%, 28rem);
+      width: min(100%, 29.5rem);
     }
   }
 
   .cf-home-mockup-stage:hover .cf-home-mockup-frame {
-    transform: scale(1.1) rotateX(2.5deg) rotateY(-5deg) rotateZ(0.4deg)
-      translateY(-3px);
+    transform: scale(1.13) rotateX(3deg) rotateY(-5.5deg) rotateZ(0.45deg)
+      translateY(-8px);
   }
 
   @media (min-width: 1024px) {
     .cf-home-mockup-stage:hover .cf-home-mockup-frame {
-      transform: scale(1.2) rotateX(3deg) rotateY(-6deg) rotateZ(0.5deg)
-        translateY(-4px);
+      transform: scale(1.25) rotateX(3.5deg) rotateY(-7deg) rotateZ(0.55deg)
+        translateY(-10px);
     }
   }
 
@@ -1282,36 +1325,39 @@
     height: auto;
     aspect-ratio: 4 / 5;
     object-fit: contain;
-    filter: drop-shadow(0 28px 48px rgba(0, 0, 0, 0.38))
-      drop-shadow(0 8px 18px rgba(249, 115, 22, 0.12));
+    /* Zoom leve: reduz a presença da placa laranja nas margens */
+    transform: scale(1.14);
+    transform-origin: center 46%;
+    filter: drop-shadow(0 36px 56px rgba(0, 0, 0, 0.48))
+      drop-shadow(0 12px 28px rgba(249, 115, 22, 0.16));
   }
 
   .cf-home-mockup-reflection {
     position: absolute;
-    left: 12%;
-    right: 12%;
-    bottom: -8%;
-    height: 18%;
+    left: 18%;
+    right: 18%;
+    bottom: -4%;
+    height: 14%;
     background: linear-gradient(
       180deg,
-      rgba(15, 23, 42, 0.18),
+      rgba(15, 23, 42, 0.14),
       transparent 75%
     );
-    filter: blur(10px);
+    filter: blur(12px);
     border-radius: 50%;
-    opacity: 0.55;
+    opacity: 0.4;
     pointer-events: none;
   }
 
   @keyframes cf-home-mockup-float {
     0%,
     100% {
-      transform: scale(1.08) rotateX(3deg) rotateY(-6deg) rotateZ(0.8deg)
-        translateY(0);
+      transform: scale(1.1) rotateX(4deg) rotateY(-7deg) rotateZ(0.9deg)
+        translateY(-4px);
     }
     50% {
-      transform: scale(1.08) rotateX(2.6deg) rotateY(-5deg) rotateZ(0.5deg)
-        translateY(-5px);
+      transform: scale(1.1) rotateX(3.4deg) rotateY(-6deg) rotateZ(0.55deg)
+        translateY(-10px);
     }
   }
 
@@ -1319,12 +1365,12 @@
     @keyframes cf-home-mockup-float {
       0%,
       100% {
-        transform: scale(1.18) rotateX(4deg) rotateY(-8deg) rotateZ(1deg)
-          translateY(0);
+        transform: scale(1.22) rotateX(5deg) rotateY(-9deg) rotateZ(1deg)
+          translateY(-6px);
       }
       50% {
-        transform: scale(1.18) rotateX(3.5deg) rotateY(-7deg) rotateZ(0.6deg)
-          translateY(-6px);
+        transform: scale(1.22) rotateX(4.2deg) rotateY(-7.5deg) rotateZ(0.65deg)
+          translateY(-12px);
       }
     }
   }
@@ -1344,7 +1390,7 @@
     .cf-home-mockup-frame,
     .cf-home-mockup-stage:hover .cf-home-mockup-frame {
       animation: none !important;
-      transform: scale(1.12) rotateX(2deg) rotateY(-4deg);
+      transform: scale(1.14) rotateX(3deg) rotateY(-5deg) translateY(-4px);
     }
 
     .cf-home-btn-primary:hover,
@@ -1352,6 +1398,84 @@
     .cf-home-lift:hover,
     .cf-nav-link:hover {
       transform: none;
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* PROJECT PHOENIX — perception layer (Sprint 1)                        */
+  /* ------------------------------------------------------------------ */
+
+  .cf-phoenix-hero-media {
+    animation: cf-phoenix-ken 28s ease-in-out infinite alternate;
+  }
+
+  @keyframes cf-phoenix-ken {
+    from {
+      transform: scale(1.04) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.08) translate3d(-1.2%, 0.6%, 0);
+    }
+  }
+
+  .cf-phoenix-skeleton {
+    background: linear-gradient(
+      110deg,
+      rgba(148, 163, 184, 0.08) 0%,
+      rgba(148, 163, 184, 0.16) 45%,
+      rgba(148, 163, 184, 0.08) 90%
+    );
+    background-size: 200% 100%;
+    animation: cf-phoenix-shimmer 1.4s ease-in-out infinite;
+  }
+
+  @keyframes cf-phoenix-shimmer {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
+
+  .cf-phoenix-evo-node {
+    transition: opacity 220ms var(--cf-ease);
+  }
+
+  .cf-phoenix-panel {
+    background:
+      radial-gradient(
+        ellipse 70% 50% at 0% 0%,
+        rgba(249, 115, 22, 0.06),
+        transparent 55%
+      ),
+      var(--cf-card);
+  }
+
+  .cf-phoenix-cta {
+    transition:
+      transform 220ms var(--cf-ease),
+      box-shadow 220ms var(--cf-ease);
+  }
+
+  .cf-phoenix-cta:hover {
+    transform: translateY(-1px);
+  }
+
+  .cf-pdp-mockup {
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cf-phoenix-hero-media,
+    .cf-phoenix-skeleton {
+      animation: none !important;
+    }
+
+    .cf-phoenix-cta:hover,
+    .cf-phoenix-card:hover,
+    .cf-pdp-mockup:hover {
+      transform: none !important;
     }
   }
 }

@@ -648,6 +648,24 @@ export const protectRouter = router({
         },
       });
 
+      try {
+        const { invalidateExperienceForUser } = await import(
+          "../core/experience/cache"
+        );
+        invalidateExperienceForUser(request.userId);
+        const { emitOrchestratorEvent } = await import("../core/orchestrator");
+        emitOrchestratorEvent(
+          "PRODUCT_REFUNDED",
+          {
+            userId: request.userId,
+            orderId: request.orderId,
+          },
+          "protect"
+        );
+      } catch {
+        /* Experience / orchestrator optional */
+      }
+
       if (finalize.accessRevocationStatus === "revoked") {
         await audit({
           refundRequestId: request.id,

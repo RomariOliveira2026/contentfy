@@ -161,6 +161,25 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       await db.incrementCouponUsage(order.couponId);
     }
 
+    try {
+      const { invalidateExperienceForUser } = await import(
+        "../core/experience/cache"
+      );
+      invalidateExperienceForUser(Number(userId));
+      const { emitOrchestratorEvent } = await import("../core/orchestrator");
+      emitOrchestratorEvent(
+        "PRODUCT_PURCHASED",
+        {
+          userId: Number(userId),
+          productId: Number(productId),
+          orderId: Number(orderId),
+        },
+        "commerce"
+      );
+    } catch {
+      /* Experience / orchestrator optional */
+    }
+
     console.log("[Stripe Webhook] Access granted successfully:", {
       orderId,
       userId,

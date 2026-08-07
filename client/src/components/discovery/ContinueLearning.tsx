@@ -22,12 +22,15 @@ export function ContinueLearning({ items }: ContinueLearningProps) {
   if (!items.length) return null;
 
   return (
-    <section className="container py-8" aria-label="Continue aprendendo">
+    <section className="container py-8" aria-label="Continue Evoluindo">
+      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
+        Jornada
+      </p>
       <h2 className="text-xl sm:text-2xl font-semibold tracking-tight mb-1">
-        Continue aprendendo
+        Continue Evoluindo
       </h2>
       <p className="text-sm text-muted-foreground mb-5">
-        Retome de onde parou
+        Retome o fio — o próximo passo já está pronto
       </p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (

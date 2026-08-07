@@ -99,6 +99,13 @@
       "when": 1775600000000,
       "tag": "0013_contentfy_learn",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1775700000000,
+      "tag": "0014_contentfy_experience",
+      "breakpoints": true
     }
   ]
 }

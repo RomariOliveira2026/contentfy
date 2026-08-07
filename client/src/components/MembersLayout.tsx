@@ -45,14 +45,14 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
 
   const navigation = [
     {
-      name: "Dashboard",
-      href: "/my-account",
+      name: "Visão Geral",
+      href: "/dashboard",
       icon: LayoutDashboard,
     },
     {
-      name: "Evolução",
-      href: "/my-account/evolucao",
-      icon: Sparkles,
+      name: "Minha Biblioteca",
+      href: "/my-account/products",
+      icon: BookOpen,
     },
     {
       name: "Minha Evolução",
@@ -60,19 +60,19 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
       icon: LineChart,
     },
     {
-      name: "Meus Produtos",
-      href: "/my-account/products",
-      icon: BookOpen,
+      name: "Minhas Jornadas",
+      href: "/my-account/evolucao",
+      icon: Sparkles,
     },
     {
-      name: "Compras / Protect",
+      name: "Conquistas",
+      href: "/my-account/achievements",
+      icon: Award,
+    },
+    {
+      name: "Compras",
       href: "/my-account/purchases",
       icon: ShoppingBag,
-    },
-    {
-      name: "Certificados",
-      href: "/my-account/certificates",
-      icon: Award,
     },
     {
       name: "Configurações",
@@ -175,9 +175,13 @@ export default function MembersLayout({ children }: MembersLayoutProps) {
               <nav className="space-y-1.5 rounded-[1.25rem] border border-border bg-card p-2">
                 {navigation.map((item) => {
                   const Icon = item.icon;
-                  const isActive = location === item.href;
+                  const isActive =
+                    location === item.href ||
+                    (item.href === "/dashboard" &&
+                      (location === "/my-account/home" ||
+                        location === "/dashboard"));
                   return (
-                    <Link key={item.href} href={item.href}>
+                    <Link key={`${item.name}-${item.href}`} href={item.href}>
                       <Button
                         variant={isActive ? "default" : "ghost"}
                         className="w-full justify-start"

@@ -2,6 +2,8 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "../db";
+import { invalidateExperienceForUser } from "../core/experience/cache";
+import * as experienceStore from "../experience-store";
 
 /**
  * Members Router - Área de membros e gestão de produtos do usuário
@@ -138,6 +140,19 @@ export const membersRouter = router({
         isCompleted: input.isCompleted,
         lastWatchedAt: new Date(),
       });
+
+      invalidateExperienceForUser(ctx.user.id);
+      void experienceStore.recordActivityEvent({
+        userId: ctx.user.id,
+        eventType: input.isCompleted ? "lesson_completed" : "lesson_started",
+        lessonId: input.lessonId,
+      });
+      const { emitOrchestratorEvent } = await import("../core/orchestrator");
+      emitOrchestratorEvent(
+        input.isCompleted ? "LESSON_COMPLETED" : "COURSE_STARTED",
+        { userId: ctx.user.id, lessonId: input.lessonId },
+        "edge"
+      );
 
       return {
         success: true,

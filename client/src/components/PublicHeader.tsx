@@ -112,7 +112,7 @@ export default function PublicHeader() {
     >
       <div
         className={cn(
-          "container flex items-center gap-3 lg:gap-6 transition-[height] duration-300",
+          "container flex items-center gap-2 lg:gap-3 xl:gap-4 transition-[height] duration-300",
           scrolled ? "h-[4.25rem] lg:h-[4.5rem]" : "h-[5rem] lg:h-[5.5rem]"
         )}
       >
@@ -125,7 +125,7 @@ export default function PublicHeader() {
           </a>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 flex-1 justify-center min-w-0 flex-nowrap">
+        <nav className="hidden lg:flex items-center gap-0.5 min-w-0 flex-1 justify-start xl:justify-center flex-nowrap pr-2">
           {navItems.map((item) =>
             "hash" in item && item.hash ? (
               <a
@@ -142,7 +142,7 @@ export default function PublicHeader() {
                 {item.label}
               </a>
             ) : (
-              <Link key={item.path} href={item.path}>
+              <Link key={item.path + item.label} href={item.path}>
                 <a
                   className={`cf-nav-link whitespace-nowrap shrink-0 ${
                     isActive(item.path) ? "cf-nav-link-active" : ""
@@ -155,11 +155,11 @@ export default function PublicHeader() {
           )}
         </nav>
 
-        <div className="hidden xl:flex w-full max-w-[17.5rem] cf-header-search shrink-0">
-          <SearchBar />
-        </div>
-
-        <div className="hidden md:flex items-center gap-2.5 shrink-0 ml-auto lg:ml-0">
+        {/* Busca + ações no mesmo bloco (ml-auto) — evita overlap com “Para Criadores” */}
+        <div className="hidden md:flex items-center gap-2.5 xl:gap-3 shrink-0 ml-auto pl-2 relative z-10">
+          <div className="hidden xl:flex w-[14.5rem] 2xl:w-[16.5rem] cf-header-search shrink-0">
+            <SearchBar />
+          </div>
           <Button
             variant="ghost"
             size="icon"

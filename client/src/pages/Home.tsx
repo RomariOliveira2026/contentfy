@@ -100,34 +100,34 @@ export default function Home() {
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
                 <p className="cf-home-hero-eyebrow">
-                  Plataforma premium de infoprodutos
+                  ContentFy Experience™
                 </p>
 
                 <h1 className="cf-home-hero-title text-balance">
-                  Transforme{" "}
-                  <span className="text-gradient-owl">conhecimento</span> em{" "}
-                  <span className="text-gradient-owl">resultado</span>
+                  Evolua com{" "}
+                  <span className="text-gradient-owl">método</span>, não com{" "}
+                  <span className="text-gradient-owl">catálogo</span>
                 </h1>
 
                 <p className="cf-home-hero-subtitle">
-                  Cursos, e-books, audiobooks e apps em uma experiência de nível
-                  internacional — feita para quem leva conteúdo a sério.
+                  Um centro de descoberta com jornadas, competências e identidade
+                  própria — feito para quem leva evolução a sério.
                 </p>
 
                 <div className="cf-home-hero-ctas">
                   <Link href="/explorar">
                     <Button size="lg" className="cf-home-btn-primary w-full sm:w-auto">
-                      Explorar Produtos
+                      Entrar no Centro de Descoberta
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </Link>
-                  <Link href="/about">
+                  <Link href="/dashboard">
                     <Button
                       size="lg"
                       variant="outline"
                       className="cf-home-btn-secondary w-full sm:w-auto"
                     >
-                      Saiba Mais
+                      Centro de Evolução
                     </Button>
                   </Link>
                 </div>
@@ -173,19 +173,19 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Home personalizada — motor Discovery (comportamento/regras) */}
-        <section className="py-10 lg:py-14 border-y border-border/40 bg-background/40">
-          <DiscoveryHomeFeed />
+        {/* Centro de Descoberta — motor Discovery (percepção Phoenix) */}
+        <section className="py-0 lg:py-0 border-y border-border/40 bg-background/40">
+          <DiscoveryHomeFeed showHero />
         </section>
 
         <section className="py-20 lg:py-24">
           <div className="container">
             <AnimatedSection>
               <div className="cf-section-header">
-                <p className="cf-caption mb-3">Categorias</p>
-                <h2 className="cf-section-title">O que você vai encontrar</h2>
+                <p className="cf-caption mb-3">Formatos</p>
+                <h2 className="cf-section-title">Como a evolução chega até você</h2>
                 <p className="cf-section-subtitle mx-auto">
-                  Formatos pensados para diferentes ritmos de aprendizado
+                  Formatos distintos — a mesma identidade ContentFy
                 </p>
               </div>
             </AnimatedSection>
@@ -221,17 +221,17 @@ export default function Home() {
           <section className="py-20 lg:py-24 cf-section-muted">
             <div className="container">
               <div className="cf-section-header">
-                <p className="cf-caption mb-3">Destaques</p>
-                <h2 className="cf-section-title">Produtos em evidência</h2>
+                <p className="cf-caption mb-3">Seleção</p>
+                <h2 className="cf-section-title">Jornadas em evidência</h2>
                 <p className="cf-section-subtitle mx-auto">
-                  Seleção do catálogo ContentFy
+                  Produtos com DNA ContentFy — transformação, não listagem
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
                 {products.slice(0, 6).map((product, index) => (
                   <AnimatedSection key={product.id} delay={index * 0.05}>
-                    <Link href={`/products/${product.slug}`}>
+                    <Link href={`/produto/${product.slug}`}>
                       <Card className="cf-card-product cf-home-lift group py-0 gap-0">
                         <div className="cf-product-cover">
                           {product.coverImage ? (
@@ -302,9 +302,9 @@ export default function Home() {
               </div>
 
               <div className="text-center mt-12">
-                <Link href="/products">
+                <Link href="/explorar">
                   <Button size="lg" variant="outline" className="cf-home-btn-secondary">
-                    Ver todos os produtos
+                    Explorar o ecossistema
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </Link>

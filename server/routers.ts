@@ -15,6 +15,9 @@ import { protectRouter } from "./routers/protect";
 import { discoveryRouter } from "./routers/discovery";
 import { learnRouter } from "./routers/learn";
 import { successRouter } from "./routers/success";
+import { experienceRouter } from "./routers/experience";
+import { intelligenceRouter } from "./routers/intelligence";
+import { orchestratorRouter } from "./routers/orchestrator";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -46,6 +49,9 @@ export const appRouter = router({
   discovery: discoveryRouter,
   learn: learnRouter,
   success: successRouter,
+  experience: experienceRouter,
+  intelligence: intelligenceRouter,
+  orchestrator: orchestratorRouter,
 });
 
 export type AppRouter = typeof appRouter;

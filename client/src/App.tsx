@@ -15,7 +15,7 @@ import ProductPlans from "./pages/ProductPlans";
 import Checkout from "./pages/Checkout";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import CheckoutError from "./pages/CheckoutError";
-import MembersDashboard from "./pages/members/Dashboard";
+import ExperienceHomePage from "./pages/members/ExperienceHome";
 import MyAccount from "./pages/MyAccount";
 import MyProducts from "./pages/MyProducts";
 import CourseViewer from "./pages/members/CourseViewer";
@@ -75,8 +75,12 @@ import AdminDiscovery from "./pages/admin/Discovery";
 
 const EvolutionPage = lazy(() => import("./pages/members/Evolution"));
 const MyEvolutionPage = lazy(() => import("./pages/members/MyEvolution"));
+const AchievementsPage = lazy(() => import("./pages/members/Achievements"));
 const AdminSuccess = lazy(() => import("./pages/admin/Success"));
 const CreatorSuccess = lazy(() => import("./pages/creator/Success"));
+const AdminIntelligence = lazy(() => import("./pages/admin/Intelligence"));
+const CreatorIntelligence = lazy(() => import("./pages/creator/Intelligence"));
+const AdminOrchestrator = lazy(() => import("./pages/admin/Orchestrator"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -111,7 +115,8 @@ function Router() {
       
         {/* Members Area */}
       <Route path="/my-account" component={MyAccount} />
-      <Route path="/dashboard" component={MembersDashboard} />
+      <Route path="/dashboard" component={ExperienceHomePage} />
+      <Route path="/my-account/home" component={ExperienceHomePage} />
       <Route path="/my-account/products" component={MyProducts} />
       <Route path="/my-account/purchases/:orderId/protection" component={OrderProtection} />
       <Route path="/my-account/purchases" component={MyPurchases} />
@@ -127,6 +132,13 @@ function Router() {
         {() => (
           <Suspense fallback={null}>
             <MyEvolutionPage />
+          </Suspense>
+        )}
+      </Route>
+      <Route path="/my-account/achievements">
+        {() => (
+          <Suspense fallback={null}>
+            <AchievementsPage />
           </Suspense>
         )}
       </Route>
@@ -155,6 +167,20 @@ function Router() {
           </Suspense>
         )}
       </Route>
+      <Route path="/admin/intelligence">
+        {() => (
+          <Suspense fallback={null}>
+            <AdminIntelligence />
+          </Suspense>
+        )}
+      </Route>
+      <Route path="/admin/orchestrator">
+        {() => (
+          <Suspense fallback={null}>
+            <AdminOrchestrator />
+          </Suspense>
+        )}
+      </Route>
       <Route path="/admin/customers" component={AdminCustomers} />
       <Route path="/admin/courses" component={AdminCourses} />
       <Route path="/admin/settings" component={AdminSettings} />
@@ -180,6 +206,13 @@ function Router() {
         {() => (
           <Suspense fallback={null}>
             <CreatorSuccess />
+          </Suspense>
+        )}
+      </Route>
+      <Route path="/creator/intelligence">
+        {() => (
+          <Suspense fallback={null}>
+            <CreatorIntelligence />
           </Suspense>
         )}
       </Route>

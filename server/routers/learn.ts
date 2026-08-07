@@ -125,7 +125,24 @@ export const learnRouter = router({
           message: "Objetivo inválido",
         });
       }
-      return learnStore.setActiveGoalId(ctx.user.id, input.goalId);
+      const result = await learnStore.setActiveGoalId(ctx.user.id, input.goalId);
+      const { invalidateExperienceForUser } = await import(
+        "../core/experience/cache"
+      );
+      const experienceStore = await import("../experience-store");
+      invalidateExperienceForUser(ctx.user.id);
+      void experienceStore.recordActivityEvent({
+        userId: ctx.user.id,
+        eventType: "goal_updated",
+        meta: { goalId: input.goalId },
+      });
+      const { emitOrchestratorEvent } = await import("../core/orchestrator");
+      emitOrchestratorEvent(
+        "GOAL_UPDATED",
+        { userId: ctx.user.id, goalId: input.goalId },
+        "learn"
+      );
+      return result;
     }),
 
   competencies: protectedProcedure.query(async ({ ctx }) => {
