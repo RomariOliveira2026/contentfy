@@ -4,6 +4,7 @@ import type {
   DiscoveryProfile,
   DiscoveryResult,
 } from "@shared/contentfy";
+import { resolveShowcaseProductImages } from "@shared/contentfy";
 import { relationshipEngine } from "./relationship-engine";
 import { categoryEngine } from "./category-engine";
 
@@ -80,6 +81,12 @@ export function toCardModel(
             ? "App"
             : String(meta.type);
 
+  const images = resolveShowcaseProductImages(
+    slug,
+    product?.coverImage || product?.thumbnailImage,
+    product?.coverImage || product?.thumbnailImage
+  );
+
   return {
     id: product?.id != null ? String(product.id) : `slug:${slug}`,
     slug,
@@ -89,7 +96,8 @@ export function toCardModel(
     category: meta.category,
     tags: meta.tags,
     author: meta.author,
-    coverImage: product?.coverImage || product?.thumbnailImage || null,
+    coverImage: images.coverImage,
+    heroImage: images.heroImage,
     priceCents: product?.price ?? null,
     level: meta.level ? String(meta.level) : undefined,
     duration: meta.duration,

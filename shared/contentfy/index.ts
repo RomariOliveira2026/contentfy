@@ -21,3 +21,4 @@ export * from "./contracts/community";
 export * from "./contracts/notifications";
 export * from "./contracts/products";
 export * from "./contentfy-dna";
+export * from "./showcase-product-images";

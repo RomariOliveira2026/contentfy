@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useState } from "react";
 import { Heart, PlayCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import {
   dnaCompetencyLabels,
   formatDnaDuration,
   resolveContentfyDna,
+  resolveShowcaseProductImages,
 } from "@shared/contentfy";
 
 export interface DiscoveryCardData {
@@ -44,8 +46,14 @@ export function DiscoveryCard({
   priority,
   className,
 }: DiscoveryCardProps) {
-  const image =
-    product.heroImage || product.coverImage || "/brand/png/symbol.png";
+  const resolved = resolveShowcaseProductImages(
+    product.slug,
+    product.coverImage,
+    product.heroImage
+  );
+  const [imageSrc, setImageSrc] = useState(
+    resolved.coverImage || resolved.heroImage || "/brand/png/symbol.png"
+  );
   const dna = resolveContentfyDna(product.slug, {
     category: product.category,
     name: product.name,
@@ -74,11 +82,12 @@ export function DiscoveryCard({
         <a className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
           <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border/50 bg-muted/30 shadow-[0_16px_40px_rgba(0,0,0,0.28)] transition-[box-shadow,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:shadow-[0_28px_56px_rgba(0,0,0,0.4)]">
             <img
-              src={image}
+              src={imageSrc}
               alt={product.name}
               loading={priority ? "eager" : "lazy"}
               decoding="async"
-              className="h-full w-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"
+              onError={() => setImageSrc("/brand/png/symbol.png")}
+              className="h-full w-full object-contain bg-[#0c1220]/80 p-1 transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.03]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
             <div className="absolute top-2.5 left-2.5">

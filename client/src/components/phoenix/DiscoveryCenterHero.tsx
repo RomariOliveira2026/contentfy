@@ -6,6 +6,7 @@ import {
   dnaCompetencyLabels,
   formatDnaDuration,
   resolveContentfyDna,
+  resolveShowcaseProductImages,
 } from "@shared/contentfy";
 import type { DiscoveryCardData } from "@/components/discovery";
 
@@ -46,10 +47,15 @@ export function DiscoveryCenterHero({
         ? dnaCompetencyLabels(dna, 4)
         : [];
 
+  const images = featured
+    ? resolveShowcaseProductImages(
+        featured.slug,
+        featured.coverImage,
+        featured.heroImage
+      )
+    : { coverImage: null, heroImage: null };
   const image =
-    featured?.heroImage ||
-    featured?.coverImage ||
-    "/brand/png/symbol.png";
+    images.heroImage || images.coverImage || "/brand/png/symbol.png";
 
   const primaryHref =
     ctaHref || featured?.href || "/explorar";
