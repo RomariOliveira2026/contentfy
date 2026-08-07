@@ -16,8 +16,7 @@ import PublicFooter from "@/components/PublicFooter";
 
 const HERO_BG =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_hero_bg-49SjHkZ9Zq4VXLF5SeHWvU.webp";
-const MOCKUP_IMG =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_mockup_oficial-FDXUTUiPqGyfYHoemKGAag.webp";
+const MOCKUP_IMG = "/products/desacelere/mockup-kit.webp";
 
 const BENEFIT_ICONS = {
   mindfulness:

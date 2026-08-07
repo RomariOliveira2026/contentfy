@@ -8,12 +8,11 @@
  */
 
 import type { ShowcaseProduct } from "./types";
+import { DESACELERE_ASSETS as D } from "./desacelereAssets";
 import { REPRESENTANTE40_ASSETS as R40 } from "./representante40Assets";
 
 const DESACELERE_HERO =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_hero_bg-49SjHkZ9Zq4VXLF5SeHWvU.webp";
-const DESACELERE_COVER =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_mockup_oficial-FDXUTUiPqGyfYHoemKGAag.webp";
 
 export const PROVISIONAL_SHOWCASE_CATALOG: ShowcaseProduct[] = [
   {
@@ -52,15 +51,19 @@ export const PROVISIONAL_SHOWCASE_CATALOG: ShowcaseProduct[] = [
       "Orientação prática para aplicação imediata",
       "Acesso em qualquer dispositivo",
     ],
-    heroImage: DESACELERE_HERO,
-    coverImage: DESACELERE_COVER,
-    landscapeImage: DESACELERE_HERO,
+    heroImage: D.mockupKit,
+    coverImage: D.mockupKit,
+    landscapeImage: D.mockupKit,
     imageFit: "contain",
+    imageSrcSet: D.mockupKitSrcSet,
+    imageSizes: D.mockupKitSizes,
     galleryImages: [
       {
-        src: DESACELERE_COVER,
-        alt: "Mockup oficial do e-book Desacelere",
+        src: D.mockupKit,
+        alt: "Mockup completo Desacelere — livro, área de membros e planner",
         fit: "contain",
+        srcSet: D.mockupKitSrcSet,
+        sizes: D.mockupKitSizes,
       },
       {
         src: DESACELERE_HERO,

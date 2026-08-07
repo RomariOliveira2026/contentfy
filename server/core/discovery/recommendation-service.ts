@@ -4,7 +4,7 @@ import type {
   DiscoveryProfile,
   DiscoveryResult,
 } from "@shared/contentfy";
-import { resolveShowcaseProductImages } from "@shared/contentfy";
+import { resolveShowcaseProductImages, resolveShowcaseDisplayName, SHOWCASE_PRODUCT_ASSETS } from "@shared/contentfy";
 import { relationshipEngine } from "./relationship-engine";
 import { categoryEngine } from "./category-engine";
 
@@ -69,7 +69,8 @@ export function toCardModel(
   extras?: Partial<DiscoveryCardModel>
 ): DiscoveryCardModel {
   const slug = meta.slug;
-  const name = product?.name || slug;
+  const name = resolveShowcaseDisplayName(slug, product?.name);
+  const assets = SHOWCASE_PRODUCT_ASSETS[slug];
   const typeLabel =
     meta.type === "ebook"
       ? "E-book"
@@ -95,7 +96,7 @@ export function toCardModel(
     typeLabel,
     category: meta.category,
     tags: meta.tags,
-    author: meta.author,
+    author: meta.author || assets?.author,
     coverImage: images.coverImage,
     heroImage: images.heroImage,
     priceCents: product?.price ?? null,

@@ -6,7 +6,7 @@ import {
   dnaCompetencyLabels,
   formatDnaDuration,
   resolveContentfyDna,
-  resolveShowcaseProductImages,
+  resolveDiscoveryCardPresentation,
 } from "@shared/contentfy";
 import type { DiscoveryCardData } from "@/components/discovery";
 
@@ -47,15 +47,18 @@ export function DiscoveryCenterHero({
         ? dnaCompetencyLabels(dna, 4)
         : [];
 
-  const images = featured
-    ? resolveShowcaseProductImages(
+  const presentation = featured
+    ? resolveDiscoveryCardPresentation(
         featured.slug,
         featured.coverImage,
-        featured.heroImage
+        featured.heroImage,
+        featured.name
       )
-    : { coverImage: null, heroImage: null };
-  const image =
-    images.heroImage || images.coverImage || "/brand/png/symbol.png";
+    : null;
+  const image = presentation?.image || "/brand/png/symbol.png";
+  const featuredName =
+    presentation?.displayName || featured?.name || "Descubra o que evolui com você";
+  const featuredAuthor = featured?.author || presentation?.author || undefined;
 
   const primaryHref =
     ctaHref || featured?.href || "/explorar";
@@ -87,7 +90,7 @@ export function DiscoveryCenterHero({
               Centro de Descoberta · ContentFy
             </p>
             <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-tight text-balance leading-[1.12]">
-              {featured?.name || "Descubra o que evolui com você"}
+              {featuredName}
             </h1>
             <p className="mt-3 text-muted-foreground text-base sm:text-lg max-w-xl leading-relaxed">
               {dna?.transformation ||
@@ -133,11 +136,11 @@ export function DiscoveryCenterHero({
             {featured ? (
               <>
                 <p className="text-lg font-medium tracking-tight mt-1.5">
-                  {featured.name}
+                  {featuredName}
                 </p>
-                {featured.author ? (
+                {featuredAuthor ? (
                   <p className="text-sm text-muted-foreground mt-1">
-                    {featured.author}
+                    {featuredAuthor}
                   </p>
                 ) : null}
                 <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">

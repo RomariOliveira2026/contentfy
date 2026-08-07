@@ -7,7 +7,7 @@ import {
   dnaCompetencyLabels,
   formatDnaDuration,
   resolveContentfyDna,
-  resolveShowcaseProductImages,
+  resolveDiscoveryCardPresentation,
 } from "@shared/contentfy";
 
 export interface DiscoveryCardData {
@@ -46,14 +46,18 @@ export function DiscoveryCard({
   priority,
   className,
 }: DiscoveryCardProps) {
-  const resolved = resolveShowcaseProductImages(
+  const presentation = resolveDiscoveryCardPresentation(
     product.slug,
     product.coverImage,
-    product.heroImage
+    product.heroImage,
+    product.name
   );
   const [imageSrc, setImageSrc] = useState(
-    resolved.coverImage || resolved.heroImage || "/brand/png/symbol.png"
+    presentation.image || "/brand/png/symbol.png"
   );
+  const displayName = presentation.displayName;
+  const displayAuthor = product.author || presentation.author || undefined;
+  const isMockup = presentation.variant === "mockup";
   const dna = resolveContentfyDna(product.slug, {
     category: product.category,
     name: product.name,
@@ -80,14 +84,26 @@ export function DiscoveryCard({
     >
       <Link href={product.href}>
         <a className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
-          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border/50 bg-muted/30 shadow-[0_16px_40px_rgba(0,0,0,0.28)] transition-[box-shadow,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:shadow-[0_28px_56px_rgba(0,0,0,0.4)]">
+          <div
+            className={cn(
+              "relative aspect-[3/4] overflow-hidden rounded-2xl border border-border/50 shadow-[0_16px_40px_rgba(0,0,0,0.28)] transition-[box-shadow,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:shadow-[0_28px_56px_rgba(0,0,0,0.4)]",
+              isMockup
+                ? "bg-gradient-to-br from-[#f97316] via-[#ea580c] to-[#c2410c]"
+                : "bg-muted/30"
+            )}
+          >
             <img
               src={imageSrc}
-              alt={product.name}
+              alt={displayName}
               loading={priority ? "eager" : "lazy"}
               decoding="async"
               onError={() => setImageSrc("/brand/png/symbol.png")}
-              className="h-full w-full object-contain bg-[#0c1220]/80 p-1 transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.03]"
+              className={cn(
+                "h-full w-full transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.03]",
+                isMockup
+                  ? "object-contain p-3 sm:p-4 drop-shadow-[0_12px_28px_rgba(0,0,0,0.35)]"
+                  : "object-cover"
+              )}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
             <div className="absolute top-2.5 left-2.5">
@@ -102,11 +118,11 @@ export function DiscoveryCard({
                 </p>
               ) : null}
               <h3 className="text-sm sm:text-[15px] font-semibold leading-snug line-clamp-2 text-white">
-                {product.name}
+                {displayName}
               </h3>
-              {product.author ? (
+              {displayAuthor ? (
                 <p className="text-xs text-white/70 line-clamp-1 mt-1">
-                  {product.author}
+                  {displayAuthor}
                 </p>
               ) : null}
             </div>

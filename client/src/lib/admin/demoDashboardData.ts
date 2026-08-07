@@ -3,8 +3,7 @@
  * Somente para apresentação — não representam métricas reais de produção.
  */
 
-const DESACELERE_COVER =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_mockup_oficial-FDXUTUiPqGyfYHoemKGAag.webp";
+const DESACELERE_MOCKUP = "/products/desacelere/mockup-kit.webp";
 const REPRESENTANTE_COVER = "/products/representante40/cover-premium.webp";
 const REPRESENTANTE_MOCKUP = "/products/representante40/mockup-kit.webp";
 
@@ -139,7 +138,7 @@ export const demoProducts = [
     status: "Publicado" as const,
     sales: 128,
     rating: 4.9,
-    cover: DESACELERE_COVER,
+    cover: DESACELERE_MOCKUP,
   },
   {
     id: "representante",
@@ -169,7 +168,7 @@ export const demoProducts = [
     status: "Publicado" as const,
     sales: 58,
     rating: 4.6,
-    cover: DESACELERE_COVER,
+    cover: DESACELERE_MOCKUP,
   },
   {
     id: "leis",

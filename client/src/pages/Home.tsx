@@ -22,9 +22,8 @@ import {
 import { motion } from "framer-motion";
 import { DiscoveryHomeFeed } from "@/components/discovery";
 
-/** Mockup oficial já usado na marca — sem inventar arte nova. */
-const DESACELERE_MOCKUP =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_mockup_oficial-FDXUTUiPqGyfYHoemKGAag.webp";
+/** Mockup kit oficial — mesmo padrão do Representante 4.0. */
+const DESACELERE_MOCKUP = "/products/desacelere/mockup-kit.webp";
 
 export default function Home() {
   const { data: products, isLoading } = trpc.products.list.useQuery();

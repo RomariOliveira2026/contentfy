@@ -24,8 +24,7 @@ import {
   Trophy,
 } from "lucide-react";
 
-const DESACELERE_COVER =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_mockup_oficial-FDXUTUiPqGyfYHoemKGAag.webp";
+const DESACELERE_COVER = "/products/desacelere/mockup-kit.webp";
 
 type LibraryProduct = {
   id: number;
