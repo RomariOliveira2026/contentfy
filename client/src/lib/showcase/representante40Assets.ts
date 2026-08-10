@@ -47,5 +47,5 @@ export const REPRESENTANTE40_ASSETS = {
   salesPageUrl: "https://representante40.com.br/",
   checkoutUrl: "/checkout/manual-do-representante-comercial",
   publicCheckoutUrl:
-    "https://www.contentfy.com.br/checkout/manual-do-representante-comercial",
+    "https://contentfy.com.br/checkout/manual-do-representante-comercial",
 } as const;
