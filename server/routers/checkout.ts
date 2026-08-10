@@ -2,6 +2,7 @@ import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "../db";
+import { ensurePortfolioCheckoutProduct } from "../core/products/ensure-portfolio-products";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -12,6 +13,24 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
  * Checkout Router - Sistema de pagamentos com Stripe
  */
 export const checkoutRouter = router({
+  /** Produto pronto para checkout — cria registro de portfólio no banco se necessário. */
+  getProduct: publicProcedure
+    .input(z.object({ slug: z.string().min(1) }))
+    .query(async ({ input }) => {
+      const product =
+        (await ensurePortfolioCheckoutProduct(input.slug)) ??
+        (await db.getProductBySlug(input.slug));
+
+      if (!product || !product.isActive) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Produto não encontrado ou indisponível para compra.",
+        });
+      }
+
+      return product;
+    }),
+
   createCheckout: publicProcedure
   .input(
     z.object({

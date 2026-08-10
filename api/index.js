@@ -1338,6 +1338,43 @@ var init_db = __esm({
   }
 });
 
+// shared/contentfy/portfolio-checkout-products.ts
+function getPortfolioCheckoutProduct(slug) {
+  return PORTFOLIO_CHECKOUT_PRODUCTS.find((p) => p.slug === slug) ?? null;
+}
+var PORTFOLIO_CHECKOUT_PRODUCTS;
+var init_portfolio_checkout_products = __esm({
+  "shared/contentfy/portfolio-checkout-products.ts"() {
+    "use strict";
+    PORTFOLIO_CHECKOUT_PRODUCTS = [
+      {
+        slug: "desacelere",
+        name: "Desacelere",
+        description: "Paz e equil\xEDbrio para sua mente \u2014 guia completo com m\xF3dulos, exerc\xEDcios e quizzes.",
+        type: "ebook",
+        price: 9700,
+        coverImage: "/products/desacelere/mockup-kit.webp",
+        thumbnailImage: "/products/desacelere/mockup-kit.webp",
+        salesPageUrl: "https://desacelere.contentfy.com.br/",
+        guaranteeDays: 30,
+        maxInstallments: 10
+      },
+      {
+        slug: "manual-do-representante-comercial",
+        name: "Manual Representante 4.0",
+        description: "Ecossistema premium do representante comercial moderno com IA \u2014 manual, CRM e b\xF4nus.",
+        type: "ebook",
+        price: 9700,
+        coverImage: "/products/representante40/mockup-kit.webp",
+        thumbnailImage: "/products/representante40/cover-premium.webp",
+        salesPageUrl: "https://representante40.com.br/",
+        guaranteeDays: 30,
+        maxInstallments: 10
+      }
+    ];
+  }
+});
+
 // server/core/learn/cache.ts
 var cache_exports = {};
 __export(cache_exports, {
@@ -2371,6 +2408,68 @@ var init_contentfy_dna = __esm({
   }
 });
 
+// shared/contentfy/showcase-product-images.ts
+function isValidShowcaseImageUrl(url) {
+  if (!url?.trim()) return false;
+  const value = url.trim();
+  if (/^https?:\/\//i.test(value)) return true;
+  if (value.startsWith("/products/") || value.startsWith("/brand/")) return true;
+  return false;
+}
+function looksLikeProductSlug(name, slug) {
+  const normalized = name.trim().toLowerCase();
+  return normalized === slug || normalized === slug.replace(/-/g, " ") || /^[a-z0-9]+(-[a-z0-9]+)+$/.test(normalized);
+}
+function resolveShowcaseDisplayName(slug, rawName) {
+  const assets = SHOWCASE_PRODUCT_ASSETS[slug];
+  if (!rawName?.trim() || looksLikeProductSlug(rawName, slug)) {
+    return assets?.displayName || rawName?.trim() || slug;
+  }
+  return rawName.trim();
+}
+function resolveShowcaseProductImages(slug, coverImage, heroImage) {
+  const assets = SHOWCASE_PRODUCT_ASSETS[slug];
+  const resolvedCover = isValidShowcaseImageUrl(coverImage) ? coverImage : assets?.coverImage ?? null;
+  const resolvedHero = isValidShowcaseImageUrl(heroImage) ? heroImage : assets?.heroImage ?? resolvedCover;
+  return {
+    coverImage: resolvedCover,
+    heroImage: resolvedHero
+  };
+}
+var DESACELERE_HERO, DESACELERE, R40, SHOWCASE_PRODUCT_ASSETS, SHOWCASE_PRODUCT_IMAGES;
+var init_showcase_product_images = __esm({
+  "shared/contentfy/showcase-product-images.ts"() {
+    "use strict";
+    DESACELERE_HERO = "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_hero_bg-49SjHkZ9Zq4VXLF5SeHWvU.webp";
+    DESACELERE = "/products/desacelere";
+    R40 = "/products/representante40";
+    SHOWCASE_PRODUCT_ASSETS = {
+      desacelere: {
+        coverImage: `${DESACELERE}/mockup-kit.webp`,
+        heroImage: DESACELERE_HERO,
+        discoveryImage: `${DESACELERE}/mockup-kit.webp`,
+        discoveryVariant: "mockup",
+        displayName: "Desacelere",
+        author: "ContentFy"
+      },
+      "manual-do-representante-comercial": {
+        coverImage: `${R40}/cover-premium.webp`,
+        heroImage: `${R40}/mockup-kit.webp`,
+        discoveryImage: `${R40}/mockup-kit.webp`,
+        discoveryVariant: "mockup",
+        displayName: "Manual Representante 4.0",
+        author: "Rom\xE1rio Oliveira"
+      }
+    };
+    SHOWCASE_PRODUCT_IMAGES = Object.fromEntries(
+      Object.entries(SHOWCASE_PRODUCT_ASSETS).map(([slug, assets]) => [
+        slug,
+        { coverImage: assets.coverImage, heroImage: assets.heroImage }
+      ])
+    );
+  }
+});
+
 // shared/contentfy/index.ts
 var init_contentfy = __esm({
   "shared/contentfy/index.ts"() {
@@ -2393,6 +2492,8 @@ var init_contentfy = __esm({
     init_notifications();
     init_products();
     init_contentfy_dna();
+    init_showcase_product_images();
+    init_portfolio_checkout_products();
   }
 });
 
@@ -4580,11 +4681,60 @@ var productsRouter = router({
 import { z as z3 } from "zod";
 init_db();
 import { TRPCError as TRPCError4 } from "@trpc/server";
+
+// server/core/products/ensure-portfolio-products.ts
+init_portfolio_checkout_products();
+init_db();
+function toInsert(def) {
+  return {
+    name: def.name,
+    slug: def.slug,
+    description: def.description,
+    type: def.type,
+    price: def.price,
+    coverImage: def.coverImage,
+    thumbnailImage: def.thumbnailImage,
+    salesPageUrl: def.salesPageUrl,
+    guaranteeDays: def.guaranteeDays,
+    maxInstallments: def.maxInstallments,
+    allowInstallments: true,
+    isRecurring: false,
+    isActive: true
+  };
+}
+async function ensurePortfolioCheckoutProduct(slug) {
+  const existing = await getProductBySlug(slug);
+  if (existing?.isActive) return existing;
+  const def = getPortfolioCheckoutProduct(slug);
+  if (!def) return existing;
+  if (existing && !existing.isActive) {
+    await updateProduct(existing.id, { isActive: true, price: def.price });
+    return getProductById(existing.id);
+  }
+  if (!existing) {
+    const created = await createProduct(toInsert(def));
+    return getProductById(created.insertId);
+  }
+  return existing;
+}
+
+// server/routers/checkout.ts
 import Stripe from "stripe";
 var stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2025-10-29.clover"
 });
 var checkoutRouter = router({
+  /** Produto pronto para checkout — cria registro de portfólio no banco se necessário. */
+  getProduct: publicProcedure.input(z3.object({ slug: z3.string().min(1) })).query(async ({ input }) => {
+    const product = await ensurePortfolioCheckoutProduct(input.slug) ?? await getProductBySlug(input.slug);
+    if (!product || !product.isActive) {
+      throw new TRPCError4({
+        code: "NOT_FOUND",
+        message: "Produto n\xE3o encontrado ou indispon\xEDvel para compra."
+      });
+    }
+    return product;
+  }),
   createCheckout: publicProcedure.input(
     z3.object({
       name: z3.string(),
@@ -6908,6 +7058,9 @@ var ContinueLearningEngine = class {
 };
 var continueLearningEngine = new ContinueLearningEngine();
 
+// server/core/discovery/recommendation-service.ts
+init_contentfy();
+
 // server/core/discovery/seed-relationships.ts
 var DISCOVERY_RELATIONSHIP_SEED = [
   // Representação comercial trail
@@ -7076,8 +7229,14 @@ function mergeCatalogMeta(products2, seedMeta, dbMeta = []) {
 }
 function toCardModel(meta, product, extras) {
   const slug = meta.slug;
-  const name = product?.name || slug;
+  const name = resolveShowcaseDisplayName(slug, product?.name);
+  const assets = SHOWCASE_PRODUCT_ASSETS[slug];
   const typeLabel = meta.type === "ebook" ? "E-book" : meta.type === "course" ? "Curso" : meta.type === "audiobook" ? "Audiobook" : meta.type === "app" ? "App" : String(meta.type);
+  const images = resolveShowcaseProductImages(
+    slug,
+    product?.coverImage || product?.thumbnailImage,
+    product?.coverImage || product?.thumbnailImage
+  );
   return {
     id: product?.id != null ? String(product.id) : `slug:${slug}`,
     slug,
@@ -7086,8 +7245,9 @@ function toCardModel(meta, product, extras) {
     typeLabel,
     category: meta.category,
     tags: meta.tags,
-    author: meta.author,
-    coverImage: product?.coverImage || product?.thumbnailImage || null,
+    author: meta.author || assets?.author,
+    coverImage: images.coverImage,
+    heroImage: images.heroImage,
     priceCents: product?.price ?? null,
     level: meta.level ? String(meta.level) : void 0,
     duration: meta.duration,

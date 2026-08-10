@@ -27,17 +27,37 @@ async function seedProducts() {
     {
       name: "Desacelere",
       slug: "desacelere",
-      description: "Controle a ansiedade e recupere a paz mental.",
+      description:
+        "Paz e equilíbrio para sua mente — guia completo com módulos, exercícios e quizzes.",
       type: "ebook",
       categoryId: 1,
-      price: 4700,
+      price: 9700,
       isRecurring: false,
       recurringInterval: null,
       allowInstallments: true,
-      maxInstallments: 6,
-      coverImage: null,
-      thumbnailImage: null,
-      salesPageUrl: null,
+      maxInstallments: 10,
+      coverImage: "/products/desacelere/mockup-kit.webp",
+      thumbnailImage: "/products/desacelere/mockup-kit.webp",
+      salesPageUrl: "https://desacelere.contentfy.com.br/",
+      guaranteeDays: 30,
+      isActive: true,
+    },
+    {
+      name: "Manual Representante 4.0",
+      slug: "manual-do-representante-comercial",
+      description:
+        "Ecossistema premium do representante comercial moderno com IA — manual, CRM e bônus.",
+      type: "ebook",
+      categoryId: 1,
+      price: 9700,
+      isRecurring: false,
+      recurringInterval: null,
+      allowInstallments: true,
+      maxInstallments: 10,
+      coverImage: "/products/representante40/mockup-kit.webp",
+      thumbnailImage: "/products/representante40/cover-premium.webp",
+      salesPageUrl: "https://representante40.com.br/",
+      guaranteeDays: 30,
       isActive: true,
     },
   ]);
@@ -46,4 +66,3 @@ async function seedProducts() {
   await connection.end();
 }
 seedProducts().catch(console.error);
-   

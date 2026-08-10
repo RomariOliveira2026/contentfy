@@ -90,6 +90,13 @@ export function isComingSoonCommerce(product: ShowcaseProduct) {
   return v === "prelaunch" || v === "coming_soon" || !product.isPublished;
 }
 
+/** Produto com preço e visibilidade comercial — pode ir ao checkout ContentFy. */
+export function canCheckout(product: ShowcaseProduct) {
+  if (product.priceCents == null) return false;
+  const visibility = getProductVisibility(product);
+  return visibility === "available" || product.isPublished;
+}
+
 /**
  * Produtos da seção “Primeiros lançamentos”.
  * Preferência: Desacelere + Manual; depois demais lançamentos.

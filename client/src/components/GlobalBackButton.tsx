@@ -17,8 +17,9 @@ export default function GlobalBackButton() {
   useTrackNavigation();
 
   const isHome = location === "/" || location === "";
+  const isCheckout = location.startsWith("/checkout");
 
-  if (isHome) return null;
+  if (isHome || isCheckout) return null;
 
   const handleBack = () => {
     const prev = popPreviousPath(location);

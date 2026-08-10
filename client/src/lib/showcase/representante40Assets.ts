@@ -44,4 +44,8 @@ export const REPRESENTANTE40_ASSETS = {
 
   kitHero: `${BASE}/kit-hero.webp`,
   logo: `${BASE}/logo.webp`,
+  salesPageUrl: "https://representante40.com.br/",
+  checkoutUrl: "/checkout/manual-do-representante-comercial",
+  publicCheckoutUrl:
+    "https://www.contentfy.com.br/checkout/manual-do-representante-comercial",
 } as const;

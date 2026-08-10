@@ -14,6 +14,7 @@ import {
   productHref,
   visibilityLabel,
   getProductVisibility,
+  canCheckout,
 } from "@/lib/showcase";
 import { badgesForProduct, ShowcaseBadgePill } from "./ShowcaseBadge";
 import ProductCoverMedia from "./ProductCoverMedia";
@@ -36,8 +37,7 @@ export default function ProductDetailModal({
   const price = formatShowcasePrice(
     product.isPublished ? product.priceCents : null
   );
-  const canBuy =
-    !comingSoon && product.isPublished && product.priceCents != null;
+  const canBuy = canCheckout(product);
   const status = getProductVisibility(product);
 
   return (

@@ -249,8 +249,19 @@ export function productHref(product: ShowcaseProduct) {
   return `/produto/${product.slug}`;
 }
 
-export function checkoutHref(product: ShowcaseProduct) {
+export function checkoutHref(product: ShowcaseProduct | { slug: string }) {
   return `/checkout/${product.slug}`;
+}
+
+export const CONTENTFY_SITE_ORIGIN = "https://www.contentfy.com.br";
+
+/** URL absoluta para CTAs das LPs externas (desacelere.contentfy.com.br, etc.). */
+export function absoluteCheckoutHref(slug: string) {
+  return `${CONTENTFY_SITE_ORIGIN}/checkout/${slug}`;
+}
+
+export function isExternalHref(href: string) {
+  return /^https?:\/\//i.test(href);
 }
 
 export { SHOWCASE_RAILS, TYPE_LABELS };

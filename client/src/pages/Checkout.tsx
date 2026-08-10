@@ -1,36 +1,64 @@
 import { useState, useEffect } from "react";
-import { useParams, useLocation } from "wouter";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
-import PublicHeader from "@/components/PublicHeader";
+import { useParams, Link } from "wouter";
+import { ContentFyLogo } from "@/components/branding";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { trpc } from "@/lib/trpc";
-import { Loader2, CheckCircle2, AlertCircle, Tag } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  Tag,
+  Lock,
+  Shield,
+  Zap,
+  CreditCard,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
+const TYPE_LABELS: Record<string, string> = {
+  course: "Curso",
+  ebook: "E-book",
+  audiobook: "Audiobook",
+  app: "App",
+};
+
+function formatBrl(cents: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(cents / 100);
+}
 
 export default function Checkout() {
   const { slug } = useParams();
-  const [, setLocation] = useLocation();
   const { user, isLoading: authLoading } = useAuth();
 
   const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    finalPrice: number;
+    discountAmount: number;
+    discountType: string;
+    discountValue: number;
+  } | null>(null);
   const [selectedInstallments, setSelectedInstallments] = useState(1);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const { data: products, isLoading: productsLoading } = trpc.products.list.useQuery();
-  const product = products?.find((p) => p.slug === slug);
+  const {
+    data: product,
+    isLoading: productLoading,
+    isError: productError,
+  } = trpc.checkout.getProduct.useQuery(
+    { slug: slug || "" },
+    { enabled: Boolean(slug) }
+  );
 
   const applyCouponMutation = trpc.checkout.applyCoupon.useMutation();
   const calculateInstallmentsMutation = trpc.checkout.calculateInstallments.useQuery(
@@ -38,14 +66,11 @@ export default function Checkout() {
       amount: appliedCoupon ? appliedCoupon.finalPrice : product?.price || 0,
       maxInstallments: product?.maxInstallments || 12,
     },
-    {
-      enabled: !!product,
-    }
+    { enabled: !!product }
   );
 
   const createSessionMutation = trpc.checkout.createSession.useMutation({
     onSuccess: (data) => {
-      // Redirecionar para Stripe Checkout
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       }
@@ -56,13 +81,14 @@ export default function Checkout() {
     },
   });
 
-  // Redirecionar se não estiver logado
   useEffect(() => {
     if (!authLoading && !user) {
-      toast.error("Você precisa fazer login para comprar");
-      setLocation("/");
+      toast.error("Faça login para continuar a compra");
+      const returnPath = `/checkout/${slug}`;
+      sessionStorage.setItem("contentfy_post_login_redirect", returnPath);
+      window.location.href = getLoginUrl();
     }
-  }, [authLoading, user, setLocation]);
+  }, [authLoading, user, slug]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim() || !product) return;
@@ -73,11 +99,12 @@ export default function Checkout() {
         productId: product.id,
         originalPrice: product.price,
       });
-
       setAppliedCoupon(result);
       toast.success(result.message);
-    } catch (error: any) {
-      toast.error(error.message || "Cupom inválido");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Cupom inválido";
+      toast.error(message);
       setAppliedCoupon(null);
     }
   };
@@ -89,315 +116,335 @@ export default function Checkout() {
 
   const handleCheckout = async () => {
     if (!product || !acceptTerms) {
-      toast.error("Você precisa aceitar os termos para continuar");
+      toast.error("Aceite os termos para continuar");
       return;
     }
 
     setIsProcessing(true);
-
     try {
       await createSessionMutation.mutateAsync({
         productId: product.id,
         couponCode: appliedCoupon ? couponCode.trim().toUpperCase() : undefined,
       });
-    } catch (error) {
-      // Erro já tratado no onError
+    } catch {
+      // onError
     }
   };
 
-  if (authLoading || productsLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <PublicHeader />
-        <main className="flex-1 py-12">
-          <div className="container max-w-6xl">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <Skeleton className="h-96 w-full" />
-              </div>
-              <div className="lg:col-span-1">
-                <Skeleton className="h-96 w-full" />
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+  if (productLoading || authLoading) {
+    return <CheckoutShell loading />;
   }
 
-  if (!product) {
+  if (!product || productError) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <PublicHeader />
-        <main className="flex-1 py-12">
-          <div className="container text-center">
-            <AlertCircle className="w-16 h-16 text-destructive mx-auto mb-4" />
-            <h1 className="text-3xl font-bold mb-4">Produto não encontrado</h1>
-            <p className="text-muted-foreground mb-8">
-              O produto que você está tentando comprar não existe.
-            </p>
-            <Button onClick={() => setLocation("/products")}>
-              Ver Produtos
-            </Button>
-          </div>
-        </main>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#070b12] px-6 text-center">
+        <AlertCircle className="w-14 h-14 text-destructive mb-4" />
+        <h1 className="text-2xl font-semibold text-white mb-2">
+          Produto não encontrado
+        </h1>
+        <p className="text-white/60 mb-8 max-w-md">
+          Este link de checkout não está disponível. Confira o slug do produto
+          ou explore o catálogo ContentFy.
+        </p>
+        <Button asChild className="cf-btn-gradient">
+          <Link href="/explorar">Explorar produtos</Link>
+        </Button>
       </div>
     );
   }
 
   const finalPrice = appliedCoupon ? appliedCoupon.finalPrice : product.price;
   const installments = calculateInstallmentsMutation.data?.installments || [];
+  const guaranteeDays = product.guaranteeDays ?? 30;
+  const cover = product.thumbnailImage || product.coverImage;
 
   return (
-    <div className="min-h-screen flex flex-col bg-muted/30">
-      <PublicHeader />
+    <div className="cf-checkout-v2 min-h-screen lg:grid lg:grid-cols-2">
+      {/* Painel esquerdo — resumo do produto */}
+      <aside
+        className="relative flex flex-col bg-[#070b12] text-white px-6 py-8 sm:px-10 lg:px-14 lg:py-12"
+        aria-label="Resumo do pedido"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_0%,rgba(249,115,22,0.12),transparent)] pointer-events-none" />
+        <div className="relative z-10 flex items-center justify-between gap-4 mb-8 lg:mb-10">
+          <Link href="/">
+            <a
+              className="cf-brand-logo-link cf-checkout-brand-link inline-flex items-center shrink-0 py-0 opacity-95 hover:opacity-100 transition-opacity duration-200 motion-safe:transition-opacity"
+              aria-label="Voltar à ContentFy"
+            >
+              <ContentFyLogo
+                variant="horizontal"
+                theme="dark"
+                priority
+                wrapClassName="!h-[3.94rem] sm:!h-[4.5rem]"
+                className="!h-[3.94rem] !max-h-[3.94rem] sm:!h-[4.5rem] sm:!max-h-[4.5rem] !w-auto"
+              />
+            </a>
+          </Link>
+          <span className="inline-flex items-center gap-1.5 text-xs font-normal text-white/45">
+            <Lock className="h-3.5 w-3.5" aria-hidden />
+            SSL
+          </span>
+        </div>
 
-      <main className="flex-1 py-12">
-        <div className="container max-w-6xl">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">Finalizar Compra</h1>
-            <p className="text-muted-foreground">
-              Complete os dados para finalizar sua compra
+        <div className="relative z-10 flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-orange-300/75 font-medium mb-4">
+            {TYPE_LABELS[product.type] || "Produto digital"}
+          </p>
+          <h2 className="text-2xl sm:text-[1.75rem] font-bold tracking-tight leading-snug mb-8 lg:mb-10">
+            {product.name}
+          </h2>
+
+          {cover ? (
+            <div className="cf-checkout-product-card mb-10 lg:mb-12">
+              <img
+                src={cover}
+                alt=""
+                className="cf-checkout-mockup-img"
+                decoding="async"
+              />
+            </div>
+          ) : null}
+
+          <div className="cf-checkout-price-block">
+            <p className="cf-checkout-price-label">Pagamento único</p>
+            <p className="cf-checkout-price-value" aria-live="polite">
+              {formatBrl(finalPrice)}
             </p>
+            {selectedInstallments > 1 ? (
+              <p className="text-sm font-normal text-white/48 pt-2">
+                {selectedInstallments}x de{" "}
+                {formatBrl(Math.round(finalPrice / selectedInstallments))}
+              </p>
+            ) : null}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Resumo do Pedido */}
-            <div className="lg:col-span-1 order-2 lg:order-1">
-              <Card className="sticky top-24">
-                <CardHeader>
-                  <CardTitle>Resumo do Pedido</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {/* Produto */}
-                  <div className="flex gap-4 mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-[#FFD43B] to-[#FF8C42] rounded-lg flex-shrink-0 overflow-hidden">
-                      {product.thumbnailImage ? (
-                        <img
-                          src={product.thumbnailImage}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : null}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Badge className="mb-2" variant="secondary">
-                        {product.type === "course" && "Curso"}
-                        {product.type === "ebook" && "E-book"}
-                        {product.type === "audiobook" && "Audiobook"}
-                        {product.type === "app" && "App"}
-                      </Badge>
-                      <h3 className="font-semibold line-clamp-2">{product.name}</h3>
-                    </div>
-                  </div>
+          <ul className="cf-checkout-benefits" aria-label="Benefícios da compra">
+            <li>
+              <Zap aria-hidden />
+              <span>Acesso imediato após confirmação</span>
+            </li>
+            <li>
+              <Shield aria-hidden />
+              <span>Garantia ContentFy de {guaranteeDays} dias</span>
+            </li>
+            <li>
+              <CreditCard aria-hidden />
+              <span>Cartão, PIX e boleto via Stripe</span>
+            </li>
+          </ul>
+        </div>
 
-                  <Separator className="my-4" />
+        <p className="relative z-10 mt-8 lg:mt-10 pb-6 lg:pb-8 cf-checkout-footer">
+          Powered by ContentFy · Pagamentos processados pelo Stripe
+        </p>
+      </aside>
 
-                  {/* Preços */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span>R$ {(product.price / 100).toFixed(2)}</span>
-                    </div>
+      {/* Painel direito — pagamento */}
+      <main className="flex flex-col bg-background px-6 py-8 sm:px-10 lg:px-14 lg:py-12">
+        <div className="w-full max-w-lg mx-auto flex-1 flex flex-col justify-center">
+          <header className="mb-8 lg:mb-10">
+            <p className="cf-checkout-hero-eyebrow">Checkout seguro</p>
+            <h1 className="cf-checkout-hero-title">Finalizar compra</h1>
+            <p className="cf-checkout-hero-sub">
+              Revise seu pedido e conclua sua compra com segurança.
+            </p>
+          </header>
 
-                    {appliedCoupon && (
-                      <div className="flex justify-between text-green-600">
-                        <span className="flex items-center gap-1">
-                          <Tag className="w-4 h-4" />
-                          Desconto ({couponCode})
-                        </span>
-                        <span>
-                          -R$ {(appliedCoupon.discountAmount / 100).toFixed(2)}
-                        </span>
-                      </div>
-                    )}
-
-                    <Separator />
-
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Total</span>
-                      <span>R$ {(finalPrice / 100).toFixed(2)}</span>
-                    </div>
-
-                    {selectedInstallments > 1 && (
-                      <p className="text-sm text-muted-foreground text-center">
-                        {selectedInstallments}x de R${" "}
-                        {((finalPrice / 100) / selectedInstallments).toFixed(2)}
+          <div className="cf-checkout-form-stack">
+            <section
+              className="cf-checkout-panel-card"
+              aria-labelledby="checkout-coupon-label"
+            >
+              <Label
+                id="checkout-coupon-label"
+                className="cf-checkout-label mb-3 block"
+              >
+                Cupom de desconto
+              </Label>
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <CheckCircle2
+                      className="h-4 w-4 text-emerald-500 shrink-0"
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {couponCode.toUpperCase()} aplicado
                       </p>
+                      <p className="text-xs font-normal text-muted-foreground">
+                        −{formatBrl(appliedCoupon.discountAmount)}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleRemoveCoupon}
+                  >
+                    Remover
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Input
+                    id="coupon-code"
+                    className="cf-checkout-input flex-1"
+                    placeholder="Ex.: CONTENTFY10"
+                    value={couponCode}
+                    onChange={(e) =>
+                      setCouponCode(e.target.value.toUpperCase())
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleApplyCoupon();
+                    }}
+                    aria-label="Código do cupom de desconto"
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="cf-checkout-apply-btn"
+                    onClick={handleApplyCoupon}
+                    disabled={
+                      !couponCode.trim() || applyCouponMutation.isPending
+                    }
+                  >
+                    {applyCouponMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Aplicar"
                     )}
-                  </div>
-
-                  <Separator className="my-4" />
-
-                  {/* Benefícios */}
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-green-600">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Acesso imediato</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-green-600">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Garantia de 7 dias</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-green-600">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Pagamento seguro</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Formulário de Pagamento */}
-            <div className="lg:col-span-2 order-1 lg:order-2">
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle>Cupom de Desconto</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {appliedCoupon ? (
-                    <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-5 h-5 text-green-600" />
-                        <div>
-                          <p className="font-medium text-green-900">
-                            Cupom aplicado!
-                          </p>
-                          <p className="text-sm text-green-700">
-                            {couponCode.toUpperCase()} -{" "}
-                            {appliedCoupon.discountType === "percentage"
-                              ? `${appliedCoupon.discountValue}%`
-                              : `R$ ${(appliedCoupon.discountValue / 100).toFixed(2)}`}{" "}
-                            de desconto
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleRemoveCoupon}
-                      >
-                        Remover
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Digite o código do cupom"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleApplyCoupon();
-                          }
-                        }}
-                      />
-                      <Button
-                        onClick={handleApplyCoupon}
-                        disabled={!couponCode.trim() || applyCouponMutation.isPending}
-                      >
-                        {applyCouponMutation.isPending ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          "Aplicar"
-                        )}
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {product.allowInstallments && !product.isRecurring && installments.length > 1 && (
-                <Card className="mb-6">
-                  <CardHeader>
-                    <CardTitle>Parcelamento</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Label htmlFor="installments" className="mb-2 block">
-                      Número de parcelas
-                    </Label>
-                    <select
-                      id="installments"
-                      value={selectedInstallments}
-                      onChange={(e) => setSelectedInstallments(parseInt(e.target.value))}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {installments.length > 0 ? (
-                        installments.map((inst) => (
-                          <option key={inst.number} value={inst.number}>
-                            {inst.label}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="1">À vista</option>
-                      )}
-                    </select>
-                  </CardContent>
-                </Card>
+                  </Button>
+                </div>
               )}
+            </section>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Pagamento</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <p className="text-sm text-muted-foreground">
-                      Você será redirecionado para o checkout seguro do Stripe para
-                      finalizar o pagamento.
-                    </p>
+            {product.allowInstallments &&
+            !product.isRecurring &&
+            installments.length > 1 ? (
+              <section
+                className="cf-checkout-panel-card"
+                aria-labelledby="checkout-installments-label"
+              >
+                <Label
+                  id="checkout-installments-label"
+                  htmlFor="installments"
+                  className="cf-checkout-label"
+                >
+                  Parcelamento no cartão
+                </Label>
+                <select
+                  id="installments"
+                  value={selectedInstallments}
+                  onChange={(e) =>
+                    setSelectedInstallments(parseInt(e.target.value, 10))
+                  }
+                  className="cf-checkout-select"
+                  aria-label="Número de parcelas"
+                >
+                  {installments.map((inst) => (
+                    <option key={inst.number} value={inst.number}>
+                      {inst.label}
+                    </option>
+                  ))}
+                </select>
+              </section>
+            ) : null}
 
-                    {/* Termos */}
-                    <div className="flex items-start gap-2">
-                      <Checkbox
-                        id="terms"
-                        checked={acceptTerms}
-                        onCheckedChange={(checked) =>
-                          setAcceptTerms(checked as boolean)
-                        }
-                      />
-                      <label
-                        htmlFor="terms"
-                        className="text-sm cursor-pointer leading-relaxed"
-                      >
-                        Eu li e concordo com os{" "}
-                        <a href="/terms" className="text-primary hover:underline">
-                          Termos de Uso
-                        </a>{" "}
-                        e{" "}
-                        <a href="/privacy" className="text-primary hover:underline">
-                          Política de Privacidade
-                        </a>
-                      </label>
-                    </div>
+            <section
+              className="cf-checkout-panel-card space-y-4"
+              aria-labelledby="checkout-summary-label"
+            >
+              <h2 id="checkout-summary-label" className="sr-only">
+                Resumo e pagamento
+              </h2>
+              <div className="flex justify-between text-sm font-normal">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span>{formatBrl(product.price)}</span>
+              </div>
+              {appliedCoupon ? (
+                <div className="flex justify-between text-sm font-normal text-emerald-600">
+                  <span className="flex items-center gap-1">
+                    <Tag className="h-3.5 w-3.5" aria-hidden />
+                    Desconto
+                  </span>
+                  <span>−{formatBrl(appliedCoupon.discountAmount)}</span>
+                </div>
+              ) : null}
+              <Separator className="cf-checkout-summary-sep" />
+              <div className="cf-checkout-total-row" role="status">
+                <span>Total</span>
+                <span>{formatBrl(finalPrice)}</span>
+              </div>
 
-                    {/* Botão de Finalizar */}
-                    <Button
-                      size="lg"
-                      className="w-full"
-                      onClick={handleCheckout}
-                      disabled={!acceptTerms || isProcessing}
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Processando...
-                        </>
-                      ) : (
-                        `Finalizar Compra - R$ ${(finalPrice / 100).toFixed(2)}`
-                      )}
-                    </Button>
+              <div className="flex items-start gap-2.5 pt-2">
+                <Checkbox
+                  id="terms"
+                  checked={acceptTerms}
+                  onCheckedChange={(checked) =>
+                    setAcceptTerms(checked === true)
+                  }
+                  aria-describedby="terms-description"
+                />
+                <label
+                  id="terms-description"
+                  htmlFor="terms"
+                  className="text-sm font-normal text-muted-foreground leading-relaxed cursor-pointer"
+                >
+                  Concordo com os{" "}
+                  <a href="/terms" className="text-primary hover:underline">
+                    Termos de Uso
+                  </a>{" "}
+                  e a{" "}
+                  <a href="/privacy" className="text-primary hover:underline">
+                    Política de Privacidade
+                  </a>
+                </label>
+              </div>
 
-                    <p className="text-xs text-center text-muted-foreground">
-                      Pagamento processado de forma segura pelo Stripe
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+              <Button
+                size="lg"
+                className="cf-checkout-pay-btn cf-btn-gradient"
+                onClick={handleCheckout}
+                disabled={!acceptTerms || isProcessing}
+                aria-busy={isProcessing}
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Redirecionando ao Stripe…
+                  </>
+                ) : (
+                  `Pagar ${formatBrl(finalPrice)}`
+                )}
+              </Button>
+
+              <p className="cf-checkout-stripe-note">
+                Você será redirecionado ao checkout seguro do Stripe para
+                concluir o pagamento.
+              </p>
+            </section>
           </div>
         </div>
+      </main>
+    </div>
+  );
+}
+
+function CheckoutShell({ loading }: { loading?: boolean }) {
+  return (
+    <div className="cf-checkout-v2 min-h-screen lg:grid lg:grid-cols-2">
+      <aside className="bg-[#070b12] p-10">
+        <Skeleton className="h-8 w-36 bg-white/10 mb-12" />
+        <Skeleton className="h-10 w-3/4 bg-white/10 mb-4" />
+        <Skeleton className="h-48 w-full bg-white/10 rounded-xl" />
+      </aside>
+      <main className="p-10 flex items-center justify-center">
+        {loading ? (
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        ) : null}
       </main>
     </div>
   );

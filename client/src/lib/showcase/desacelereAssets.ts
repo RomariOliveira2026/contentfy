@@ -15,4 +15,7 @@ export const DESACELERE_ASSETS = {
   ].join(", "),
   mockupKitSizes:
     "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 720px",
+  salesPageUrl: "https://desacelere.contentfy.com.br/",
+  checkoutUrl: "/checkout/desacelere",
+  publicCheckoutUrl: "https://www.contentfy.com.br/checkout/desacelere",
 } as const;

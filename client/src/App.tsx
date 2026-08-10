@@ -8,6 +8,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import ScrollToTop from "./components/ScrollToTop";
 import GlobalBackButton from "./components/GlobalBackButton";
+import { PostLoginRedirect } from "./components/PostLoginRedirect";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -242,6 +243,7 @@ function App() {
         <ScrollToTop />
         <TooltipProvider>
           <Toaster />
+          <PostLoginRedirect />
           <Router />
           <GlobalBackButton />
         </TooltipProvider>

@@ -9,8 +9,10 @@ import {
   checkoutHref,
   formatShowcasePrice,
   isComingSoonCommerce,
+  isExternalHref,
   resolveProductImage,
   useShowcaseCatalog,
+  canCheckout,
 } from "@/lib/showcase";
 import ProductCoverMedia from "@/components/showcase/ProductCoverMedia";
 import ProductGallery from "@/components/showcase/ProductGallery";
@@ -100,6 +102,7 @@ export default function ShowcaseProductPage() {
 
   const isDesacelere = product.slug === "desacelere";
   const comingSoon = isComingSoonCommerce(product);
+  const checkoutReady = canCheckout(product);
   const price = formatShowcasePrice(
     product.isPublished ? product.priceCents : null
   );
@@ -109,34 +112,32 @@ export default function ShowcaseProductPage() {
     product.priceCents != null &&
     product.source === "database";
 
-  /**
-   * Desacelere (provisional): CTA principal abre a página de vendas existente
-   * — checkout Stripe exige produto ativo no banco + login.
-   */
-  const primaryCtaHref = dbCheckoutReady
+  /** CTA principal → checkout ContentFy; LP externa fica no secundário. */
+  const primaryCtaHref = checkoutReady
     ? checkoutHref(product)
-    : product.salesPageUrl || null;
-  const canPurchase = Boolean(primaryCtaHref) && !comingSoon;
+    : dbCheckoutReady
+      ? checkoutHref(product)
+      : product.salesPageUrl || null;
+  const canPurchase =
+    Boolean(primaryCtaHref) && (!comingSoon || checkoutReady);
   const secondarySalesHref =
-    product.salesPageUrl && product.salesPageUrl !== primaryCtaHref
+    checkoutReady &&
+    product.salesPageUrl &&
+    isExternalHref(product.salesPageUrl)
       ? product.salesPageUrl
-      : isDesacelere
-        ? null
-        : product.salesPageUrl && !canPurchase
-          ? product.salesPageUrl
-          : null;
-  /** Quando o primary já é a sales page, oferecer CTA secundário útil. */
+      : product.salesPageUrl && product.salesPageUrl !== primaryCtaHref
+        ? product.salesPageUrl
+        : null;
   const secondaryHref =
     secondarySalesHref ||
-    (isDesacelere && primaryCtaHref === product.salesPageUrl
+    (checkoutReady && primaryCtaHref === checkoutHref(product)
       ? "#galeria"
       : null);
-  const secondaryLabel =
-    secondarySalesHref || (!isDesacelere && product.salesPageUrl)
-      ? "Ver página de vendas"
-      : secondaryHref === "#galeria"
-        ? "Ver amostra"
-        : null;
+  const secondaryLabel = secondarySalesHref
+    ? "Ver página de vendas"
+    : secondaryHref === "#galeria"
+      ? "Ver amostra"
+      : null;
 
   const dna = resolveContentfyDna(product.slug, {
     category: product.category,
@@ -375,9 +376,19 @@ export default function ShowcaseProductPage() {
                       "focus-visible:ring-2 focus-visible:ring-primary/70"
                     )}
                   >
-                    <Link href={primaryCtaHref}>Comprar agora</Link>
+                    {isExternalHref(primaryCtaHref) ? (
+                      <a
+                        href={primaryCtaHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Comprar agora
+                      </a>
+                    ) : (
+                      <Link href={primaryCtaHref}>Comprar agora</Link>
+                    )}
                   </Button>
-                ) : comingSoon && !isDesacelere ? (
+                ) : comingSoon && !checkoutReady ? (
                   <Button size="lg" disabled className="h-12 min-h-[48px] px-6">
                     Em breve
                   </Button>
@@ -398,20 +409,38 @@ export default function ShowcaseProductPage() {
                   >
                     {secondaryHref.startsWith("#") ? (
                       <a href={secondaryHref}>{secondaryLabel}</a>
+                    ) : isExternalHref(secondaryHref) ? (
+                      <a
+                        href={secondaryHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {secondaryLabel}
+                      </a>
                     ) : (
                       <Link href={secondaryHref}>{secondaryLabel}</Link>
                     )}
                   </Button>
                 ) : product.salesPageUrl &&
                   comingSoon &&
-                  !isDesacelere ? (
+                  !checkoutReady ? (
                   <Button
                     asChild
                     size="lg"
                     variant="outline"
                     className="h-12 min-h-[48px] px-6"
                   >
-                    <Link href={product.salesPageUrl}>Ver página de vendas</Link>
+                    {isExternalHref(product.salesPageUrl) ? (
+                      <a
+                        href={product.salesPageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Ver página de vendas
+                      </a>
+                    ) : (
+                      <Link href={product.salesPageUrl}>Ver página de vendas</Link>
+                    )}
                   </Button>
                 ) : null}
               </div>
