@@ -1,7 +1,7 @@
 import type { LmsModule } from "./types";
 
 /** Curriculum demo for empty/unavailable course structures (UI only). */
-export const DEMO_COURSE_TITLE = "Curso Dominando o TDAH";
+export const DEMO_COURSE_TITLE = "Desacelere";
 
 export const DEMO_MODULES: LmsModule[] = [
   {
@@ -19,8 +19,8 @@ export const DEMO_MODULES: LmsModule[] = [
       },
       {
         id: 1002,
-        title: "Como o cérebro com TDAH funciona",
-        description: "Neurociência aplicada de forma simples e prática.",
+        title: "Como o ritmo mental funciona",
+        description: "Entenda o ciclo de atenção e como recuperar presença no dia a dia.",
         duration: 14,
         type: "video",
         isCompleted: true,
@@ -38,11 +38,11 @@ export const DEMO_MODULES: LmsModule[] = [
   },
   {
     id: 102,
-    title: "Módulo 2 · Foco e Rotina",
+    title: "Módulo 2 · Presença e Rotina",
     lessons: [
       {
         id: 1004,
-        title: "Sistema de foco em blocos",
+        title: "Presença em blocos curtos",
         description: "Monte um protocolo diário realista e sustentável.",
         duration: 16,
         type: "video",
@@ -68,7 +68,7 @@ export const DEMO_MODULES: LmsModule[] = [
   },
   {
     id: 103,
-    title: "Módulo 3 · Produtividade Avançada",
+    title: "Módulo 3 · Clareza no dia a dia",
     lessons: [
       {
         id: 1007,

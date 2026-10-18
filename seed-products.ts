@@ -9,22 +9,6 @@ async function seedProducts() {
 
   await db.insert(schema.products).values([
     {
-      name: "Curso Dominando o TDAH",
-      slug: "curso-dominando-tdah",
-      description: "Aprenda técnicas práticas para foco, organização e produtividade.",
-      type: "course",
-      categoryId: 1,
-      price: 6700,
-      isRecurring: false,
-      recurringInterval: null,
-      allowInstallments: true,
-      maxInstallments: 12,
-      coverImage: null,
-      thumbnailImage: null,
-      salesPageUrl: null,
-      isActive: true,
-    },
-    {
       name: "Desacelere",
       slug: "desacelere",
       description:

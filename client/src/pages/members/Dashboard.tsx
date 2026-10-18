@@ -65,10 +65,10 @@ export default function MembersDashboard() {
         </div>
 
         <ContinueWatching
-          courseTitle="Curso Dominando o TDAH"
-          lessonTitle="Como o cérebro com TDAH funciona"
-          href="/my-account/course/1"
-          progressPercentage={42}
+          courseTitle="Desacelere"
+          lessonTitle="Capítulo 2 · Presença no dia a dia"
+          href="/my-account/product/2"
+          progressPercentage={18}
         />
 
         {/* Stats Cards */}

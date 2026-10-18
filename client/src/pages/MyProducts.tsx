@@ -6,7 +6,6 @@ import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AnimatedSection from "@/components/AnimatedSection";
-import { TdahCover } from "@/pages/library/TdahCover";
 import { cn } from "@/lib/utils";
 import {
   ArrowRight,
@@ -24,8 +23,6 @@ import {
   Trophy,
 } from "lucide-react";
 
-const DESACELERE_COVER = "/products/desacelere/mockup-kit.webp";
-
 type LibraryProduct = {
   id: number;
   name: string;
@@ -36,7 +33,7 @@ type LibraryProduct = {
   progress: number;
   progressDetail: string;
   lastAccess: string;
-  cover: "tdah" | "desacelere";
+  coverImage: string;
   /** Curso */
   currentModule?: string;
   timeRemaining?: string;
@@ -45,21 +42,6 @@ type LibraryProduct = {
 };
 
 const libraryProducts: LibraryProduct[] = [
-  {
-    id: 1,
-    name: "Dominando o TDAH",
-    type: "course",
-    description:
-      "Técnicas práticas para foco, organização e produtividade no dia a dia.",
-    actionLabel: "Continuar",
-    href: "/my-account/course/1",
-    progress: 42,
-    progressDetail: "3 de 7 módulos",
-    lastAccess: "Há 2 dias",
-    currentModule: "Módulo 3 · Foco e rotina",
-    timeRemaining: "~2h 40min",
-    cover: "tdah",
-  },
   {
     id: 2,
     name: "Desacelere",
@@ -72,7 +54,7 @@ const libraryProducts: LibraryProduct[] = [
     progressDetail: "Leitura iniciada",
     lastAccess: "Hoje",
     currentPage: "Página 32 de 168",
-    cover: "desacelere",
+    coverImage: "/products/desacelere/mockup-kit.webp",
   },
 ];
 
@@ -80,14 +62,14 @@ const continueRail = [
   {
     id: "last",
     title: "Último conteúdo aberto",
-    subtitle: "Dominando o TDAH · Módulo 3",
-    href: "/my-account/course/1",
+    subtitle: "Desacelere · Cap. 2",
+    href: "/my-account/product/2",
     icon: History,
   },
   {
     id: "rec",
     title: "Recomendado para você",
-    subtitle: "Desacelere · Cap. 2",
+    subtitle: "Desacelere · Cap. 3",
     href: "/my-account/product/2",
     icon: Compass,
   },
@@ -95,7 +77,7 @@ const continueRail = [
     id: "resume",
     title: "Continue de onde parou",
     subtitle: "Retome com um clique",
-    href: "/my-account/course/1",
+    href: "/my-account/product/2",
     icon: RotateCcw,
   },
 ];
@@ -117,8 +99,8 @@ const recentActivity = [
     items: [
       {
         id: "a2",
-        product: "Dominando o TDAH",
-        detail: "Módulo 3",
+        product: "Desacelere",
+        detail: "Capítulo 1",
         when: "há 2 dias",
       },
     ],
@@ -134,7 +116,7 @@ const comingSoon = [
 const achievements = [
   { icon: Trophy, label: "Primeira leitura concluída" },
   { icon: Flame, label: "18% da biblioteca concluída" },
-  { icon: BookOpen, label: "2 conteúdos adquiridos" },
+  { icon: BookOpen, label: "1 conteúdo adquirido" },
 ];
 
 function typeLabel(type: LibraryProduct["type"]) {
@@ -513,19 +495,15 @@ function LibraryCard({ product }: { product: LibraryProduct }) {
       )}
     >
       <div className="relative aspect-[16/9] overflow-hidden bg-[#070b12]">
-        {product.cover === "tdah" ? (
-          <TdahCover className="absolute inset-0 h-full w-full object-cover transition-transform duration-[220ms] ease-out motion-safe:group-hover:scale-[1.03]" />
-        ) : (
-          <img
-            src={DESACELERE_COVER}
-            alt={`Capa de ${product.name}`}
-            width={640}
-            height={360}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-[center_40%] transition-transform duration-[220ms] ease-out motion-safe:group-hover:scale-[1.03]"
-          />
-        )}
+        <img
+          src={product.coverImage}
+          alt={`Capa de ${product.name}`}
+          width={640}
+          height={360}
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover object-[center_40%] transition-transform duration-[220ms] ease-out motion-safe:group-hover:scale-[1.03]"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#070b12]/95 via-[#070b12]/20 to-transparent" />
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
           <BadgePill>

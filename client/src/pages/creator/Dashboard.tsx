@@ -68,12 +68,6 @@ const PORTFOLIO = {
       revenue: "R$ 38.900",
     },
     {
-      name: "Dominando o TDAH",
-      status: "Publicado" as const,
-      students: "420",
-      revenue: "R$ 24.500",
-    },
-    {
       name: "Manual do Representante",
       status: "Rascunho" as const,
       students: "—",
@@ -96,7 +90,7 @@ const PORTFOLIO = {
     {
       when: "Ontem",
       title: "Novo aluno",
-      detail: "Dominando o TDAH",
+      detail: "Desacelere",
       meta: "",
     },
     {
