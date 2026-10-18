@@ -16,7 +16,7 @@ import PublicFooter from "@/components/PublicFooter";
 
 const HERO_BG =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663097022226/Qf2ybVS3fKbp69WuPYRytJ/desacelere_hero_bg-49SjHkZ9Zq4VXLF5SeHWvU.webp";
-const MOCKUP_IMG = "/products/desacelere/mockup-kit.webp";
+const MOCKUP_IMG = "/products/desacelere/lp-mockup.webp";
 
 const BENEFIT_ICONS = {
   mindfulness:
@@ -134,8 +134,8 @@ export default function Desacelere() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/35" />
 
           <div className="relative z-10 container max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8 text-white">
+            <div className="grid grid-cols-1 gap-10 lg:gap-12 items-center">
+              <div className="space-y-8 text-white max-w-3xl">
                 <Badge className="w-fit bg-orange-500 hover:bg-orange-600 text-white border-0">
                   E-book de Desenvolvimento Pessoal
                 </Badge>
@@ -186,11 +186,13 @@ export default function Desacelere() {
                 </div>
               </div>
 
-              <div className="hidden lg:flex justify-center">
+              <div className="flex justify-center">
                 <img
                   src={MOCKUP_IMG}
-                  alt="Mockup do e-book Desacelere"
-                  className="w-full max-w-md drop-shadow-2xl"
+                  alt="Mockup do e-book Desacelere: livro, leitura no tablet e no celular"
+                  width={1536}
+                  height={1024}
+                  className="w-full rounded-2xl shadow-2xl"
                 />
               </div>
             </div>
@@ -278,8 +280,10 @@ export default function Desacelere() {
                 <div className="flex justify-center">
                   <img
                     src={MOCKUP_IMG}
-                    alt="E-book Desacelere"
-                    className="w-full max-w-sm drop-shadow-2xl rounded-xl"
+                    alt="E-book Desacelere em livro, tablet e celular"
+                    width={1536}
+                    height={1024}
+                    className="w-full rounded-2xl shadow-2xl"
                   />
                 </div>
               </div>
