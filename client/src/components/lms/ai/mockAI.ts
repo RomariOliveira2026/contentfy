@@ -31,7 +31,7 @@ export const INITIAL_CHAT: AIChatMessage[] = [
     id: "m3",
     role: "assistant",
     content:
-      "Claro. O ponto central desta aula é transformar atenção dispersa em blocos de foco curtos e repetíveis. Em vez de forçar concentração longa, você cria ciclos: intenção → ação → pausa → revisão. Assim o cérebro com TDAH trabalha a favor, não contra.",
+      "Claro. O ponto central desta aula é recuperar presença com blocos curtos e repetíveis. Em vez de acelerar o dia inteiro, você cria ciclos: intenção → ação → pausa → revisão. Assim o ritmo trabalha a favor da clareza, não contra.",
     createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
   },
   {
@@ -98,7 +98,7 @@ export const MOCK_FLASHCARDS: AIFlashcard[] = [
 
 export const MOCK_MIND_MAP: AIMindMapNode = {
   id: "root",
-  label: "Foco com TDAH",
+  label: "Presença no dia a dia",
   children: [
     {
       id: "c1",
@@ -200,10 +200,10 @@ export function getMockReply(
     return `Exemplos práticos:\n• Antes de estudar, deixe o celular em outro cômodo\n• Use um timer visível\n• Comece pela tarefa mais clara (não a maior)\n• Premie-se com 5 min de pausa real`;
   }
   if (action === "faq" || q.includes("faq") || q.includes("frequente")) {
-    return `Perguntas frequentes:\n• “E se eu falhar no bloco?” → Reduza para 10 min e recomece\n• “Posso mudar o horário?” → Sim, consistência > horário fixo\n• “Funciona sem medicação?” → A rotina ajuda com ou sem`;
+    return `Perguntas frequentes:\n• “E se eu falhar no bloco?” → Reduza para 10 min e recomece\n• “Posso mudar o horário?” → Sim, consistência > horário fixo\n• “E se o dia sair do ritmo?” → Volte para uma pausa curta e uma única prioridade`;
   }
   if (action === "translate" || q.includes("traduz")) {
-    return `English summary:\nThis lesson teaches short focus blocks, low-friction environments, daily micro-wins, and a 48-hour review loop for ADHD-friendly learning.`;
+    return `English summary:\nThis lesson teaches short presence blocks, low-friction environments, daily micro-wins, and a 48-hour review loop for a calmer routine.`;
   }
   if (action === "simplify" || q.includes("simplif")) {
     return `Versão simples:\n1. Estude pouco tempo, mas com intenção\n2. Tire o que te distrai\n3. Faça uma coisa pequena e termine\n4. Olhe de novo depois de 2 dias`;
